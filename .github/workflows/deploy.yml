@@ -58,7 +58,7 @@ jobs:
 
       # 여덟 번째 단계: Docker 이미지를 태깅합니다. 이는 이미지를 ECR에 푸시하기 위해 태그를 설정하는 단계입니다.
       - name: Docker tag
-        run: docker tag zzaekkac-server ${{ steps.login-ecr.outputs.registry }}/reev-server:latest
+        run: docker tag reev-server ${{ steps.login-ecr.outputs.registry }}/reev-server:latest
 
       # 아홉 번째 단계: Docker 이미지를 ECR에 푸시합니다. 이는 태그된 이미지를 AWS ECR로 업로드하는 단계입니다.
       - name: Docker push

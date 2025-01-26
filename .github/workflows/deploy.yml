@@ -1,0 +1,77 @@
+name: reev server deploy
+
+# main 브랜치에 push 이벤트가 발생했을 때 이 워크플로우를 실행합니다.
+on:
+  push:
+    branches:
+      - main
+
+# jobs: 이 워크플로우에서 수행할 작업들을 정의합니다.
+jobs:
+  build:
+    # 이 작업을 실행할 환경을 지정합니다. 여기서는 최신 버전의 Ubuntu를 사용합니다.
+    runs-on: ubuntu-latest
+
+    # steps: 작업 내에서 수행할 명령어들을 순차적으로 정의합니다.
+    steps:
+      # 첫 번째 단계: Github 레포지토리를 체크아웃합니다. 이는 git clone과 유사하게, 현재 레포지토리의 내용을 가져옵니다.
+      - name: Github Repository Load
+        uses: actions/checkout@v4
+
+      # 두 번째 단계: JDK 17을 설치합니다. 이는 자바 애플리케이션을 빌드하고 실행하기 위한 환경을 설정합니다.
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      # 세 번째 단계: application.properties 파일을 생성합니다. 이는 환경 설정 파일로, 필요한 설정 값을 넣습니다.
+      - name: application.properties 파일 생성
+        run: echo "${{ secrets.APPLICATION_PROPERTIES }}" > ./src/main/resources/application.properties
+
+      # 네 번째 단계: Gradle을 사용하여 애플리케이션을 빌드합니다. 여기에는 테스트도 포함될 수 있습니다.
+      - name: Build with Gradle
+        run: ./gradlew clean build
+
+      # 다섯 번째 단계: AWS 자격 증명을 설정합니다. 이는 AWS와 상호 작용하기 위한 인증 정보를 설정합니다.
+      - name: AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ap-northeast-2
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      # 여섯 번째 단계: AWS ECR에 로그인합니다. ECR은 Docker 이미지를 저장할 수 있는 AWS의 컨테이너 레지스트리 서비스입니다.
+      - name: Login to AWS ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      # 일곱 번째 단계: Docker 이미지를 빌드합니다. 이는 Dockerfile을 기반으로 애플리케이션의 이미지를 생성합니다.
+      - name: Docker image build
+        run: docker build -t reev-server .
+
+      # 여덟 번째 단계: Docker 이미지를 태깅합니다. 이는 이미지를 ECR에 푸시하기 위해 태그를 설정하는 단계입니다.
+      - name: Docker tag
+        run: docker tag zzaekkac-server ${{ steps.login-ecr.outputs.registry }}/reev-server:latest
+
+      # 아홉 번째 단계: Docker 이미지를 ECR에 푸시합니다. 이는 태그된 이미지를 AWS ECR로 업로드하는 단계입니다.
+      - name: Docker push
+        run: docker push ${{ steps.login-ecr.outputs.registry }}/reev-server:latest
+
+      # 열 번째 단계: SSH를 통해 EC2 인스턴스에 접속합니다. 이는 원격 서버에 접근하여 명령을 실행하기 위한 단계입니다.
+      - name: ssh
+        uses: ubuntu/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_PRIVATE_KEY }}
+          script_stop: true
+          script: |
+            # 현재 실행 중인 Docker 컨테이너를 중지합니다. 서버가 중지되어도 오류를 무시하도록 '|| true'를 추가했습니다.
+            docker stop reev-server || true
+            # 중지된 Docker 컨테이너를 삭제합니다. 이미 컨테이너가 없더라도 오류를 무시하도록 '|| true'를 추가했습니다.
+            docker rm reev-server || true
+            # ECR로부터 최신 Docker 이미지를 가져옵니다.
+            docker pull ${{ steps.login-ecr.outputs.registry }}/reev-server:latest
+            # 새로운 Docker 컨테이너를 실행합니다. 8080 포트를 매핑하여 외부에서 접근할 수 있도록 설정했습니다.
+            docker run -d --name reev-server -p 80:8080 ${{ steps.login-ecr.outputs.registry }}/reev-server:latest

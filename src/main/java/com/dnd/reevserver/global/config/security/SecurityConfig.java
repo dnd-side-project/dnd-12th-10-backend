@@ -1,6 +1,5 @@
 package com.dnd.reevserver.global.config.security;
 
-import com.dnd.reevserver.domain.member.service.CustomOAuth2UserService;
 import com.dnd.reevserver.global.config.properties.ReevProperties;
 import com.dnd.reevserver.global.jwt.filter.JwtAuthenticationFilter;
 import com.dnd.reevserver.global.jwt.handler.OAuth2FailureHandler;

@@ -33,7 +33,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         String userId = oauth2User.getUserId();
         String refreshToken = jwtProvider.createRefreshToken(userId);
 
-        ResponseCookie refreshCookie = createCookie(tokenProperties.getRefreshTokenName(), refreshToken, 60 * 60 * 24 * 7);
+        ResponseCookie refreshCookie = createCookie(tokenProperties.getRefreshTokenName(), refreshToken);
         response.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
 
         refreshTokenService.saveRefreshToken(userId, refreshToken);
@@ -54,14 +54,14 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
                 : baseUrl;
     }
 
-    private ResponseCookie createCookie(String name, String value, int maxAge) {
+    private ResponseCookie createCookie(String name, String value) {
 
         return ResponseCookie.from(name, value)
                 .secure(true)
                 .sameSite("None")
                 .httpOnly(true)
                 .path("/")
-                .maxAge(maxAge)
+                .maxAge(604800)
                 .build();
     }
 }

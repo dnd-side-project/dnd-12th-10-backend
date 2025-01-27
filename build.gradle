@@ -1,6 +1,6 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '3.4.1'
+    id 'org.springframework.boot' version '3.3.5'
     id 'io.spring.dependency-management' version '1.1.7'
 }
 
@@ -34,9 +34,20 @@ dependencies {
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0'
     implementation 'org.springframework.boot:spring-boot-starter-security'
-    implementation 'software.amazon.awssdk:mediaconvert:2.20.0'
-    implementation 'software.amazon.awssdk:s3:2.20.0'
-    implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
+
+    // oauth2 dependency
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+
+    // jwt token
+    implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.5'
+    runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.5'
+    runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.5'
+
+    // redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+    // hibernate
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
 }
 
 tasks.named('test') {

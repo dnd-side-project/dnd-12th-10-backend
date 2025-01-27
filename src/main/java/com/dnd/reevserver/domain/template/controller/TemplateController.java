@@ -4,7 +4,6 @@ import com.dnd.reevserver.domain.template.dto.request.CreateTemplateRequestDto;
 import com.dnd.reevserver.domain.template.dto.request.FindTemplateByMemberIdRequestDto;
 import com.dnd.reevserver.domain.template.dto.request.UpdateTemplateRequestDto;
 import com.dnd.reevserver.domain.template.dto.response.TemplateResponseDto;
-import com.dnd.reevserver.domain.template.entity.Template;
 import com.dnd.reevserver.domain.template.service.TemplateService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;

@@ -1,10 +1,14 @@
 package com.dnd.reevserver.domain.group.entity;
 
+import com.dnd.reevserver.domain.memberGroup.entity.MemberGroup;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -27,6 +31,19 @@ public class Group {
     @Column(name = "max_num", nullable = false)
     private Long maxNum;
 
+    @OneToMany(mappedBy = "group")
+    private List<MemberGroup> memberGroups = new ArrayList<>();
 
+    @Builder
+    public Group(String groupName, String description, Boolean isPublic, Long maxNum) {
+        this.groupName = groupName;
+        this.description = description;
+        this.isPublic = isPublic;
+        this.maxNum = maxNum;
+    }
 
+    public void addMemberGroup(MemberGroup memberGroup) {
+        memberGroups.add(memberGroup);
+        memberGroup.setGroup(this);
+    }
 }

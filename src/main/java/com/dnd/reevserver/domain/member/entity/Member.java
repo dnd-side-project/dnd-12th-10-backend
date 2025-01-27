@@ -1,19 +1,20 @@
 package com.dnd.reevserver.domain.member.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.dnd.reevserver.domain.memberGroup.entity.MemberGroup;
+import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 @Entity
 @Table(name = "Member")
 @Getter
+@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -30,6 +31,9 @@ public class Member implements OAuth2User {
 
     @Column(name = "role", nullable = false, length = 100)
     private String role;
+
+    @OneToMany(mappedBy = "member")
+    private List<MemberGroup> memberGroups = new ArrayList<>();
 
     @Override
     public Map<String, Object> getAttributes() {
@@ -52,5 +56,10 @@ public class Member implements OAuth2User {
 
     public void updateProfileUrl(String newProfileUrl) {
         this.profileUrl = newProfileUrl;
+    }
+
+    public void addUserGroup(MemberGroup memberGroup) {
+        memberGroups.add(memberGroup);
+        memberGroup.setMember(this);
     }
 }

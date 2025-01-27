@@ -17,10 +17,26 @@ public class SwaggerConfig {
     }
 
     @Bean
+    public GroupedOpenApi authGroup(){
+        return GroupedOpenApi.builder()
+                .group("Auth")
+                .pathsToMatch("/api/v1/auth/**")
+                .build();
+    }
+
+    @Bean
     public GroupedOpenApi memberGroup(){
         return GroupedOpenApi.builder()
                 .group("Member")
                 .pathsToMatch("/api/v1/member/**")
+                .build();
+    }
+
+    @Bean
+    public GroupedOpenApi templateGroup(){
+        return GroupedOpenApi.builder()
+                .group("Template")
+                .pathsToMatch("/api/v1/template/**")
                 .build();
     }
 }

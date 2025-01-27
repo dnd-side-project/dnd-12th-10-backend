@@ -28,21 +28,21 @@ public class JwtProvider {
         refreshTokenExpirationDay = tokenProperties.getRefreshTokenExpirationDay();
     }
 
-    public String createAccessToken(String kakaoId) {
+    public String createAccessToken(String userId) {
         Date expiredDate = Date.from(Instant.now().plus(accessTokenExpirationDay, ChronoUnit.DAYS));
         return Jwts.builder()
                 .signWith(key, SignatureAlgorithm.HS256)
-                .setSubject(kakaoId)
+                .setSubject(userId)
                 .setIssuedAt(new Date())
                 .setExpiration(expiredDate)
                 .compact();
     }
 
-    public String createRefreshToken(String kakaoId) {
+    public String createRefreshToken(String userId) {
         Date expiredDate = Date.from(Instant.now().plus(refreshTokenExpirationDay, ChronoUnit.DAYS));
         return Jwts.builder()
                 .signWith(key, SignatureAlgorithm.HS256)
-                .setSubject(kakaoId)
+                .setSubject(userId)
                 .setIssuedAt(new Date())
                 .setExpiration(expiredDate)
                 .compact();

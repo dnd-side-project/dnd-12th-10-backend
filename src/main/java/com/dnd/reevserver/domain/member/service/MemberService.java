@@ -18,7 +18,7 @@ public class MemberService {
     // 모임 관련 API 작성 예정
 
     // 회원 내용 읽기 (내에서만)
-    private Member findById(String userId){
+    public Member findById(String userId){
         return memberRepository.findById(userId).orElseThrow(MemberNotFoundException::new);
     }
 

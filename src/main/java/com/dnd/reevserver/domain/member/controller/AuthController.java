@@ -4,6 +4,7 @@ import com.dnd.reevserver.domain.member.dto.response.ReissueResponseDto;
 import com.dnd.reevserver.domain.member.exception.UnauthorizedException;
 import com.dnd.reevserver.domain.member.service.AuthService;
 import com.dnd.reevserver.global.util.CookieUtils;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.http.HttpHeaders;
@@ -20,6 +21,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public class AuthController {
     private final AuthService authService;
 
+    // todo : 헤더로 저장되는 AT 대신 RT로 할까?
+    @Operation(summary = "AT로 진행, Authorization 헤더로 검사함, Bearer AT 형식")
     @GetMapping("/check")
     public ResponseEntity<Map<String, Boolean>> checkAuth(@RequestHeader(value = "Authorization", required = false) String authorization) {
 
@@ -33,6 +36,7 @@ public class AuthController {
         return ResponseEntity.ok(response);
     }
 
+    @Operation(summary = "RT로 진행, Redis 안의 RT와 쿠키의 RT를 재갱신함")
     @GetMapping("/reissue")
     public ResponseEntity<Void> reissueToken(@CookieValue(value = "refresh_token", required = false) String refreshToken) {
 
@@ -41,6 +45,8 @@ public class AuthController {
         }
 
         ReissueResponseDto reissuedToken = authService.reissueToken(refreshToken);
+
+
 
         ResponseCookie refreshCookie = CookieUtils.createCookie(
                 "refresh_token",

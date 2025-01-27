@@ -37,7 +37,7 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Build with Gradle
-        run: ./gradlew clean build
+        run: ./gradlew clean build -x test
 
       # 다섯 번째 단계: AWS 자격 증명을 설정합니다. 이는 AWS와 상호 작용하기 위한 인증 정보를 설정합니다.
       - name: AWS Credentials

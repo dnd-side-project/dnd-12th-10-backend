@@ -1,7 +1,6 @@
 package com.dnd.reevserver.domain.template.controller;
 
 import com.dnd.reevserver.domain.template.dto.request.CreateTemplateRequestDto;
-import com.dnd.reevserver.domain.template.dto.request.FindTemplateByMemberIdRequestDto;
 import com.dnd.reevserver.domain.template.dto.request.UpdateTemplateRequestDto;
 import com.dnd.reevserver.domain.template.dto.response.TemplateResponseDto;
 import com.dnd.reevserver.domain.template.service.TemplateService;
@@ -24,8 +23,8 @@ public class TemplateController {
     // 유저의 커스텀 템플릿 조회
     @Operation(summary = "유저의 커스텀 템플릿 조회")
     @GetMapping("/custom")
-    public ResponseEntity<List<TemplateResponseDto>> findCustomTemplatesByUser(@RequestBody FindTemplateByMemberIdRequestDto dto) {
-        return ResponseEntity.ok(templateService.findCustomTemplatesByUser(dto));
+    public ResponseEntity<List<TemplateResponseDto>> findCustomTemplatesByUser(@RequestParam String userId) {
+        return ResponseEntity.ok(templateService.findCustomTemplatesByUser(userId));
     }
 
     // 공용 템플릿 조회

@@ -27,6 +27,6 @@ public class Template {
     private boolean isPublic; // true : public, false : custom
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
+    @JoinColumn(name = "user_id")
     private Member member; // 유저 전용 템플릿의 소유자 (공용 템플릿일 경우 null)
 }

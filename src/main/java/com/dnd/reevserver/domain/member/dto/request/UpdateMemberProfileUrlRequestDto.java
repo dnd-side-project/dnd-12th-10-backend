@@ -1,13 +1,4 @@
 package com.dnd.reevserver.domain.member.dto.request;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class UpdateMemberProfileUrlRequestDto {
-    private String userId;
-    private String profileUrl;
+public record UpdateMemberProfileUrlRequestDto(String userId, String profileUrl) {
 }

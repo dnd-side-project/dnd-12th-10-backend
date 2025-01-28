@@ -7,10 +7,9 @@ import lombok.*;
 @Entity
 @Table(name = "Memo")
 @Getter
-@Setter
 @Builder
 @AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Memo {
     @Id
     @Column(name = "memo_id")

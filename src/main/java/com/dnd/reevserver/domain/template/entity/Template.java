@@ -7,10 +7,9 @@ import lombok.*;
 @Entity
 @Table(name = "Template")
 @Getter
-@Setter
 @Builder
 @AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Template {
     @Id
     @Column(name = "template_id")
@@ -29,4 +28,12 @@ public class Template {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private Member member; // 유저 전용 템플릿의 소유자 (공용 템플릿일 경우 null)
+
+    public void updateTemplateName(String newTemplateName) {
+        this.templateName = newTemplateName;
+    }
+
+    public void updateContent(String newContent) {
+        this.content = newContent;
+    }
 }

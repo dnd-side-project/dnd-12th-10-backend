@@ -71,10 +71,8 @@ public class TemplateService {
             throw new PublicTemplateCannotModifyException();
         }
 
-        template.setTemplateName(dto.templateName());
-        template.setContent(dto.content());
-
-        templateRepository.save(template);
+        template.updateTemplateName(dto.templateName());
+        template.updateContent(dto.content());
     }
 
     // 템플릿 삭제. isPublic이 false여만 가능, true면 PublicTemplateCannotDeleteException 예외 처리

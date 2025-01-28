@@ -31,15 +31,13 @@ public class MemberService {
     @Transactional
     public void updateNickname(UpdateMemberNicknameRequestDto dto){
         Member member = findById(dto.userId());
-        member.setNickname(dto.nickname());
-        memberRepository.save(member);
+        member.updateNickname(dto.nickname());
     }
 
     @Transactional
     public void updateProfileUrl(UpdateMemberProfileUrlRequestDto dto){
         Member member = findById(dto.userId());
-        member.setProfileUrl(dto.profileUrl());
-        memberRepository.save(member);
+        member.updateProfileUrl(dto.profileUrl());
     }
 
     // 회원 탈퇴

@@ -23,8 +23,9 @@ public class GroupController {
     }
 
     @GetMapping("/{groupId}")
-    public ResponseEntity<?> getGroupById(@PathVariable("groupId") String groupId, @AuthenticationPrincipal String userId){
-        GroupResponseDto group = groupService.getGroup(groupId);
+    public ResponseEntity<?> getGroupById(@PathVariable("groupId") Long groupId, @AuthenticationPrincipal String userId){
+        GroupResponseDto group = groupService.getGroupById(groupId);
+        return ResponseEntity.ok().body(group);
     }
 //
 //    @PostMapping

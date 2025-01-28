@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Service
@@ -24,6 +26,8 @@ public class GroupService {
                         .groupId(group.getGroupId())
                         .groupName(group.getGroupName())
                         .discription(group.getDescription())
+                        .userCount(group.getMemberGroups().size())
+                        .recentActString(getRecentActString(group.getRecentAct()))
                         .build())
                 .toList();
         return groupList;
@@ -36,7 +40,24 @@ public class GroupService {
                 .groupId(group.getGroupId())
                 .groupName(group.getGroupName())
                 .discription(group.getDescription())
+                .userCount(group.getMemberGroups().size())
+                .recentActString(getRecentActString(group.getRecentAct()))
                 .build();
     }
 
+    private String getRecentActString(LocalDateTime recentAct){
+
+        LocalDateTime now = LocalDateTime.now();
+        long timeGap = ChronoUnit.MINUTES.between(recentAct, now);
+
+        if(timeGap < 60){
+            return timeGap + "분 전";
+        }
+        if(timeGap < 1440){
+            return ChronoUnit.HOURS.between(recentAct, now) + "시간 전";
+        }
+        return ChronoUnit.DAYS.between(recentAct, now) + "일 전";
+
+
+    }
 }

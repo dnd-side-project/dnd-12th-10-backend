@@ -31,7 +31,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         String userId = attributes.get("id").toString();
         String name = (String) profile.get("nickname");
-        String profileImage = (String) profile.get("profile_image_url");
+        String profileImage = "NA";
 
         Optional<Member> member = memberRepository.findByUserId(userId);
         if (member.isPresent()) {

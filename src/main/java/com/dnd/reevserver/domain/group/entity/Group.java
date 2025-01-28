@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,12 +35,16 @@ public class Group {
     @OneToMany(mappedBy = "group")
     private List<MemberGroup> memberGroups = new ArrayList<>();
 
+    @Column(name = "recent_act")
+    private LocalDateTime recentAct;
+
     @Builder
     public Group(String groupName, String description, Boolean isPublic, Long maxNum) {
         this.groupName = groupName;
         this.description = description;
         this.isPublic = isPublic;
         this.maxNum = maxNum;
+        this.recentAct = LocalDateTime.now();
     }
 
     public void addMemberGroup(MemberGroup memberGroup) {

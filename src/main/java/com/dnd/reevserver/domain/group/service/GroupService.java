@@ -6,6 +6,7 @@ import com.dnd.reevserver.domain.group.exception.GroupNotFoundException;
 import com.dnd.reevserver.domain.group.repository.GroupRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -15,6 +16,7 @@ public class GroupService {
 
     private final GroupRepository groupRepository;
 
+    @Transactional(readOnly = true)
     public List<GroupResponseDto> getAllGroups() {
         List<Group> groups = groupRepository.findAll();
         List<GroupResponseDto> groupList = groups.stream()
@@ -27,6 +29,7 @@ public class GroupService {
         return groupList;
     }
 
+    @Transactional(readOnly = true)
     public GroupResponseDto getGroupById(Long groupId) {
         Group group = groupRepository.findById(groupId).orElseThrow(GroupNotFoundException::new);
         return GroupResponseDto.builder()

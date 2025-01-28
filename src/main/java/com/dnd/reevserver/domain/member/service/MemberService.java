@@ -30,16 +30,14 @@ public class MemberService {
     // 회원 정보 수정 (nickname, profileUrl)
     @Transactional
     public void updateNickname(UpdateMemberNicknameRequestDto dto){
-        Member member = findById(dto.getUserId());
-        member.setNickname(dto.getNickname());
-        memberRepository.save(member);
+        Member member = findById(dto.userId());
+        member.updateNickname(dto.nickname());
     }
 
     @Transactional
     public void updateProfileUrl(UpdateMemberProfileUrlRequestDto dto){
-        Member member = findById(dto.getUserId());
-        member.setProfileUrl(dto.getProfileUrl());
-        memberRepository.save(member);
+        Member member = findById(dto.userId());
+        member.updateProfileUrl(dto.profileUrl());
     }
 
     // 회원 탈퇴

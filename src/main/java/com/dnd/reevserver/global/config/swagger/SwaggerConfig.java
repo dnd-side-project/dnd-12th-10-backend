@@ -39,4 +39,12 @@ public class SwaggerConfig {
                 .pathsToMatch("/api/v1/template/**")
                 .build();
     }
+
+    @Bean
+    public GroupedOpenApi memoGroup(){
+        return GroupedOpenApi.builder()
+                .group("Memo")
+                .pathsToMatch("/api/v1/memo/**")
+                .build();
+    }
 }

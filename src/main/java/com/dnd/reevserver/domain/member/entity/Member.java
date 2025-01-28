@@ -14,10 +14,9 @@ import java.util.Map;
 @Entity
 @Table(name = "Member")
 @Getter
-@Setter
 @Builder
 @AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Member implements OAuth2User {
     @Id
     @Column(name = "user_id", length = 100, nullable = false, unique = true)
@@ -45,5 +44,13 @@ public class Member implements OAuth2User {
     @Override
     public String getName() {
         return this.nickname;
+    }
+
+    public void updateNickname(String newNickname) {
+        this.nickname = newNickname;
+    }
+
+    public void updateProfileUrl(String newProfileUrl) {
+        this.profileUrl = newProfileUrl;
     }
 }

@@ -38,13 +38,17 @@ public class Group {
     @Column(name = "recent_act")
     private LocalDateTime recentAct;
 
+    @Column(name = "owner_id", nullable = false)
+    private String ownerId;
+
     @Builder
-    public Group(String groupName, String description, Boolean isPublic, Long maxNum) {
+    public Group(String groupName, String description, Boolean isPublic, Long maxNum, String ownerId) {
         this.groupName = groupName;
         this.description = description;
         this.isPublic = isPublic;
         this.maxNum = maxNum;
         this.recentAct = LocalDateTime.now();
+        this.ownerId = ownerId;
     }
 
     public void addMemberGroup(MemberGroup memberGroup) {

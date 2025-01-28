@@ -1,6 +1,6 @@
 package com.dnd.reevserver.domain.member.entity;
 
-import com.dnd.reevserver.domain.memberGroup.entity.MemberGroup;
+import com.dnd.reevserver.domain.userTeam.entity.UserTeam;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -33,7 +33,7 @@ public class Member implements OAuth2User {
     private String role;
 
     @OneToMany(mappedBy = "member")
-    private List<MemberGroup> memberGroups = new ArrayList<>();
+    private List<UserTeam> userGroups = new ArrayList<>();
 
     @Override
     public Map<String, Object> getAttributes() {
@@ -58,8 +58,16 @@ public class Member implements OAuth2User {
         this.profileUrl = newProfileUrl;
     }
 
-    public void addUserGroup(MemberGroup memberGroup) {
-        memberGroups.add(memberGroup);
-        memberGroup.setMember(this);
+
+    public Member(String userId, String nickname, String profileUrl, String role) {
+        this.userId = userId;
+        this.nickname = nickname;
+        this.profileUrl = profileUrl;
+        this.role = role;
+    }
+
+    public void addUserGroup(UserTeam userGroup) {
+        userGroups.add(userGroup);
+        userGroup.setMember(this);
     }
 }

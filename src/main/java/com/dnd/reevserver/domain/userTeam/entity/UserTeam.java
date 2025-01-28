@@ -1,6 +1,6 @@
-package com.dnd.reevserver.domain.memberGroup.entity;
+package com.dnd.reevserver.domain.userTeam.entity;
 
-import com.dnd.reevserver.domain.group.entity.Group;
+import com.dnd.reevserver.domain.team.entity.Team;
 import com.dnd.reevserver.domain.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -10,26 +10,32 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class MemberGroup {
+@Table(name = "user_team")
+public class UserTeam {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long userGroupId;
+    private Long userTeamId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "group_id", nullable = false)
-    private Group group;
+    @JoinColumn(name = "team_id", nullable = false)
+    private Team team;
 
     public void setMember(Member member) {
         this.member = member;
     }
 
-    public void setGroup(Group group) {
-        this.group = group;
+    public void setTeam(Team team) {
+        this.team = team;
+    }
+
+    public UserTeam(Member member, Team team) {
+        this.member = member;
+        this.team = team;
     }
 
 }

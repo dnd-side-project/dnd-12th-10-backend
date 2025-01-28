@@ -1,6 +1,6 @@
-package com.dnd.reevserver.domain.group.entity;
+package com.dnd.reevserver.domain.team.entity;
 
-import com.dnd.reevserver.domain.memberGroup.entity.MemberGroup;
+import com.dnd.reevserver.domain.userTeam.entity.UserTeam;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -14,14 +14,14 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Group {
+public class Team {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long groupId;
+    private Long teamId;
 
-    @Column(name = "group_name", nullable = false, length = 100)
-    private String groupName;
+    @Column(name = "team_name", nullable = false, length = 100)
+    private String teamName;
 
     @Column(nullable = false, length = 1000)
     private String description;
@@ -30,10 +30,10 @@ public class Group {
     private Boolean isPublic;
 
     @Column(name = "max_num", nullable = false)
-    private Long maxNum;
+    private int maxNum;
 
-    @OneToMany(mappedBy = "group")
-    private List<MemberGroup> memberGroups = new ArrayList<>();
+    @OneToMany(mappedBy = "team")
+    private List<UserTeam> userTeams = new ArrayList<>();
 
     @Column(name = "recent_act")
     private LocalDateTime recentAct;
@@ -42,8 +42,8 @@ public class Group {
     private String ownerId;
 
     @Builder
-    public Group(String groupName, String description, Boolean isPublic, Long maxNum, String ownerId) {
-        this.groupName = groupName;
+    public Team(String teamName, String description, Boolean isPublic, int maxNum, String ownerId) {
+        this.teamName = teamName;
         this.description = description;
         this.isPublic = isPublic;
         this.maxNum = maxNum;
@@ -51,8 +51,8 @@ public class Group {
         this.ownerId = ownerId;
     }
 
-    public void addMemberGroup(MemberGroup memberGroup) {
-        memberGroups.add(memberGroup);
-        memberGroup.setGroup(this);
+    public void addUserTeam(UserTeam userTeam) {
+        userTeams.add(userTeam);
+        userTeam.setTeam(this);
     }
 }

@@ -76,6 +76,7 @@ public class Member implements OAuth2User {
     public void addUserGroup(UserTeam userGroup) {
         userGroups.add(userGroup);
         userGroup.setMember(this);
+    }
 
     public void updateJob(String updateJob) {
         this.job = updateJob;

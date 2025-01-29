@@ -28,7 +28,6 @@ public class TeamService {
 
     @Transactional(readOnly = true)
     public List<TeamResponseDto> getAllGroups() {
-
         List<Team> groups = teamRepository.findAll();
         List<TeamResponseDto> teamList = groups.stream()
                 .map(team -> TeamResponseDto.builder()
@@ -44,7 +43,6 @@ public class TeamService {
 
     @Transactional(readOnly = true)
     public TeamResponseDto getGroupById(Long groupId) {
-
         Team team = teamRepository.findById(groupId).orElseThrow(TeamNotFoundException::new);
         return TeamResponseDto.builder()
                 .teamId(team.getTeamId())
@@ -56,7 +54,6 @@ public class TeamService {
     }
 
     private String getRecentActString(LocalDateTime recentAct){
-
         LocalDateTime now = LocalDateTime.now();
         long timeGap = ChronoUnit.MINUTES.between(recentAct, now);
 

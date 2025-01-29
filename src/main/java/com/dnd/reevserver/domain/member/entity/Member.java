@@ -1,19 +1,20 @@
 package com.dnd.reevserver.domain.member.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.dnd.reevserver.domain.userTeam.entity.UserTeam;
+import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 @Entity
 @Table(name = "Member")
 @Getter
+@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -33,6 +34,9 @@ public class Member implements OAuth2User {
 
     @Column(name = "role", nullable = false, length = 100)
     private String role;
+
+    @OneToMany(mappedBy = "member")
+    private List<UserTeam> userGroups = new ArrayList<>();
 
     @Column(name = "job", nullable = false, length = 100)
     private String job;
@@ -60,7 +64,21 @@ public class Member implements OAuth2User {
         this.profileUrl = newProfileUrl;
     }
 
+
+
+    public Member(String userId, String nickname, String profileUrl, String role) {
+        this.userId = userId;
+        this.nickname = nickname;
+        this.profileUrl = profileUrl;
+        this.role = role;
+    }
+
+    public void addUserGroup(UserTeam userGroup) {
+        userGroups.add(userGroup);
+        userGroup.setMember(this);
+
     public void updateJob(String updateJob) {
         this.job = updateJob;
+
     }
 }

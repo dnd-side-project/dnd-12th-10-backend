@@ -22,8 +22,11 @@ public class MemoService {
         return memoRepository.findById(id).orElseThrow(MemoNotFoundException::new);
     }
 
+    public MemoResponseDto findMemoById(Long id) {
+        return new MemoResponseDto(findById(id));
+    }
+
     // 유저의 전체 메모 조회
-    // todo : 페이지네이션 필요
     public List<MemoResponseDto> findMemosByUserId(String userId){
         return memoRepository.findMemosByMember(memberService.findById(userId)).stream()
                 .map(MemoResponseDto::new).collect(Collectors.toList());

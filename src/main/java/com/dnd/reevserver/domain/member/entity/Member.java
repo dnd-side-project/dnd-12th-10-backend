@@ -20,10 +20,13 @@ import java.util.Map;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Member implements OAuth2User {
     @Id
-    @Column(name = "user_id", length = 100, nullable = false, unique = true)
+    @Column(name = "user_id", length = 100, nullable = false)
     private String userId;
 
-    @Column(name = "nickname", nullable = false, length = 100)
+    @Column(name = "kakao_name", nullable = false, length = 100)
+    private String kakaoName;
+
+    @Column(name = "nickname", nullable = false, length = 100, unique = true)
     private String nickname;
 
     @Column(name = "profile_url", nullable = false, length = 1000)
@@ -34,6 +37,9 @@ public class Member implements OAuth2User {
 
     @OneToMany(mappedBy = "member")
     private List<UserTeam> userGroups = new ArrayList<>();
+
+    @Column(name = "job", nullable = false, length = 100)
+    private String job;
 
     @Override
     public Map<String, Object> getAttributes() {
@@ -59,6 +65,7 @@ public class Member implements OAuth2User {
     }
 
 
+
     public Member(String userId, String nickname, String profileUrl, String role) {
         this.userId = userId;
         this.nickname = nickname;
@@ -69,5 +76,9 @@ public class Member implements OAuth2User {
     public void addUserGroup(UserTeam userGroup) {
         userGroups.add(userGroup);
         userGroup.setMember(this);
+
+    public void updateJob(String updateJob) {
+        this.job = updateJob;
+
     }
 }

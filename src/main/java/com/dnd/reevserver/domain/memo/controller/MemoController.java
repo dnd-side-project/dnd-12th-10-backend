@@ -16,9 +16,14 @@ import java.util.List;
 public class MemoController {
     private final MemoService memoService;
 
+    @GetMapping("/{memoId}")
+    public ResponseEntity<MemoResponseDto> findMemoById(@PathVariable Long memoId) {
+        return ResponseEntity.ok(memoService.findMemoById(memoId));
+    }
+
     @Operation(summary = "유저의 전체 메모 조회")
     @GetMapping("/{userId}")
-    public ResponseEntity<List<MemoResponseDto>> getMemosByUserId(@PathVariable String userId) {
+    public ResponseEntity<List<MemoResponseDto>> findMemosByUserId(@PathVariable String userId) {
         List<MemoResponseDto> memos = memoService.findMemosByUserId(userId);
         return ResponseEntity.ok(memos);
     }

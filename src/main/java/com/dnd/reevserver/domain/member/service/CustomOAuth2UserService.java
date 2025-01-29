@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -31,14 +32,13 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         String userId = attributes.get("id").toString();
         String name = (String) profile.get("nickname");
-        String profileImage = (String) profile.get("profile_image_url");
 
         Optional<Member> member = memberRepository.findByUserId(userId);
         if (member.isPresent()) {
             return member.get();
         }
 
-        Member newMember = new Member(userId, name, profileImage, "ROLE_USER");
+        Member newMember = new Member(userId, name, "기본 닉네임"+ UUID.randomUUID(), "NA", "ROLE_USER", "NA");
 
         // 사용자 정보 저장
         memberRepository.save(newMember);

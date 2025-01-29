@@ -58,12 +58,14 @@ public class TemplateService {
                 .content(dto.content())
                 .isPublic(false)
                 .member(member)
+                .description(dto.description())
                 .build();
         templateRepository.save(template);
     }
 
-    // 템플릿 제목, 내용 수정, isPublic이 false여만 가능, true면 PublicTemplateCannotModifyException 예외 처리
+    // 템플릿 제목, 내용, 설명 수정, isPublic이 false여만 가능, true면 PublicTemplateCannotModifyException 예외 처리
     @Transactional
+    // todo : 모든 수정에 자신의 객체가 맞는지 확인해야 할 듯?
     public void updateTemplate(UpdateTemplateRequestDto dto) {
         Template template = findById(dto.templateId());
 
@@ -73,6 +75,7 @@ public class TemplateService {
 
         template.updateTemplateName(dto.templateName());
         template.updateContent(dto.content());
+        template.updateDescription(dto.description());
     }
 
     // 템플릿 삭제. isPublic이 false여만 가능, true면 PublicTemplateCannotDeleteException 예외 처리

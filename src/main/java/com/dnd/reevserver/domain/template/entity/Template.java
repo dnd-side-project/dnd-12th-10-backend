@@ -29,6 +29,10 @@ public class Template {
     @JoinColumn(name = "user_id")
     private Member member; // 유저 전용 템플릿의 소유자 (공용 템플릿일 경우 null)
 
+    @Column(name = "description", nullable = false)
+    private String description;
+
+
     public void updateTemplateName(String newTemplateName) {
         this.templateName = newTemplateName;
     }
@@ -36,4 +40,6 @@ public class Template {
     public void updateContent(String newContent) {
         this.content = newContent;
     }
+
+    public void updateDescription(String newDescription) { this.description = newDescription; }
 }

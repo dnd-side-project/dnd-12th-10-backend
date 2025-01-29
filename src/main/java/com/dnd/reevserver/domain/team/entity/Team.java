@@ -53,6 +53,6 @@ public class Team {
 
     public void addUserTeam(UserTeam userTeam) {
         userTeams.add(userTeam);
-        userTeam.setTeam(this);
+        userTeam.updateTeam(this);
     }
 }

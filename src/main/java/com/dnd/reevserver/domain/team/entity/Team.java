@@ -1,5 +1,6 @@
 package com.dnd.reevserver.domain.team.entity;
 
+import com.dnd.reevserver.domain.category.entity.TeamCategory;
 import com.dnd.reevserver.domain.userTeam.entity.UserTeam;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -41,6 +42,9 @@ public class Team {
     @Column(name = "owner_id", nullable = false)
     private String ownerId;
 
+    @OneToMany(mappedBy = "team")
+    private List<TeamCategory> teamCategories = new ArrayList<>();
+
     @Builder
     public Team(String teamName, String description, Boolean isPublic, int maxNum, String ownerId) {
         this.teamName = teamName;
@@ -53,6 +57,11 @@ public class Team {
 
     public void addUserTeam(UserTeam userTeam) {
         userTeams.add(userTeam);
-        userTeam.setTeam(this);
+        userTeam.updateTeam(this);
+    }
+
+    public void addTeamCategory(TeamCategory teamCategory) {
+        teamCategories.add(teamCategory);
+        teamCategory.updateTeam(this);
     }
 }

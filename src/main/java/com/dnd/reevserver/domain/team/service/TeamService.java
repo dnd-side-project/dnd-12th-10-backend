@@ -1,5 +1,9 @@
 package com.dnd.reevserver.domain.team.service;
 
+import com.dnd.reevserver.domain.category.entity.Category;
+import com.dnd.reevserver.domain.category.entity.TeamCategory;
+import com.dnd.reevserver.domain.category.repository.TeamCategoryRepository;
+import com.dnd.reevserver.domain.category.service.CategoryService;
 import com.dnd.reevserver.domain.team.dto.request.AddTeamRequestDto;
 import com.dnd.reevserver.domain.team.dto.response.AddTeamResponseDto;
 import com.dnd.reevserver.domain.team.dto.response.TeamResponseDto;
@@ -25,6 +29,8 @@ public class TeamService {
     private final TeamRepository teamRepository;
     private final UserTeamRepository userTeamRepository;
     private final MemberService memberService;
+    private final CategoryService categoryService;
+    private final TeamCategoryRepository teamCategoryRepository;
 
     @Transactional(readOnly = true)
     public List<TeamResponseDto> getAllGroups() {
@@ -36,6 +42,11 @@ public class TeamService {
                         .description(team.getDescription())
                         .userCount(team.getUserTeams().size())
                         .recentActString(getRecentActString(team.getRecentAct()))
+                        .categoryNames(
+                                team.getTeamCategories().stream()
+                                        .map(teamCategory -> teamCategory.getCategory().getCategoryName())
+                                        .toList()
+                        )
                         .build())
                 .toList();
         return teamList;
@@ -50,6 +61,11 @@ public class TeamService {
                 .description(team.getDescription())
                 .userCount(team.getUserTeams().size())
                 .recentActString(getRecentActString(team.getRecentAct()))
+                .categoryNames(
+                        team.getTeamCategories().stream()
+                                .map(teamCategory -> teamCategory.getCategory().getCategoryName())
+                                .toList()
+                )
                 .build();
     }
 
@@ -75,8 +91,21 @@ public class TeamService {
                 .ownerId(addTeamRequestDto.userId())
                 .isPublic(addTeamRequestDto.isPublic())
                 .build();
-
         teamRepository.save(team);
+
+
+        List<String> categories = addTeamRequestDto.categoryNames();
+        if(categories != null){
+            for(String categoryName : categories){
+                Category category = categoryService.findByCategoryName(categoryName);
+                TeamCategory teamCategory = new TeamCategory(team, category);
+                team.addTeamCategory(teamCategory);
+                teamRepository.save(team);
+                teamCategoryRepository.save(teamCategory);
+            }
+        }
+
+
         Member member = memberService.findById(addTeamRequestDto.userId());
         UserTeam userTeam = new UserTeam(member,team);
         userTeamRepository.save(userTeam);
@@ -86,7 +115,7 @@ public class TeamService {
         teamRepository.save(team);
         userTeamRepository.save(userTeam);
 
-
         return new AddTeamResponseDto(team.getTeamId());
     }
+
 }

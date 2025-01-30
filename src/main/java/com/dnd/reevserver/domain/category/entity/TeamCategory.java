@@ -1,7 +1,6 @@
-package com.dnd.reevserver.domain.userTeam.entity;
+package com.dnd.reevserver.domain.category.entity;
 
 import com.dnd.reevserver.domain.team.entity.Team;
-import com.dnd.reevserver.domain.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -10,32 +9,31 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "user_team")
-public class UserTeam {
+public class TeamCategory {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long userTeamId;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private Member member;
+    private Long teamCategoryId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "team_id", nullable = false)
     private Team team;
 
-    public void updateMember(Member member) {
-        this.member = member;
-    }
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id", nullable = false)
+    private Category category;
 
     public void updateTeam(Team team) {
         this.team = team;
     }
 
-    public UserTeam(Member member, Team team) {
-        this.member = member;
+    public void updateCategory(Category category) {
+        this.category = category;
+    }
+
+    public TeamCategory(Team team, Category category) {
         this.team = team;
+        this.category = category;
     }
 
 }

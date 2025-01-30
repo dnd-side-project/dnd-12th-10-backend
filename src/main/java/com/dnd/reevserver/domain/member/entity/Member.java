@@ -41,6 +41,15 @@ public class Member implements OAuth2User {
     @Column(name = "job", nullable = false, length = 100)
     private String job;
 
+    public Member(String userId, String kakaoName, String nickName, String profileUrl, String role, String job) {
+        this.userId = userId;
+        this.kakaoName = kakaoName;
+        this.nickname = nickName;
+        this.profileUrl = profileUrl;
+        this.role = role;
+        this.job = job;
+    }
+
     @Override
     public Map<String, Object> getAttributes() {
         return null;
@@ -75,7 +84,8 @@ public class Member implements OAuth2User {
 
     public void addUserGroup(UserTeam userGroup) {
         userGroups.add(userGroup);
-        userGroup.setMember(this);
+        userGroup.updateMember(this);
+    }
 
     public void updateJob(String updateJob) {
         this.job = updateJob;

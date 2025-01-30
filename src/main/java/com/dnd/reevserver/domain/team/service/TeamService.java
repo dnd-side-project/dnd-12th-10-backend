@@ -2,6 +2,7 @@ package com.dnd.reevserver.domain.team.service;
 
 import com.dnd.reevserver.domain.category.entity.Category;
 import com.dnd.reevserver.domain.category.entity.TeamCategory;
+import com.dnd.reevserver.domain.category.repository.TeamCategoryRepository;
 import com.dnd.reevserver.domain.category.service.CategoryService;
 import com.dnd.reevserver.domain.team.dto.request.AddTeamRequestDto;
 import com.dnd.reevserver.domain.team.dto.response.AddTeamResponseDto;
@@ -29,6 +30,7 @@ public class TeamService {
     private final UserTeamRepository userTeamRepository;
     private final MemberService memberService;
     private final CategoryService categoryService;
+    private final TeamCategoryRepository teamCategoryRepository;
 
     @Transactional(readOnly = true)
     public List<TeamResponseDto> getAllGroups() {
@@ -40,6 +42,11 @@ public class TeamService {
                         .description(team.getDescription())
                         .userCount(team.getUserTeams().size())
                         .recentActString(getRecentActString(team.getRecentAct()))
+                        .categoryNames(
+                                team.getTeamCategories().stream()
+                                        .map(teamCategory -> teamCategory.getCategory().getCategoryName())
+                                        .toList()
+                        )
                         .build())
                 .toList();
         return teamList;
@@ -89,6 +96,7 @@ public class TeamService {
                 TeamCategory teamCategory = new TeamCategory(team, category);
                 team.addTeamCategory(teamCategory);
                 teamRepository.save(team);
+                teamCategoryRepository.save(teamCategory);
             }
         }
 

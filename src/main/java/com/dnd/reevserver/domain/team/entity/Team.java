@@ -43,7 +43,7 @@ public class Team {
     private String ownerId;
 
     @OneToMany(mappedBy = "team")
-    private List<TeamCategory> teamCategorys = new ArrayList<>();
+    private List<TeamCategory> teamCategories = new ArrayList<>();
 
     @Builder
     public Team(String teamName, String description, Boolean isPublic, int maxNum, String ownerId) {
@@ -61,7 +61,7 @@ public class Team {
     }
 
     public void addTeamCategory(TeamCategory teamCategory) {
-        teamCategorys.add(teamCategory);
+        teamCategories.add(teamCategory);
         teamCategory.updateTeam(this);
     }
 }

@@ -61,6 +61,11 @@ public class TeamService {
                 .description(team.getDescription())
                 .userCount(team.getUserTeams().size())
                 .recentActString(getRecentActString(team.getRecentAct()))
+                .categoryNames(
+                        team.getTeamCategories().stream()
+                                .map(teamCategory -> teamCategory.getCategory().getCategoryName())
+                                .toList()
+                )
                 .build();
     }
 

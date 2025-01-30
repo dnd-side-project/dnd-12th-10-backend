@@ -28,4 +28,5 @@ public class CategoryController {
         AddCategoryResponseDto responseDto = categoryService.addCategory(addCategoryRequestDto);
         return ResponseEntity.ok().body(responseDto);
     }
+
 }

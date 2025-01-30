@@ -1,6 +1,7 @@
 package com.dnd.reevserver.domain.memo.entity;
 
 import com.dnd.reevserver.domain.member.entity.Member;
+import com.dnd.reevserver.global.common.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -10,7 +11,7 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Memo {
+public class Memo extends BaseTimeEntity {
     @Id
     @Column(name = "memo_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)

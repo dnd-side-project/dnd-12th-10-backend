@@ -1,6 +1,7 @@
 package com.dnd.reevserver.domain.template.entity;
 
 import com.dnd.reevserver.domain.member.entity.Member;
+import com.dnd.reevserver.global.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -10,7 +11,7 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Template {
+public class Template extends BaseEntity {
     @Id
     @Column(name = "template_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)

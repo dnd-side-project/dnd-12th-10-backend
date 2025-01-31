@@ -1,7 +1,7 @@
 package com.dnd.reevserver.domain.category.entity;
 
 import com.dnd.reevserver.domain.team.entity.Team;
-import com.dnd.reevserver.global.common.entity.BaseTimeEntity;
+import com.dnd.reevserver.global.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class TeamCategory extends BaseTimeEntity {
+public class TeamCategory extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

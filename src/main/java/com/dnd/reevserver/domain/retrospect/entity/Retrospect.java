@@ -2,7 +2,7 @@ package com.dnd.reevserver.domain.retrospect.entity;
 
 import com.dnd.reevserver.domain.member.entity.Member;
 import com.dnd.reevserver.domain.team.entity.Team;
-import com.dnd.reevserver.global.common.entity.BaseTimeEntity;
+import com.dnd.reevserver.global.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Retrospect extends BaseTimeEntity {
+public class Retrospect extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -2,7 +2,7 @@ package com.dnd.reevserver.domain.userTeam.entity;
 
 import com.dnd.reevserver.domain.team.entity.Team;
 import com.dnd.reevserver.domain.member.entity.Member;
-import com.dnd.reevserver.global.common.entity.BaseTimeEntity;
+import com.dnd.reevserver.global.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "user_team")
-public class UserTeam extends BaseTimeEntity {
+public class UserTeam extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

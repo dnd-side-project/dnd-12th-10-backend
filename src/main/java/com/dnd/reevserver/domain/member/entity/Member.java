@@ -1,7 +1,7 @@
 package com.dnd.reevserver.domain.member.entity;
 
 import com.dnd.reevserver.domain.userTeam.entity.UserTeam;
-import com.dnd.reevserver.global.common.entity.BaseTimeEntity;
+import com.dnd.reevserver.global.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -19,7 +19,7 @@ import java.util.Map;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Member extends BaseTimeEntity implements OAuth2User {
+public class Member extends BaseEntity implements OAuth2User {
     @Id
     @Column(name = "user_id", length = 100, nullable = false)
     private String userId;

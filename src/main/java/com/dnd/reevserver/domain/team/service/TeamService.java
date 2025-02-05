@@ -118,4 +118,8 @@ public class TeamService {
         return new AddTeamResponseDto(team.getTeamId());
     }
 
+    public Team findById(Long groupId) {
+        return teamRepository.findById(groupId).orElseThrow(TeamNotFoundException::new);
+    }
+
 }

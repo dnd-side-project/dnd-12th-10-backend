@@ -3,6 +3,7 @@ package com.dnd.reevserver.domain.retrospect.service;
 import com.dnd.reevserver.domain.member.entity.Member;
 import com.dnd.reevserver.domain.member.service.MemberService;
 import com.dnd.reevserver.domain.retrospect.dto.request.AddRetrospectRequestDto;
+import com.dnd.reevserver.domain.retrospect.dto.request.GetAllGroupRetrospectRequestDto;
 import com.dnd.reevserver.domain.retrospect.dto.request.GetRetrospectRequestDto;
 import com.dnd.reevserver.domain.retrospect.dto.response.AddRetrospectResponseDto;
 import com.dnd.reevserver.domain.retrospect.dto.response.RetrospectResponseDto;
@@ -16,6 +17,9 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -36,6 +40,22 @@ public class RetrospectService {
                 .timeString(getTimeString(retrospect.getUpdatedAt()))
                 .likeCount(retrospect.getLikeCount())
                 .build();
+    }
+
+    //그룹 회고 조회
+    public List<RetrospectResponseDto> getAllRetrospectByGruopId(GetAllGroupRetrospectRequestDto getAllGroupRetrospectRequestDto) {
+        List<Retrospect> list = retrospectRepository.findAllByTeamId(getAllGroupRetrospectRequestDto.groupId());
+        List<RetrospectResponseDto> retrospectResponseDtoList = list.stream()
+                .map(retro -> RetrospectResponseDto.builder()
+                        .retrosepctId(retro.getRetrospectId())
+                        .title(retro.getTitle())
+                        .content(retro.getContent())
+                        .userName(retro.getMember().getNickname())
+                        .timeString(getTimeString(retro.getUpdatedAt()))
+                        .likeCount(retro.getLikeCount())
+                        .build())
+                .toList();
+        return retrospectResponseDtoList;
     }
 
 

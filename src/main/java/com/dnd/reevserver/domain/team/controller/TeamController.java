@@ -1,5 +1,6 @@
 package com.dnd.reevserver.domain.team.controller;
 
+import com.dnd.reevserver.domain.team.dto.request.AddFavoriteGroupRequestDto;
 import com.dnd.reevserver.domain.team.dto.request.AddTeamRequestDto;
 import com.dnd.reevserver.domain.team.dto.response.TeamResponseDto;
 import com.dnd.reevserver.domain.team.dto.response.AddTeamResponseDto;
@@ -30,9 +31,14 @@ public class TeamController {
     }
 
     @PostMapping
-    public ResponseEntity<AddTeamResponseDto> addGroup(@RequestBody AddTeamRequestDto addGroupRequestDto){
-        AddTeamResponseDto response = groupService.addGroup(addGroupRequestDto);
+    public ResponseEntity<AddTeamResponseDto> addGroup(@RequestBody AddTeamRequestDto requestDto){
+        AddTeamResponseDto response = groupService.addGroup(requestDto);
         return ResponseEntity.ok().body(response);
     }
 
+    @PostMapping("/favorite")
+    public ResponseEntity<?> addGroupFavorite(@RequestBody AddFavoriteGroupRequestDto requestDto){
+
+
+    }
 }

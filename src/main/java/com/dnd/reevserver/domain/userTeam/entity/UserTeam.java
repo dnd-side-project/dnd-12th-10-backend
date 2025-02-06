@@ -29,7 +29,7 @@ public class UserTeam extends BaseEntity {
 
     @ColumnDefault("false")
     @Column(columnDefinition = "TINYINT(1)")
-    private boolean isFavourite;
+    private boolean isFavorite;
 
     public void updateMember(Member member) {
         this.member = member;

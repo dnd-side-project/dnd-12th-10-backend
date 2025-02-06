@@ -6,6 +6,7 @@ import com.dnd.reevserver.domain.category.repository.TeamCategoryRepository;
 import com.dnd.reevserver.domain.category.service.CategoryService;
 import com.dnd.reevserver.domain.team.dto.request.AddFavoriteGroupRequestDto;
 import com.dnd.reevserver.domain.team.dto.request.AddTeamRequestDto;
+import com.dnd.reevserver.domain.team.dto.request.GetAllFavoriteGroupRequestDto;
 import com.dnd.reevserver.domain.team.dto.response.AddFavoriteGroupResponseDto;
 import com.dnd.reevserver.domain.team.dto.response.AddTeamResponseDto;
 import com.dnd.reevserver.domain.team.dto.response.TeamResponseDto;
@@ -139,6 +140,32 @@ public class TeamService {
         }
         userTeam.addIsFavorite();
         return new AddFavoriteGroupResponseDto("즐겨찾기 추가");
+    }
+
+    @Transactional(readOnly = true)
+    public List<TeamResponseDto> getAllFavoriteGroups(GetAllFavoriteGroupRequestDto requestDto) {
+        List<UserTeam> list = userTeamRepository.findAllFavoriteGroupsByUserId(requestDto.userId());
+
+        List<TeamResponseDto> favoriteTeamList = list.stream()
+                .map(userTeam -> {
+                    Team team = userTeam.getTeam();
+                    return TeamResponseDto.builder()
+                            .teamId(team.getTeamId())
+                            .teamName(team.getTeamName())
+                            .description(team.getDescription())
+                            .userCount(team.getUserTeams().size())
+                            .recentActString(getRecentActString(team.getRecentAct()))
+                            .categoryNames(
+                                    team.getTeamCategories().stream()
+                                            .map(teamCategory -> teamCategory.getCategory().getCategoryName())
+                                            .toList()
+                            )
+                            .build();
+                })
+                .toList();
+
+        return favoriteTeamList;
+
     }
 
 }

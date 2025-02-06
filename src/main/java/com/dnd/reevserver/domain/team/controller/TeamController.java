@@ -2,6 +2,7 @@ package com.dnd.reevserver.domain.team.controller;
 
 import com.dnd.reevserver.domain.team.dto.request.AddFavoriteGroupRequestDto;
 import com.dnd.reevserver.domain.team.dto.request.AddTeamRequestDto;
+import com.dnd.reevserver.domain.team.dto.response.AddFavoriteGroupResponseDto;
 import com.dnd.reevserver.domain.team.dto.response.TeamResponseDto;
 import com.dnd.reevserver.domain.team.dto.response.AddTeamResponseDto;
 import com.dnd.reevserver.domain.team.service.TeamService;
@@ -37,8 +38,8 @@ public class TeamController {
     }
 
     @PostMapping("/favorite")
-    public ResponseEntity<?> addGroupFavorite(@RequestBody AddFavoriteGroupRequestDto requestDto){
-
-
+    public ResponseEntity<AddFavoriteGroupResponseDto> addGroupFavorite(@RequestBody AddFavoriteGroupRequestDto requestDto){
+        AddFavoriteGroupResponseDto responseDto = groupService.addFavorite(requestDto);
+        return ResponseEntity.ok().body(responseDto);
     }
 }

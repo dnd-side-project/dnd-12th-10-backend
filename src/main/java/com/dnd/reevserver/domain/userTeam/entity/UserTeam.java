@@ -44,4 +44,12 @@ public class UserTeam extends BaseEntity {
         this.team = team;
     }
 
+    public void addIsFavorite(){
+        this.isFavorite = true;
+    }
+
+    public void removeIsFavorite(){
+        this.isFavorite = false;
+    }
+
 }

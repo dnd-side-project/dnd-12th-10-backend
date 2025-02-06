@@ -130,6 +130,7 @@ public class TeamService {
         return userTeamRepository.findByUserIdAndGroupId(userId,groupId).orElseThrow(UserGroupNotFoundException::new);
     }
 
+    @Transactional
     public AddFavoriteGroupResponseDto addFavorite(AddFavoriteGroupRequestDto requestDto) {
         UserTeam userTeam = findByUserIdAndGroupId(requestDto.userId(),requestDto.groupId());
         if(userTeam.isFavorite()){

@@ -27,8 +27,8 @@ public class TeamController {
 
     @GetMapping("/{groupId}")
     public ResponseEntity<TeamResponseDto> getGroupById(@PathVariable("groupId") Long groupId){
-        TeamResponseDto group = groupService.getGroupById(groupId);
-        return ResponseEntity.ok().body(group);
+        TeamResponseDto response = groupService.getGroupById(groupId);
+        return ResponseEntity.ok().body(response);
     }
 
     @PostMapping
@@ -37,7 +37,7 @@ public class TeamController {
         return ResponseEntity.ok().body(response);
     }
 
-    @PostMapping("/favorite")
+    @PatchMapping("/favorite")
     public ResponseEntity<AddFavoriteGroupResponseDto> addGroupFavorite(@RequestBody AddFavoriteGroupRequestDto requestDto){
         AddFavoriteGroupResponseDto responseDto = groupService.addFavorite(requestDto);
         return ResponseEntity.ok().body(responseDto);

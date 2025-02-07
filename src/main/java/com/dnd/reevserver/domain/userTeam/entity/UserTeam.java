@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 
 @Entity
 @Getter
@@ -26,6 +27,10 @@ public class UserTeam extends BaseEntity {
     @JoinColumn(name = "team_id", nullable = false)
     private Team team;
 
+    @ColumnDefault("false")
+    @Column(columnDefinition = "TINYINT(1)")
+    private boolean isFavorite;
+
     public void updateMember(Member member) {
         this.member = member;
     }
@@ -37,6 +42,14 @@ public class UserTeam extends BaseEntity {
     public UserTeam(Member member, Team team) {
         this.member = member;
         this.team = team;
+    }
+
+    public void addIsFavorite(){
+        this.isFavorite = true;
+    }
+
+    public void removeIsFavorite(){
+        this.isFavorite = false;
     }
 
 }

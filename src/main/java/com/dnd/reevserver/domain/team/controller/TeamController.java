@@ -1,6 +1,9 @@
 package com.dnd.reevserver.domain.team.controller;
 
+import com.dnd.reevserver.domain.team.dto.request.AddFavoriteGroupRequestDto;
 import com.dnd.reevserver.domain.team.dto.request.AddTeamRequestDto;
+import com.dnd.reevserver.domain.team.dto.request.GetAllFavoriteGroupRequestDto;
+import com.dnd.reevserver.domain.team.dto.response.AddFavoriteGroupResponseDto;
 import com.dnd.reevserver.domain.team.dto.response.TeamResponseDto;
 import com.dnd.reevserver.domain.team.dto.response.AddTeamResponseDto;
 import com.dnd.reevserver.domain.team.service.TeamService;
@@ -25,14 +28,25 @@ public class TeamController {
 
     @GetMapping("/{groupId}")
     public ResponseEntity<TeamResponseDto> getGroupById(@PathVariable("groupId") Long groupId){
-        TeamResponseDto group = groupService.getGroupById(groupId);
-        return ResponseEntity.ok().body(group);
-    }
-
-    @PostMapping
-    public ResponseEntity<AddTeamResponseDto> addGroup(@RequestBody AddTeamRequestDto addGroupRequestDto){
-        AddTeamResponseDto response = groupService.addGroup(addGroupRequestDto);
+        TeamResponseDto response = groupService.getGroupById(groupId);
         return ResponseEntity.ok().body(response);
     }
 
+    @PostMapping
+    public ResponseEntity<AddTeamResponseDto> addGroup(@RequestBody AddTeamRequestDto requestDto){
+        AddTeamResponseDto response = groupService.addGroup(requestDto);
+        return ResponseEntity.ok().body(response);
+    }
+
+    @PatchMapping("/favorite")
+    public ResponseEntity<AddFavoriteGroupResponseDto> addGroupFavorite(@RequestBody AddFavoriteGroupRequestDto requestDto){
+        AddFavoriteGroupResponseDto responseDto = groupService.addFavorite(requestDto);
+        return ResponseEntity.ok().body(responseDto);
+    }
+
+    @GetMapping("/favorite")
+    public ResponseEntity<List<TeamResponseDto>> getAllFavoriteGroups(@RequestBody GetAllFavoriteGroupRequestDto requestDto){
+        List<TeamResponseDto> groups = groupService.getAllFavoriteGroups(requestDto);
+        return ResponseEntity.ok().body(groups);
+    }
 }

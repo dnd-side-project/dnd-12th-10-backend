@@ -4,7 +4,10 @@ import com.dnd.reevserver.domain.category.entity.Category;
 import com.dnd.reevserver.domain.category.entity.TeamCategory;
 import com.dnd.reevserver.domain.category.repository.TeamCategoryRepository;
 import com.dnd.reevserver.domain.category.service.CategoryService;
+import com.dnd.reevserver.domain.team.dto.request.AddFavoriteGroupRequestDto;
 import com.dnd.reevserver.domain.team.dto.request.AddTeamRequestDto;
+import com.dnd.reevserver.domain.team.dto.request.GetAllFavoriteGroupRequestDto;
+import com.dnd.reevserver.domain.team.dto.response.AddFavoriteGroupResponseDto;
 import com.dnd.reevserver.domain.team.dto.response.AddTeamResponseDto;
 import com.dnd.reevserver.domain.team.dto.response.TeamResponseDto;
 import com.dnd.reevserver.domain.team.entity.Team;
@@ -13,8 +16,10 @@ import com.dnd.reevserver.domain.team.repository.TeamRepository;
 import com.dnd.reevserver.domain.member.entity.Member;
 import com.dnd.reevserver.domain.member.service.MemberService;
 import com.dnd.reevserver.domain.userTeam.entity.UserTeam;
+import com.dnd.reevserver.domain.userTeam.exception.UserGroupNotFoundException;
 import com.dnd.reevserver.domain.userTeam.repository.UserTeamRepository;
 import lombok.RequiredArgsConstructor;
+import org.apache.catalina.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -120,6 +125,47 @@ public class TeamService {
 
     public Team findById(Long groupId) {
         return teamRepository.findById(groupId).orElseThrow(TeamNotFoundException::new);
+    }
+
+    public UserTeam findByUserIdAndGroupId(String userId, Long groupId) {
+        return userTeamRepository.findByUserIdAndGroupId(userId,groupId).orElseThrow(UserGroupNotFoundException::new);
+    }
+
+    @Transactional
+    public AddFavoriteGroupResponseDto addFavorite(AddFavoriteGroupRequestDto requestDto) {
+        UserTeam userTeam = findByUserIdAndGroupId(requestDto.userId(),requestDto.groupId());
+        if(userTeam.isFavorite()){
+            userTeam.removeIsFavorite();
+            return new AddFavoriteGroupResponseDto("즐겨찾기 해제");
+        }
+        userTeam.addIsFavorite();
+        return new AddFavoriteGroupResponseDto("즐겨찾기 추가");
+    }
+
+    @Transactional(readOnly = true)
+    public List<TeamResponseDto> getAllFavoriteGroups(GetAllFavoriteGroupRequestDto requestDto) {
+        List<UserTeam> list = userTeamRepository.findAllFavoriteGroupsByUserId(requestDto.userId());
+
+        List<TeamResponseDto> favoriteTeamList = list.stream()
+                .map(userTeam -> {
+                    Team team = userTeam.getTeam();
+                    return TeamResponseDto.builder()
+                            .teamId(team.getTeamId())
+                            .teamName(team.getTeamName())
+                            .description(team.getDescription())
+                            .userCount(team.getUserTeams().size())
+                            .recentActString(getRecentActString(team.getRecentAct()))
+                            .categoryNames(
+                                    team.getTeamCategories().stream()
+                                            .map(teamCategory -> teamCategory.getCategory().getCategoryName())
+                                            .toList()
+                            )
+                            .build();
+                })
+                .toList();
+
+        return favoriteTeamList;
+
     }
 
 }

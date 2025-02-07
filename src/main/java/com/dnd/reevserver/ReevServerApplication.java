@@ -7,11 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
-@OpenAPIDefinition(
-        servers = {
-                @Server(url="/", description = "Default Server url")
-        }
-)
+@OpenAPIDefinition(servers = {@Server(url = "https://reevserver.site", description = "기본 도메인 설정")})
 @SpringBootApplication
 @ConfigurationPropertiesScan
 @EnableJpaAuditing

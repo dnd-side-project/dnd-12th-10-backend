@@ -48,7 +48,7 @@ public class AuthController {
 
 
 
-        ResponseCookie refreshCookie = CookieUtils.createCookie(
+        ResponseCookie refreshCookie = CookieUtils.createReissueCookie(
                 "refresh_token",
                 reissuedToken.getRefreshToken(),
                 60 * 60 * 24 * 7);

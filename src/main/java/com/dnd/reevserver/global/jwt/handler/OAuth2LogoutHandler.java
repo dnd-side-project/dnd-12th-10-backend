@@ -9,6 +9,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
@@ -42,9 +43,8 @@ public class OAuth2LogoutHandler implements LogoutHandler {
         }
 
         // 삭제할 쿠키 생성
-        ResponseCookie deleteCookie = CookieUtils.deleteCookie(tokenProperties.getRefreshTokenName());
-        response.addHeader("Authorization", "");
-        response.addHeader("Set-Cookie", deleteCookie.toString());
+        CookieUtils.deleteCookie(request, response, "refresh_token");
+        response.addHeader(HttpHeaders.AUTHORIZATION, "");
         refreshTokenService.deleteRefreshToken(userId);
     }
 

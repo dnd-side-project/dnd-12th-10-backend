@@ -4,6 +4,7 @@ import com.dnd.reevserver.domain.member.entity.Member;
 import com.dnd.reevserver.domain.member.service.RefreshTokenService;
 import com.dnd.reevserver.global.config.properties.ReevProperties;
 import com.dnd.reevserver.global.config.properties.TokenProperties;
+import com.dnd.reevserver.global.jwt.provider.JwtProvider;
 import com.dnd.reevserver.global.util.CookieUtils;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,6 +25,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     private final ReevProperties reevProperties;
     private final RefreshTokenService refreshTokenService;
     private final TokenProperties tokenProperties;
+    private final JwtProvider jwtProvider;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
@@ -32,9 +34,11 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         String userId = oauth2User.getUserId();
 
         String refreshToken = refreshTokenService.getOrCreateRefreshToken(userId);
+        String accessToken = jwtProvider.createAccessToken(userId);
 
         ResponseCookie refreshCookie = CookieUtils.createCookie(tokenProperties.getRefreshTokenName(), refreshToken, 604800);
         response.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
+        response.addHeader(HttpHeaders.AUTHORIZATION, accessToken);
 
         String redirectUrl = getRedirectUrl(request);
         response.sendRedirect(redirectUrl);

@@ -4,6 +4,7 @@ import com.dnd.reevserver.domain.member.entity.Member;
 import com.dnd.reevserver.domain.member.service.RefreshTokenService;
 import com.dnd.reevserver.global.config.properties.ReevProperties;
 import com.dnd.reevserver.global.config.properties.TokenProperties;
+import com.dnd.reevserver.global.util.CookieUtils;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -32,7 +33,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
         String refreshToken = refreshTokenService.getOrCreateRefreshToken(userId);
 
-        ResponseCookie refreshCookie = createCookie(tokenProperties.getRefreshTokenName(), refreshToken);
+        ResponseCookie refreshCookie = CookieUtils.createCookie(tokenProperties.getRefreshTokenName(), refreshToken, 604800);
         response.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
 
         String redirectUrl = getRedirectUrl(request);
@@ -49,16 +50,5 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         return (redirectParam != null)
                 ? baseUrl + "?redirect=" + redirectParam
                 : baseUrl;
-    }
-
-    private ResponseCookie createCookie(String name, String value) {
-
-        return ResponseCookie.from(name, value)
-                .secure(true)
-                .sameSite("None")
-                .httpOnly(true)
-                .path("/")
-                .maxAge(604800)
-                .build();
     }
 }

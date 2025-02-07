@@ -2,7 +2,9 @@ package com.dnd.reevserver.global.jwt.handler;
 
 import com.dnd.reevserver.domain.member.repository.MemberRepository;
 import com.dnd.reevserver.domain.member.service.RefreshTokenService;
+import com.dnd.reevserver.global.config.properties.TokenProperties;
 import com.dnd.reevserver.global.jwt.provider.JwtProvider;
+import com.dnd.reevserver.global.util.CookieUtils;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -20,6 +22,7 @@ public class OAuth2LogoutHandler implements LogoutHandler {
     private final MemberRepository memberRepository;
     private final RefreshTokenService refreshTokenService;
     private final JwtProvider jwtProvider;
+    private final TokenProperties tokenProperties;
 
     @Override
     public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
@@ -37,6 +40,7 @@ public class OAuth2LogoutHandler implements LogoutHandler {
             return;
         }
 
+        CookieUtils.deleteCookie(tokenProperties.getRefreshTokenName());
         refreshTokenService.deleteRefreshToken(userId);
     }
 

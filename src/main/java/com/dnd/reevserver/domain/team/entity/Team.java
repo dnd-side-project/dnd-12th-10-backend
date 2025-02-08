@@ -20,10 +20,10 @@ public class Team extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long teamId;
+    private Long groupId;
 
-    @Column(name = "team_name", nullable = false, length = 100)
-    private String teamName;
+    @Column(name = "group_name", nullable = false, length = 100)
+    private String groupName;
 
     @Column(nullable = false, length = 1000)
     private String description;
@@ -47,8 +47,8 @@ public class Team extends BaseEntity {
     private List<TeamCategory> teamCategories = new ArrayList<>();
 
     @Builder
-    public Team(String teamName, String description, Boolean isPublic, int maxNum, String ownerId) {
-        this.teamName = teamName;
+    public Team(String groupName, String description, Boolean isPublic, int maxNum, String ownerId) {
+        this.groupName = groupName;
         this.description = description;
         this.isPublic = isPublic;
         this.maxNum = maxNum;

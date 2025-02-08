@@ -42,8 +42,8 @@ public class TeamService {
         List<Team> groups = teamRepository.findAll();
         List<TeamResponseDto> teamList = groups.stream()
                 .map(team -> TeamResponseDto.builder()
-                        .teamId(team.getTeamId())
-                        .teamName(team.getTeamName())
+                        .groupId(team.getGroupId())
+                        .groupName(team.getGroupName())
                         .description(team.getDescription())
                         .userCount(team.getUserTeams().size())
                         .recentActString(getRecentActString(team.getRecentAct()))
@@ -61,8 +61,8 @@ public class TeamService {
     public TeamResponseDto getGroupById(Long groupId) {
         Team team = teamRepository.findById(groupId).orElseThrow(TeamNotFoundException::new);
         return TeamResponseDto.builder()
-                .teamId(team.getTeamId())
-                .teamName(team.getTeamName())
+                .groupId(team.getGroupId())
+                .groupName(team.getGroupName())
                 .description(team.getDescription())
                 .userCount(team.getUserTeams().size())
                 .recentActString(getRecentActString(team.getRecentAct()))
@@ -90,7 +90,7 @@ public class TeamService {
 
 
     public AddTeamResponseDto addGroup(AddTeamRequestDto addTeamRequestDto) {
-        Team team = Team.builder().teamName(addTeamRequestDto.teamName())
+        Team team = Team.builder().groupName(addTeamRequestDto.groupName())
                 .description(addTeamRequestDto.description())
                 .maxNum(addTeamRequestDto.maxNum())
                 .ownerId(addTeamRequestDto.userId())
@@ -120,7 +120,7 @@ public class TeamService {
         teamRepository.save(team);
         userTeamRepository.save(userTeam);
 
-        return new AddTeamResponseDto(team.getTeamId());
+        return new AddTeamResponseDto(team.getGroupId());
     }
 
     public Team findById(Long groupId) {
@@ -150,8 +150,8 @@ public class TeamService {
                 .map(userTeam -> {
                     Team team = userTeam.getTeam();
                     return TeamResponseDto.builder()
-                            .teamId(team.getTeamId())
-                            .teamName(team.getTeamName())
+                            .groupId(team.getGroupId())
+                            .groupName(team.getGroupName())
                             .description(team.getDescription())
                             .userCount(team.getUserTeams().size())
                             .recentActString(getRecentActString(team.getRecentAct()))

@@ -14,7 +14,7 @@ public class CookieUtils {
         return ResponseCookie.from(name, value)
                 .secure(true)
                 .sameSite("None")
-                .httpOnly(false)
+                .httpOnly(true)
                 .path("/")
                 .maxAge(maxAge)
                 .build();
@@ -24,7 +24,7 @@ public class CookieUtils {
         ResponseCookie cookie = ResponseCookie.from(name, value)
                 .sameSite("None")
                 .secure(true)
-                .httpOnly(false)
+                .httpOnly(true)
                 .path("/")
                 .maxAge(maxAge)
                 .build();
@@ -36,7 +36,7 @@ public class CookieUtils {
         ResponseCookie cookie = ResponseCookie.from(name, "")
                 .sameSite("None")
                 .secure(true)
-                .httpOnly(false) // 개발 환경에서는 false (운영 환경에서는 true)
+                .httpOnly(true)
                 .path("/")
                 .maxAge(0) // 쿠키 즉시 만료
                 .build();

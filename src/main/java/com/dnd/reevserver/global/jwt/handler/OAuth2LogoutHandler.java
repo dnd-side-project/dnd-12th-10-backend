@@ -24,7 +24,6 @@ public class OAuth2LogoutHandler implements LogoutHandler {
     private final MemberRepository memberRepository;
     private final RefreshTokenService refreshTokenService;
     private final JwtProvider jwtProvider;
-    private final TokenProperties tokenProperties;
 
     @Override
     public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
@@ -43,7 +42,7 @@ public class OAuth2LogoutHandler implements LogoutHandler {
         }
 
         // 삭제할 쿠키 생성
-        CookieUtils.deleteCookie(request, response, "refresh_token");
+        CookieUtils.deleteCookie(response, "refresh_token");
         response.addHeader(HttpHeaders.AUTHORIZATION, "");
         refreshTokenService.deleteRefreshToken(userId);
     }

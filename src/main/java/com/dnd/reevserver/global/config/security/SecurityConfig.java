@@ -83,8 +83,7 @@ public class SecurityConfig {
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         config.setAllowedHeaders(List.of("Authorization", "Content-Type", "Access-Control-Allow-Headers", "Access-Control-Expose-Headers", "_retry"));
 
-        config.addExposedHeader("Authorization"); //프론트에서 해당 헤더를 읽을 수 있게
-        config.setExposedHeaders(List.of("Set-Cookie"));
+        config.setExposedHeaders(List.of("Set-Cookie", "Authorization"));
         config.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

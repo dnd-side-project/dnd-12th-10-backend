@@ -21,7 +21,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class AuthController {
     private final AuthService authService;
 
-    // todo : 헤더로 저장되는 AT 대신 RT로 할까?
     @Operation(summary = "AT로 진행, Authorization 헤더로 검사함, Bearer AT 형식")
     @GetMapping("/check")
     public ResponseEntity<Map<String, Boolean>> checkAuth(@RequestHeader(value = "Authorization", required = false) String authorization) {
@@ -45,8 +44,6 @@ public class AuthController {
         }
 
         ReissueResponseDto reissuedToken = authService.reissueToken(refreshToken);
-
-
 
         ResponseCookie refreshCookie = CookieUtils.createReissueCookie(
                 "refresh_token",

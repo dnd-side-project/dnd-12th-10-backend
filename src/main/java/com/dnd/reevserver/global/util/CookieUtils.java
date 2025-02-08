@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.ResponseCookie;
 
+
 public class CookieUtils {
     private CookieUtils() {
         throw new IllegalStateException("Utility class");
@@ -12,7 +13,7 @@ public class CookieUtils {
 
     public static ResponseCookie createReissueCookie(String name, String value, int maxAge) {
         return ResponseCookie.from(name, value)
-                .secure(true)
+                .secure(false) // 현재 프론트가 http 개발 환경이기에 false 처리
                 .sameSite("None")
                 .httpOnly(true)
                 .path("/")

@@ -17,7 +17,7 @@ public class TeamCategory extends BaseEntity {
     private Long teamCategoryId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "team_id", nullable = false)
+    @JoinColumn(name = "group_id", nullable = false)
     private Team team;
 
     @ManyToOne(fetch = FetchType.LAZY)

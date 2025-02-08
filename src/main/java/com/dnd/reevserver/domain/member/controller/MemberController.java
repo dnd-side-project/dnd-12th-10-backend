@@ -1,6 +1,7 @@
 package com.dnd.reevserver.domain.member.controller;
 
 import com.dnd.reevserver.domain.member.dto.request.InsertInfoRequestDto;
+import com.dnd.reevserver.domain.member.dto.request.UpdateMemberJobRequestDto;
 import com.dnd.reevserver.domain.member.dto.request.UpdateMemberNicknameRequestDto;
 import com.dnd.reevserver.domain.member.dto.request.UpdateMemberProfileUrlRequestDto;
 import com.dnd.reevserver.domain.member.dto.response.MemberResponseDto;
@@ -41,6 +42,13 @@ public class MemberController {
     @PatchMapping("/profile-url")
     public ResponseEntity<Void> updateProfileUrl(@RequestBody UpdateMemberProfileUrlRequestDto dto) {
         memberService.updateProfileUrl(dto);
+        return ResponseEntity.noContent().build();
+    }
+
+    @Operation(summary = "회원 수정")
+    @PatchMapping("/job")
+    public ResponseEntity<Void> updateJob(@RequestBody UpdateMemberJobRequestDto dto) {
+        memberService.updateJob(dto);
         return ResponseEntity.noContent().build();
     }
 

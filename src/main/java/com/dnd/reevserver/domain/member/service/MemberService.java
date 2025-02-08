@@ -1,6 +1,7 @@
 package com.dnd.reevserver.domain.member.service;
 
 import com.dnd.reevserver.domain.member.dto.request.InsertInfoRequestDto;
+import com.dnd.reevserver.domain.member.dto.request.UpdateMemberJobRequestDto;
 import com.dnd.reevserver.domain.member.dto.request.UpdateMemberNicknameRequestDto;
 import com.dnd.reevserver.domain.member.dto.request.UpdateMemberProfileUrlRequestDto;
 import com.dnd.reevserver.domain.member.dto.response.MemberResponseDto;
@@ -39,6 +40,12 @@ public class MemberService {
     public void updateProfileUrl(UpdateMemberProfileUrlRequestDto dto){
         Member member = findById(dto.userId());
         member.updateProfileUrl(dto.profileUrl());
+    }
+
+    @Transactional
+    public void updateJob(UpdateMemberJobRequestDto dto){
+        Member member = findById(dto.userId());
+        member.updateJob(dto.job());
     }
 
     // 로그인 이후 정보 기입

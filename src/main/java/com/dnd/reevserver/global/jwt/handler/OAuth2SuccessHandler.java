@@ -39,7 +39,13 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         //response.addHeader(HttpHeaders.AUTHORIZATION, accessToken);
 
         String redirectUrl = getRedirectUrl(request);
-        response.sendRedirect(redirectUrl+"?access_token="+accessToken);
+        if("NA".equals(oauth2User.getJob())){
+            response.sendRedirect(redirectUrl+"?access_token="+accessToken+"&isRegistered=true");
+        }
+        else{
+            response.sendRedirect(redirectUrl+"?access_token="+accessToken+"&isRegistered=false");
+        }
+
     }
 
     public String getRedirectUrl(HttpServletRequest request) {

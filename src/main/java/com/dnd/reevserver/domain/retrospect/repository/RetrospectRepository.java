@@ -9,6 +9,6 @@ import java.util.List;
 
 
 public interface RetrospectRepository extends JpaRepository<Retrospect, Long> {
-    @Query("select r from Retrospect r where r.team.groupId = :teamId ")
-    List<Retrospect> findAllByTeamId(@Param("groupId") Long teamId);
+    @Query("select r from Retrospect r where r.team.groupId = :groupId ")
+    List<Retrospect> findAllByTeamId(@Param("groupId") Long groupId);
 }

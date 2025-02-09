@@ -3,6 +3,7 @@ package com.dnd.reevserver.domain.retrospect.controller;
 import com.dnd.reevserver.domain.retrospect.dto.request.AddRetrospectRequestDto;
 import com.dnd.reevserver.domain.retrospect.dto.request.GetAllGroupRetrospectRequestDto;
 import com.dnd.reevserver.domain.retrospect.dto.request.GetRetrospectRequestDto;
+import com.dnd.reevserver.domain.retrospect.dto.request.UpdateRetrospectRequestDto;
 import com.dnd.reevserver.domain.retrospect.dto.response.AddRetrospectResponseDto;
 import com.dnd.reevserver.domain.retrospect.dto.response.RetrospectResponseDto;
 import com.dnd.reevserver.domain.retrospect.service.RetrospectService;
@@ -36,6 +37,12 @@ public class RetrospectController {
     public ResponseEntity<AddRetrospectResponseDto> addRetrospect(@RequestBody AddRetrospectRequestDto requestDto) {
        AddRetrospectResponseDto responseDto = retrospectService.addRetrospect(requestDto);
        return ResponseEntity.ok().body(responseDto);
+    }
+
+    @PatchMapping
+    public ResponseEntity<RetrospectResponseDto> updateRetrospect(@RequestBody UpdateRetrospectRequestDto requestDto){
+        RetrospectResponseDto responseDto = retrospectService.updateRetrospect(requestDto);
+        return ResponseEntity.ok().body(responseDto);
     }
 
 }

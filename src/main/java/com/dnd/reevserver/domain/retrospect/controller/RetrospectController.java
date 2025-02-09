@@ -1,10 +1,8 @@
 package com.dnd.reevserver.domain.retrospect.controller;
 
-import com.dnd.reevserver.domain.retrospect.dto.request.AddRetrospectRequestDto;
-import com.dnd.reevserver.domain.retrospect.dto.request.GetAllGroupRetrospectRequestDto;
-import com.dnd.reevserver.domain.retrospect.dto.request.GetRetrospectRequestDto;
-import com.dnd.reevserver.domain.retrospect.dto.request.UpdateRetrospectRequestDto;
+import com.dnd.reevserver.domain.retrospect.dto.request.*;
 import com.dnd.reevserver.domain.retrospect.dto.response.AddRetrospectResponseDto;
+import com.dnd.reevserver.domain.retrospect.dto.response.DeleteRetrospectResponseDto;
 import com.dnd.reevserver.domain.retrospect.dto.response.RetrospectResponseDto;
 import com.dnd.reevserver.domain.retrospect.service.RetrospectService;
 import lombok.RequiredArgsConstructor;
@@ -42,6 +40,12 @@ public class RetrospectController {
     @PatchMapping
     public ResponseEntity<RetrospectResponseDto> updateRetrospect(@RequestBody UpdateRetrospectRequestDto requestDto){
         RetrospectResponseDto responseDto = retrospectService.updateRetrospect(requestDto);
+        return ResponseEntity.ok().body(responseDto);
+    }
+
+    @DeleteMapping
+    public ResponseEntity<DeleteRetrospectResponseDto>  deleteRetrospect(@RequestBody DeleteRetrospectRequestDto requestDto){
+        DeleteRetrospectResponseDto responseDto = retrospectService.deleteRetrospect(requestDto);
         return ResponseEntity.ok().body(responseDto);
     }
 

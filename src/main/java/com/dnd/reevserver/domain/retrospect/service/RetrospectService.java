@@ -2,11 +2,9 @@ package com.dnd.reevserver.domain.retrospect.service;
 
 import com.dnd.reevserver.domain.member.entity.Member;
 import com.dnd.reevserver.domain.member.service.MemberService;
-import com.dnd.reevserver.domain.retrospect.dto.request.AddRetrospectRequestDto;
-import com.dnd.reevserver.domain.retrospect.dto.request.GetAllGroupRetrospectRequestDto;
-import com.dnd.reevserver.domain.retrospect.dto.request.GetRetrospectRequestDto;
-import com.dnd.reevserver.domain.retrospect.dto.request.UpdateRetrospectRequestDto;
+import com.dnd.reevserver.domain.retrospect.dto.request.*;
 import com.dnd.reevserver.domain.retrospect.dto.response.AddRetrospectResponseDto;
+import com.dnd.reevserver.domain.retrospect.dto.response.DeleteRetrospectResponseDto;
 import com.dnd.reevserver.domain.retrospect.dto.response.RetrospectResponseDto;
 import com.dnd.reevserver.domain.retrospect.entity.Retrospect;
 import com.dnd.reevserver.domain.retrospect.exception.RetrospectAuthorException;
@@ -111,5 +109,16 @@ public class RetrospectService {
                 .timeString(getTimeString(retrospect.getUpdatedAt()))
                 .likeCount(retrospect.getLikeCount())
                 .build();
+    }
+
+    @Transactional
+    public DeleteRetrospectResponseDto deleteRetrospect(DeleteRetrospectRequestDto requestDto) {
+        Retrospect retrospect = findById(requestDto.retrospectId());
+        if(!retrospect.getMember().getUserId().equals(requestDto.userId())){
+            throw new RetrospectAuthorException();
+        }
+        long RetrospectId = retrospect.getRetrospectId();
+        retrospectRepository.delete(retrospect);
+        return new DeleteRetrospectResponseDto(RetrospectId);
     }
 }

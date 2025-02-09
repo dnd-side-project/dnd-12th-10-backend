@@ -9,8 +9,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UserTeamRepository extends JpaRepository<UserTeam, Long> {
-    @Query("SELECT ut FROM UserTeam ut WHERE ut.member.userId = :userId AND ut.team.teamId = :teamId")
-    Optional<UserTeam> findByUserIdAndGroupId(@Param("userId") String userId, @Param("teamId") Long teamId);
+    @Query("SELECT ut FROM UserTeam ut WHERE ut.member.userId = :userId AND ut.team.groupId = :groupId")
+    Optional<UserTeam> findByUserIdAndGroupId(@Param("userId") String userId, @Param("groupId") Long groupId);
 
     @Query("SELECT ut FROM UserTeam ut WHERE ut.member.userId = :userId AND ut.isFavorite = true")
     List<UserTeam> findAllFavoriteGroupsByUserId(@Param("userId") String userId);

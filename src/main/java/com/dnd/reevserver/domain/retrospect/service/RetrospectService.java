@@ -33,7 +33,7 @@ public class RetrospectService {
     public RetrospectResponseDto getRetrospectById(GetRetrospectRequestDto getRetrospectRequestDto) {
         Retrospect retrospect = findById(getRetrospectRequestDto.retrospectId());
         return RetrospectResponseDto.builder()
-                .retrosepctId(retrospect.getRetrospectId())
+                .retrospectId(retrospect.getRetrospectId())
                 .title(retrospect.getTitle())
                 .content(retrospect.getContent())
                 .userName(retrospect.getMember().getNickname())
@@ -47,7 +47,7 @@ public class RetrospectService {
         List<Retrospect> list = retrospectRepository.findAllByTeamId(getAllGroupRetrospectRequestDto.groupId());
         List<RetrospectResponseDto> retrospectResponseDtoList = list.stream()
                 .map(retro -> RetrospectResponseDto.builder()
-                        .retrosepctId(retro.getRetrospectId())
+                        .retrospectId(retro.getRetrospectId())
                         .title(retro.getTitle())
                         .content(retro.getContent())
                         .userName(retro.getMember().getNickname())

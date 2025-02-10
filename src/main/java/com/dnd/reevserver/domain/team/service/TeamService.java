@@ -7,8 +7,10 @@ import com.dnd.reevserver.domain.category.service.CategoryService;
 import com.dnd.reevserver.domain.team.dto.request.AddFavoriteGroupRequestDto;
 import com.dnd.reevserver.domain.team.dto.request.AddTeamRequestDto;
 import com.dnd.reevserver.domain.team.dto.request.GetAllFavoriteGroupRequestDto;
+import com.dnd.reevserver.domain.team.dto.request.JoinGroupRequestDto;
 import com.dnd.reevserver.domain.team.dto.response.AddFavoriteGroupResponseDto;
 import com.dnd.reevserver.domain.team.dto.response.AddTeamResponseDto;
+import com.dnd.reevserver.domain.team.dto.response.JoinGroupResponseDto;
 import com.dnd.reevserver.domain.team.dto.response.TeamResponseDto;
 import com.dnd.reevserver.domain.team.entity.Team;
 import com.dnd.reevserver.domain.team.exception.TeamNotFoundException;
@@ -16,6 +18,7 @@ import com.dnd.reevserver.domain.team.repository.TeamRepository;
 import com.dnd.reevserver.domain.member.entity.Member;
 import com.dnd.reevserver.domain.member.service.MemberService;
 import com.dnd.reevserver.domain.userTeam.entity.UserTeam;
+import com.dnd.reevserver.domain.userTeam.exception.UserGroupExistException;
 import com.dnd.reevserver.domain.userTeam.exception.UserGroupNotFoundException;
 import com.dnd.reevserver.domain.userTeam.repository.UserTeamRepository;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -115,7 +119,7 @@ public class TeamService {
         UserTeam userTeam = new UserTeam(member,team);
         userTeamRepository.save(userTeam);
 
-        member.addUserGroup(userTeam);
+        member.addUserTeam(userTeam);
         team.addUserTeam(userTeam);
         teamRepository.save(team);
         userTeamRepository.save(userTeam);
@@ -168,4 +172,18 @@ public class TeamService {
 
     }
 
+    @Transactional
+    public JoinGroupResponseDto joinGroup(JoinGroupRequestDto requestDto) {
+        Optional<UserTeam> userTeam = userTeamRepository.findByUserIdAndGroupId(requestDto.userId(),requestDto.groupId());
+        if(userTeam.isPresent()){
+            throw new UserGroupExistException();
+        }
+        Member member = memberService.findById(requestDto.userId());
+        Team team = findById(requestDto.groupId());
+        UserTeam join = new UserTeam(member,team);
+        userTeamRepository.save(join);
+        member.addUserTeam(join);
+        team.addUserTeam(join);
+        return new JoinGroupResponseDto(member.getUserId(),team.getGroupId());
+    }
 }

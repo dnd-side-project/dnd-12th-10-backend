@@ -12,6 +12,7 @@ import com.dnd.reevserver.domain.retrospect.exception.RetrospectNotFoundExceptio
 import com.dnd.reevserver.domain.retrospect.repository.RetrospectRepository;
 import com.dnd.reevserver.domain.team.entity.Team;
 import com.dnd.reevserver.domain.team.service.TeamService;
+import com.dnd.reevserver.domain.userTeam.entity.UserTeam;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,8 +30,9 @@ public class RetrospectService {
     private final TeamService teamService;
 
     //단일회고 조회
-    public RetrospectResponseDto getRetrospectById(GetRetrospectRequestDto getRetrospectRequestDto) {
-        Retrospect retrospect = findById(getRetrospectRequestDto.retrospectId());
+    public RetrospectResponseDto getRetrospectById(GetRetrospectRequestDto requestDto) {
+        UserTeam userTeam = teamService.findByUserIdAndGroupId(requestDto.userId(),requestDto.groupId());
+        Retrospect retrospect = findById(requestDto.retrospectId());
         return RetrospectResponseDto.builder()
                 .retrospectId(retrospect.getRetrospectId())
                 .title(retrospect.getTitle())
@@ -42,9 +44,9 @@ public class RetrospectService {
     }
 
     //그룹 회고 조회
-    public List<RetrospectResponseDto> getAllRetrospectByGruopId(GetAllGroupRetrospectRequestDto getAllGroupRetrospectRequestDto) {
-        List<Retrospect> list = retrospectRepository.findAllByTeamId(getAllGroupRetrospectRequestDto.groupId());
-        List<RetrospectResponseDto> retrospectResponseDtoList = list.stream()
+    public List<RetrospectResponseDto> getAllRetrospectByGruopId(GetAllGroupRetrospectRequestDto requestDto) {
+        List<Retrospect> list = retrospectRepository.findAllByTeamId(requestDto.groupId());
+        List<RetrospectResponseDto> responseDtoList = list.stream()
                 .map(retro -> RetrospectResponseDto.builder()
                         .retrospectId(retro.getRetrospectId())
                         .title(retro.getTitle())
@@ -54,19 +56,19 @@ public class RetrospectService {
                         .likeCount(retro.getLikeCount())
                         .build())
                 .toList();
-        return retrospectResponseDtoList;
+        return responseDtoList;
     }
 
 
     //회고 작성
-    public AddRetrospectResponseDto addRetrospect(AddRetrospectRequestDto addRetrospectRequestDto) {
-        Member member = memberService.findById(addRetrospectRequestDto.userId());
-        Team team = teamService.findById(addRetrospectRequestDto.groupId());
+    public AddRetrospectResponseDto addRetrospect(AddRetrospectRequestDto requestDto) {
+        Member member = memberService.findById(requestDto.userId());
+        Team team = teamService.findById(requestDto.groupId());
         Retrospect retrospect = Retrospect.builder()
                 .member(member)
                 .team(team)
-                .title(addRetrospectRequestDto.title())
-                .content(addRetrospectRequestDto.content())
+                .title(requestDto.title())
+                .content(requestDto.content())
                 .build();
         retrospectRepository.save(retrospect);
 

@@ -64,6 +64,7 @@ public class RetrospectService {
     public AddRetrospectResponseDto addRetrospect(AddRetrospectRequestDto requestDto) {
         Member member = memberService.findById(requestDto.userId());
         Team team = teamService.findById(requestDto.groupId());
+        UserTeam userTeam = teamService.findByUserIdAndGroupId(requestDto.userId(),requestDto.groupId());
         Retrospect retrospect = Retrospect.builder()
                 .member(member)
                 .team(team)

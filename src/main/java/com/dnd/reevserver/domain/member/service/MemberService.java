@@ -65,4 +65,9 @@ public class MemberService {
 
         memberRepository.deleteById(userId);
     }
+
+    //회원 저장
+    public void save(Member member) {
+        memberRepository.save(member);
+    }
 }

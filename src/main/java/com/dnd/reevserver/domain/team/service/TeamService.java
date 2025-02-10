@@ -117,12 +117,11 @@ public class TeamService {
 
         Member member = memberService.findById(addTeamRequestDto.userId());
         UserTeam userTeam = new UserTeam(member,team);
-        userTeamRepository.save(userTeam);
-
         member.addUserTeam(userTeam);
         team.addUserTeam(userTeam);
-        teamRepository.save(team);
         userTeamRepository.save(userTeam);
+        teamRepository.save(team);
+        memberService.save(member);
 
         return new AddTeamResponseDto(team.getGroupId());
     }

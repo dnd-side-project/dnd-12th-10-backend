@@ -4,14 +4,8 @@ import com.dnd.reevserver.domain.category.entity.Category;
 import com.dnd.reevserver.domain.category.entity.TeamCategory;
 import com.dnd.reevserver.domain.category.repository.TeamCategoryRepository;
 import com.dnd.reevserver.domain.category.service.CategoryService;
-import com.dnd.reevserver.domain.team.dto.request.AddFavoriteGroupRequestDto;
-import com.dnd.reevserver.domain.team.dto.request.AddTeamRequestDto;
-import com.dnd.reevserver.domain.team.dto.request.GetAllFavoriteGroupRequestDto;
-import com.dnd.reevserver.domain.team.dto.request.JoinGroupRequestDto;
-import com.dnd.reevserver.domain.team.dto.response.AddFavoriteGroupResponseDto;
-import com.dnd.reevserver.domain.team.dto.response.AddTeamResponseDto;
-import com.dnd.reevserver.domain.team.dto.response.JoinGroupResponseDto;
-import com.dnd.reevserver.domain.team.dto.response.TeamResponseDto;
+import com.dnd.reevserver.domain.team.dto.request.*;
+import com.dnd.reevserver.domain.team.dto.response.*;
 import com.dnd.reevserver.domain.team.entity.Team;
 import com.dnd.reevserver.domain.team.exception.TeamNotFoundException;
 import com.dnd.reevserver.domain.team.repository.TeamRepository;
@@ -184,5 +178,18 @@ public class TeamService {
         member.addUserTeam(join);
         team.addUserTeam(join);
         return new JoinGroupResponseDto(member.getUserId(),team.getGroupId());
+    }
+
+    @Transactional
+    public LeaveGroupResponseDto leaveGroup(LeaveGroupRequestDto requestDto) {
+        UserTeam userTeam = findByUserIdAndGroupId(requestDto.userId(),requestDto.groupId());
+
+        Member member = memberService.findById(requestDto.userId());
+        Team team = findById(requestDto.groupId());
+        member.getUserGroups().remove(userTeam);
+        team.getUserTeams().remove(userTeam);
+
+        userTeamRepository.delete(userTeam);
+        return new LeaveGroupResponseDto("그룹탈퇴가 완료되었습니다.");
     }
 }

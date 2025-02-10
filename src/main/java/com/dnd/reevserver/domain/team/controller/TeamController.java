@@ -1,13 +1,7 @@
 package com.dnd.reevserver.domain.team.controller;
 
-import com.dnd.reevserver.domain.team.dto.request.AddFavoriteGroupRequestDto;
-import com.dnd.reevserver.domain.team.dto.request.AddTeamRequestDto;
-import com.dnd.reevserver.domain.team.dto.request.GetAllFavoriteGroupRequestDto;
-import com.dnd.reevserver.domain.team.dto.request.JoinGroupRequestDto;
-import com.dnd.reevserver.domain.team.dto.response.AddFavoriteGroupResponseDto;
-import com.dnd.reevserver.domain.team.dto.response.JoinGroupResponseDto;
-import com.dnd.reevserver.domain.team.dto.response.TeamResponseDto;
-import com.dnd.reevserver.domain.team.dto.response.AddTeamResponseDto;
+import com.dnd.reevserver.domain.team.dto.request.*;
+import com.dnd.reevserver.domain.team.dto.response.*;
 import com.dnd.reevserver.domain.team.service.TeamService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -55,6 +49,12 @@ public class TeamController {
     @PostMapping("/join")
     public ResponseEntity<JoinGroupResponseDto> joinGroup(@RequestBody JoinGroupRequestDto requestDto){
         JoinGroupResponseDto responseDto = groupService.joinGroup(requestDto);
+        return ResponseEntity.ok().body(responseDto);
+    }
+
+    @DeleteMapping("/leave")
+    public ResponseEntity<LeaveGroupResponseDto> LeaveGroup(@RequestBody LeaveGroupRequestDto requestDto){
+        LeaveGroupResponseDto responseDto = groupService.leaveGroup(requestDto);
         return ResponseEntity.ok().body(responseDto);
     }
 }

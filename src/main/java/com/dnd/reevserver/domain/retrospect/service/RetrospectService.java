@@ -122,4 +122,12 @@ public class RetrospectService {
         retrospectRepository.delete(retrospect);
         return new DeleteRetrospectResponseDto(RetrospectId);
     }
+
+    // 좋아요 호출 시 사용하는 내부 메소드
+    @Transactional
+    public void updateLikeCnt(Long retrospectId, boolean isLike) {
+        Retrospect retrospect = findById(retrospectId);
+        if(isLike) retrospect.updateLikeCount(retrospect.getLikeCount() + 1);
+        else retrospect.updateLikeCount(retrospect.getLikeCount() - 1);
+    }
 }

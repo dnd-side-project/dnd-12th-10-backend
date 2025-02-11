@@ -59,6 +59,8 @@ public class Retrospect extends BaseEntity {
         this.team = team;
     }
 
+    public void updateLikeCount(int likeCount) { this.likeCount = likeCount; }
+
     public void updateTitle(String title) {
         this.title = title;
     }

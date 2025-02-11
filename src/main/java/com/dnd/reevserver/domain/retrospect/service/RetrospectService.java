@@ -2,24 +2,24 @@ package com.dnd.reevserver.domain.retrospect.service;
 
 import com.dnd.reevserver.domain.member.entity.Member;
 import com.dnd.reevserver.domain.member.service.MemberService;
-import com.dnd.reevserver.domain.retrospect.dto.request.AddRetrospectRequestDto;
-import com.dnd.reevserver.domain.retrospect.dto.request.GetAllGroupRetrospectRequestDto;
-import com.dnd.reevserver.domain.retrospect.dto.request.GetRetrospectRequestDto;
+import com.dnd.reevserver.domain.retrospect.dto.request.*;
 import com.dnd.reevserver.domain.retrospect.dto.response.AddRetrospectResponseDto;
+import com.dnd.reevserver.domain.retrospect.dto.response.DeleteRetrospectResponseDto;
 import com.dnd.reevserver.domain.retrospect.dto.response.RetrospectResponseDto;
 import com.dnd.reevserver.domain.retrospect.entity.Retrospect;
+import com.dnd.reevserver.domain.retrospect.exception.RetrospectAuthorException;
 import com.dnd.reevserver.domain.retrospect.exception.RetrospectNotFoundException;
 import com.dnd.reevserver.domain.retrospect.repository.RetrospectRepository;
 import com.dnd.reevserver.domain.team.entity.Team;
 import com.dnd.reevserver.domain.team.service.TeamService;
+import com.dnd.reevserver.domain.userTeam.entity.UserTeam;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -30,8 +30,9 @@ public class RetrospectService {
     private final TeamService teamService;
 
     //단일회고 조회
-    public RetrospectResponseDto getRetrospectById(GetRetrospectRequestDto getRetrospectRequestDto) {
-        Retrospect retrospect = findById(getRetrospectRequestDto.retrospectId());
+    public RetrospectResponseDto getRetrospectById(GetRetrospectRequestDto requestDto) {
+        UserTeam userTeam = teamService.findByUserIdAndGroupId(requestDto.userId(),requestDto.groupId());
+        Retrospect retrospect = findById(requestDto.retrospectId());
         return RetrospectResponseDto.builder()
                 .retrospectId(retrospect.getRetrospectId())
                 .title(retrospect.getTitle())
@@ -43,9 +44,9 @@ public class RetrospectService {
     }
 
     //그룹 회고 조회
-    public List<RetrospectResponseDto> getAllRetrospectByGruopId(GetAllGroupRetrospectRequestDto getAllGroupRetrospectRequestDto) {
-        List<Retrospect> list = retrospectRepository.findAllByTeamId(getAllGroupRetrospectRequestDto.groupId());
-        List<RetrospectResponseDto> retrospectResponseDtoList = list.stream()
+    public List<RetrospectResponseDto> getAllRetrospectByGruopId(GetAllGroupRetrospectRequestDto requestDto) {
+        List<Retrospect> list = retrospectRepository.findAllByTeamId(requestDto.groupId());
+        List<RetrospectResponseDto> responseDtoList = list.stream()
                 .map(retro -> RetrospectResponseDto.builder()
                         .retrospectId(retro.getRetrospectId())
                         .title(retro.getTitle())
@@ -55,19 +56,20 @@ public class RetrospectService {
                         .likeCount(retro.getLikeCount())
                         .build())
                 .toList();
-        return retrospectResponseDtoList;
+        return responseDtoList;
     }
 
 
     //회고 작성
-    public AddRetrospectResponseDto addRetrospect(AddRetrospectRequestDto addRetrospectRequestDto) {
-        Member member = memberService.findById(addRetrospectRequestDto.userId());
-        Team team = teamService.findById(addRetrospectRequestDto.groupId());
+    public AddRetrospectResponseDto addRetrospect(AddRetrospectRequestDto requestDto) {
+        Member member = memberService.findById(requestDto.userId());
+        Team team = teamService.findById(requestDto.groupId());
+        UserTeam userTeam = teamService.findByUserIdAndGroupId(requestDto.userId(),requestDto.groupId());
         Retrospect retrospect = Retrospect.builder()
                 .member(member)
                 .team(team)
-                .title(addRetrospectRequestDto.title())
-                .content(addRetrospectRequestDto.content())
+                .title(requestDto.title())
+                .content(requestDto.content())
                 .build();
         retrospectRepository.save(retrospect);
 
@@ -91,5 +93,33 @@ public class RetrospectService {
 
     public Retrospect findById(Long retrospectId) {
         return retrospectRepository.findById(retrospectId).orElseThrow(RetrospectNotFoundException::new);
+    }
+
+    @Transactional
+    public RetrospectResponseDto updateRetrospect(UpdateRetrospectRequestDto requestDto) {
+        Retrospect retrospect = findById(requestDto.retrospectId());
+        if(!retrospect.getMember().getUserId().equals(requestDto.userId())){
+            throw new RetrospectAuthorException();
+        }
+        retrospect.updateRetrospect(requestDto.title(), requestDto.content());
+        return RetrospectResponseDto.builder()
+                .retrospectId(retrospect.getRetrospectId())
+                .title(retrospect.getTitle())
+                .content(retrospect.getContent())
+                .userName(retrospect.getMember().getNickname())
+                .timeString(getTimeString(retrospect.getUpdatedAt()))
+                .likeCount(retrospect.getLikeCount())
+                .build();
+    }
+
+    @Transactional
+    public DeleteRetrospectResponseDto deleteRetrospect(DeleteRetrospectRequestDto requestDto) {
+        Retrospect retrospect = findById(requestDto.retrospectId());
+        if(!retrospect.getMember().getUserId().equals(requestDto.userId())){
+            throw new RetrospectAuthorException();
+        }
+        long RetrospectId = retrospect.getRetrospectId();
+        retrospectRepository.delete(retrospect);
+        return new DeleteRetrospectResponseDto(RetrospectId);
     }
 }

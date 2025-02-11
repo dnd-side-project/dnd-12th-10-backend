@@ -24,7 +24,7 @@ public class Retrospect extends BaseEntity {
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "team_id")
+    @JoinColumn(name = "group_id")
     private Team team;
 
     @Column(nullable = false, length = 200)
@@ -64,6 +64,11 @@ public class Retrospect extends BaseEntity {
     }
 
     public void updateContent(String content) {
+        this.content = content;
+    }
+
+    public void updateRetrospect(String title, String content) {
+        this.title = title;
         this.content = content;
     }
 }

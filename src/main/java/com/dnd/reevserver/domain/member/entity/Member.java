@@ -83,9 +83,9 @@ public class Member extends BaseEntity implements OAuth2User {
         this.role = role;
     }
 
-    public void addUserGroup(UserTeam userGroup) {
-        userGroups.add(userGroup);
-        userGroup.updateMember(this);
+    public void addUserTeam(UserTeam userTeam) {
+        userGroups.add(userTeam);
+        userTeam.updateMember(this);
     }
 
     public void updateJob(String updateJob) {

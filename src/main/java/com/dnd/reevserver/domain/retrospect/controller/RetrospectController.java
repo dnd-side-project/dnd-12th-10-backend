@@ -18,7 +18,7 @@ public class RetrospectController {
 
     private final RetrospectService retrospectService;
 
-    //todo:페이징, 유저가 모임에 가입되어있는지 확인하는 로직 추가
+    //todo:페이징
     @GetMapping("/all")
     public ResponseEntity<List<RetrospectResponseDto>> retrospect(@RequestBody GetAllGroupRetrospectRequestDto requestDto) {
         List<RetrospectResponseDto> retroList = retrospectService.getAllRetrospectByGruopId(requestDto);

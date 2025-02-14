@@ -16,7 +16,7 @@ public class CommentController {
 
     private final CommentService commentService;
 
-    @GetMapping("/{retrospectId}/all")
+    @GetMapping("/{retrospectId}")
     public ResponseEntity<List<CommentResponseDto>> getAllComment(@PathVariable Long retrospectId) {
         List<CommentResponseDto> responseDtoList = commentService.getAllComment(retrospectId);
         return ResponseEntity.ok().body(responseDtoList);

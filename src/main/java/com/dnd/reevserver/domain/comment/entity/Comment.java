@@ -39,8 +39,7 @@ public class Comment extends BaseEntity {
     private boolean isDeleted;
 
     @Builder
-    public Comment(Long commentId, Member member, Retrospect retrospect, String content) {
-        this.commentId = commentId;
+    public Comment(Member member, Retrospect retrospect, String content) {
         this.member = member;
         this.retrospect = retrospect;
         this.content = content;

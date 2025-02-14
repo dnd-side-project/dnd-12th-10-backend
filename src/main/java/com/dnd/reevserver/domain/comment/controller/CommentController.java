@@ -1,5 +1,6 @@
 package com.dnd.reevserver.domain.comment.controller;
 
+import com.dnd.reevserver.domain.comment.dto.request.AddCommentRequestDto;
 import com.dnd.reevserver.domain.comment.dto.response.CommentResponseDto;
 import com.dnd.reevserver.domain.comment.service.CommentService;
 import lombok.RequiredArgsConstructor;
@@ -20,4 +21,11 @@ public class CommentController {
         List<CommentResponseDto> responseDtoList = commentService.getAllComment(retrospectId);
         return ResponseEntity.ok().body(responseDtoList);
     }
+
+    @PostMapping
+    public ResponseEntity<CommentResponseDto> addComment(@RequestBody AddCommentRequestDto requestDto) {
+        CommentResponseDto commentResponseDto = commentService.addComment(requestDto);
+        return ResponseEntity.ok().body(commentResponseDto);
+    }
+
 }

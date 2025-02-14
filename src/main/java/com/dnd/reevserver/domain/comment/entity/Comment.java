@@ -8,6 +8,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 
 @Entity
 @Getter
@@ -32,6 +33,10 @@ public class Comment extends BaseEntity {
 
     @Column(nullable = false, length = 500)
     private String content;
+
+    @ColumnDefault("false")
+    @Column(columnDefinition = "TINYINT(1)")
+    private boolean isDeleted;
 
     @Builder
     public Comment(Long commentId, Member member, Retrospect retrospect, String content) {

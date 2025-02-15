@@ -20,8 +20,9 @@ public class LikeService {
     private final MemberService memberService;
 
     @Transactional
-    public boolean toggleLike(String userId, LikeRequestDto dto){
+    public boolean toggleLike(LikeRequestDto dto){
         Long retrospectId = dto.retrospectId();
+        String userId = dto.userId();
         Member member = memberService.findById(userId);
         Retrospect retrospect = retrospectService.findById(retrospectId);
         if(likeRepository.isLiked(userId, retrospectId)){

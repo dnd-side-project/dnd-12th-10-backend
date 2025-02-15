@@ -1,4 +1,4 @@
 package com.dnd.reevserver.domain.like.dto.request;
 
-public record LikeRequestDto(Long retrospectId) {
+public record LikeRequestDto(String userId, Long retrospectId) {
 }

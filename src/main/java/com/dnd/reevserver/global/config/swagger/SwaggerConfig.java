@@ -33,10 +33,10 @@ public class SwaggerConfig {
     }
 
     @Bean
-    public GroupedOpenApi memberGroup(){
+    public GroupedOpenApi userGroup(){
         return GroupedOpenApi.builder()
-                .group("Member")
-                .pathsToMatch("/api/v1/member/**")
+                .group("User")
+                .pathsToMatch("/api/v1/user/**")
                 .build();
     }
 

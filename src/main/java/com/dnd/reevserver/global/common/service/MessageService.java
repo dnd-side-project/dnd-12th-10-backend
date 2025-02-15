@@ -1,4 +1,4 @@
-package com.dnd.reevserver.domain.alert.service;
+package com.dnd.reevserver.global.common.service;
 
 import com.amazonaws.services.sqs.AmazonSQSAsync;
 import org.springframework.beans.factory.annotation.Value;
@@ -8,13 +8,13 @@ import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
 
 @Service
-public class SQSService {
+public class MessageService {
     private final QueueMessagingTemplate queueMessagingTemplate;
 
     @Value("${cloud.aws.sqs.queue-name}")
     private String queueName;
 
-    public SQSService(AmazonSQSAsync amazonSQS){
+    public MessageService(AmazonSQSAsync amazonSQS){
         this.queueMessagingTemplate = new QueueMessagingTemplate(amazonSQS);
     }
 

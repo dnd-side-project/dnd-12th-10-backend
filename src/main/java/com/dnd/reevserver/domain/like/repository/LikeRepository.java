@@ -1,13 +1,17 @@
 package com.dnd.reevserver.domain.like.repository;
 
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 
 @Repository
-@RequiredArgsConstructor
 public class LikeRepository {
+    @Qualifier("redisBooleanTemplate") // 특정 RedisTemplate을 지정
     private final RedisTemplate<String, Boolean> redisTemplate;
+
+    public LikeRepository(RedisTemplate<String, Boolean> redisTemplate) {
+        this.redisTemplate = redisTemplate;
+    }
 
     // 유저가 해당 게시글에 좋아요를 눌렀는지가 키가 됨. 값은 좋아요 여부
     private String getLikeKey(String userId, Long retrospectId) {

@@ -71,4 +71,12 @@ public class SwaggerConfig {
                 .pathsToMatch("/api/v1/retrospect/**")
                 .build();
     }
+
+    @Bean
+    public GroupedOpenApi alertGroup(){
+        return GroupedOpenApi.builder()
+                .group("Alert")
+                .pathsToMatch("/api/v1/alert/**")
+                .build();
+    }
 }

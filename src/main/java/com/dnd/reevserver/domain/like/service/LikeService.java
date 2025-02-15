@@ -1,6 +1,6 @@
 package com.dnd.reevserver.domain.like.service;
 
-import com.dnd.reevserver.global.common.service.MessageService;
+import com.dnd.reevserver.domain.alert.service.AlertService;
 import com.dnd.reevserver.domain.like.dto.request.LikeRequestDto;
 import com.dnd.reevserver.domain.like.repository.LikeRepository;
 import com.dnd.reevserver.domain.member.entity.Member;
@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class LikeService {
     private final LikeRepository likeRepository;
     private final RetrospectService retrospectService;
-    private final MessageService messageService;
+    private final AlertService alertService;
     private final MemberService memberService;
 
     @Transactional
@@ -31,7 +31,7 @@ public class LikeService {
         } else {
             likeRepository.addLike(userId, retrospectId);
             retrospectService.updateLikeCnt(retrospectId, true);
-            messageService.sendMessage(member.getName() + "님이 " + retrospect.getTitle() + "에 좋아요를 눌렀습니다. [" + retrospectId + "]");
+            alertService.sendMessage(member.getName() + "님이 " + retrospect.getTitle() + "에 좋아요를 눌렀습니다. [" + retrospectId + "]");
             return true;
         }
     }

@@ -49,4 +49,8 @@ public class Comment extends BaseEntity {
         this.content = comment.getContent();
     }
 
+    public void setParentComment(Comment parentComment) {
+        this.parentComment = parentComment;
+    }
+
 }

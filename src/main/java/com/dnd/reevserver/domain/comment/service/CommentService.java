@@ -1,9 +1,11 @@
 package com.dnd.reevserver.domain.comment.service;
 
 import com.dnd.reevserver.domain.comment.dto.request.AddCommentRequestDto;
+import com.dnd.reevserver.domain.comment.dto.request.AddReplyRequestDto;
 import com.dnd.reevserver.domain.comment.dto.response.CommentResponseDto;
 import com.dnd.reevserver.domain.comment.dto.response.ReplyResponseDto;
 import com.dnd.reevserver.domain.comment.entity.Comment;
+import com.dnd.reevserver.domain.comment.exception.NotFoundCommentException;
 import com.dnd.reevserver.domain.comment.repository.CommentRepository;
 import com.dnd.reevserver.domain.member.entity.Member;
 import com.dnd.reevserver.domain.member.service.MemberService;
@@ -16,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -94,5 +97,35 @@ public class CommentService {
                         .build())
                 .toList();
         return ResponseDtoList;
+    }
+
+    //대댓글 생성
+    public ReplyResponseDto addReply(AddReplyRequestDto requestDto, Long parentCommentId) {
+        Member member = memberService.findById(requestDto.userId());
+        Retrospect retrospect = retrospectService.findById(requestDto.retrospectId());
+        Comment parentComment = findById(parentCommentId);
+
+        Comment comment = Comment.builder()
+                .member(member)
+                .retrospect(retrospect)
+                .content(requestDto.content())
+                .build();
+        comment.setParentComment(parentComment);
+        commentRepository.save(comment);
+
+        ReplyResponseDto responseDto = ReplyResponseDto.builder()
+                .commentId(comment.getCommentId())
+                .userId(member.getUserId())
+                .retrospectId(retrospect.getRetrospectId())
+                .content(comment.getContent())
+                .nickName(member.getNickname())
+                .timeMessage(getTimeString(comment.getUpdatedAt()))
+                .build();
+        return responseDto;
+
+    }
+
+    public Comment findById(Long commentId) {
+        return commentRepository.findById(commentId).orElseThrow(NotFoundCommentException::new);
     }
 }

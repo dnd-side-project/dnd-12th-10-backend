@@ -36,9 +36,9 @@ public class CommentController {
         return ResponseEntity.ok().body(responseDtoList);
     }
 
-    @PostMapping
-    public ResponseEntity<ReplyResponseDto> addReply(@RequestBody AddReplyRequestDto requestDto) {
-        ReplyResponseDto replyResponseDto = commentService.addReply(requestDto);
+    @PostMapping("/{commentId}")
+    public ResponseEntity<ReplyResponseDto> addReply(@PathVariable Long commentId, @RequestBody AddReplyRequestDto requestDto) {
+        ReplyResponseDto replyResponseDto = commentService.addReply(requestDto, commentId);
         return ResponseEntity.ok().body(replyResponseDto);
     }
 

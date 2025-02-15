@@ -57,4 +57,10 @@ public class TeamController {
         LeaveGroupResponseDto responseDto = groupService.leaveGroup(requestDto);
         return ResponseEntity.ok().body(responseDto);
     }
+
+    @GetMapping("/user/list")
+    public ResponseEntity<List<TeamResponseDto>> getAllMemberGroups(@RequestBody GetAllUserGroupRequestDto requestDto){
+        List<TeamResponseDto> responseList = groupService.getAllUserGroups(requestDto);
+        return ResponseEntity.ok().body(responseList);
+    }
 }

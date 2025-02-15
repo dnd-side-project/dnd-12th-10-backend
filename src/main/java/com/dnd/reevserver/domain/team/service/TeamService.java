@@ -16,7 +16,6 @@ import com.dnd.reevserver.domain.userTeam.exception.UserGroupExistException;
 import com.dnd.reevserver.domain.userTeam.exception.UserGroupNotFoundException;
 import com.dnd.reevserver.domain.userTeam.repository.UserTeamRepository;
 import lombok.RequiredArgsConstructor;
-import org.apache.catalina.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,6 +34,7 @@ public class TeamService {
     private final CategoryService categoryService;
     private final TeamCategoryRepository teamCategoryRepository;
 
+    //모든 그룹조회
     @Transactional(readOnly = true)
     public List<TeamResponseDto> getAllGroups() {
         List<Team> groups = teamRepository.findAll();
@@ -55,6 +55,7 @@ public class TeamService {
         return teamList;
     }
 
+    //그룹 단건 조회
     @Transactional(readOnly = true)
     public TeamResponseDto getGroupById(Long groupId) {
         Team team = teamRepository.findById(groupId).orElseThrow(TeamNotFoundException::new);
@@ -72,6 +73,28 @@ public class TeamService {
                 .build();
     }
 
+    //내가 속한 모임 조회
+    @Transactional(readOnly = true)
+    public List<TeamResponseDto> getAllUserGroups(GetAllUserGroupRequestDto requestDto){
+        List<Team> groups = teamRepository.findAllByUserId(requestDto.userId());
+        List<TeamResponseDto> teamList = groups.stream()
+                .map(team -> TeamResponseDto.builder()
+                        .groupId(team.getGroupId())
+                        .groupName(team.getGroupName())
+                        .description(team.getDescription())
+                        .userCount(team.getUserTeams().size())
+                        .recentActString(getRecentActString(team.getRecentAct()))
+                        .categoryNames(
+                                team.getTeamCategories().stream()
+                                        .map(teamCategory -> teamCategory.getCategory().getCategoryName())
+                                        .toList()
+                        )
+                        .build())
+                .toList();
+        return teamList;
+    }
+
+    //최근 활동 시간 문자열
     private String getRecentActString(LocalDateTime recentAct){
         LocalDateTime now = LocalDateTime.now();
         long timeGap = ChronoUnit.MINUTES.between(recentAct, now);
@@ -86,7 +109,7 @@ public class TeamService {
 
     }
 
-
+    //모임 생성
     public AddTeamResponseDto addGroup(AddTeamRequestDto addTeamRequestDto) {
         Team team = Team.builder().groupName(addTeamRequestDto.groupName())
                 .description(addTeamRequestDto.description())
@@ -128,6 +151,7 @@ public class TeamService {
         return userTeamRepository.findByUserIdAndGroupId(userId,groupId).orElseThrow(UserGroupNotFoundException::new);
     }
 
+    //모임 즐겨찾기
     @Transactional
     public AddFavoriteGroupResponseDto addFavorite(AddFavoriteGroupRequestDto requestDto) {
         UserTeam userTeam = findByUserIdAndGroupId(requestDto.userId(),requestDto.groupId());
@@ -139,6 +163,7 @@ public class TeamService {
         return new AddFavoriteGroupResponseDto("즐겨찾기 추가");
     }
 
+    //즐겨찾기한 모임 모음
     @Transactional(readOnly = true)
     public List<TeamResponseDto> getAllFavoriteGroups(GetAllFavoriteGroupRequestDto requestDto) {
         List<UserTeam> list = userTeamRepository.findAllFavoriteGroupsByUserId(requestDto.userId());
@@ -165,6 +190,7 @@ public class TeamService {
 
     }
 
+    //모임 가입
     @Transactional
     public JoinGroupResponseDto joinGroup(JoinGroupRequestDto requestDto) {
         Optional<UserTeam> userTeam = userTeamRepository.findByUserIdAndGroupId(requestDto.userId(),requestDto.groupId());
@@ -180,6 +206,7 @@ public class TeamService {
         return new JoinGroupResponseDto(member.getUserId(),team.getGroupId());
     }
 
+    //모임 탈퇴
     @Transactional
     public LeaveGroupResponseDto leaveGroup(LeaveGroupRequestDto requestDto) {
         UserTeam userTeam = findByUserIdAndGroupId(requestDto.userId(),requestDto.groupId());

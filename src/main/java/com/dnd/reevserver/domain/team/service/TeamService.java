@@ -76,8 +76,8 @@ public class TeamService {
 
     //내가 속한 모임 조회
     @Transactional(readOnly = true)
-    public List<TeamResponseDto> getAllUserGroups(GetAllUserGroupRequestDto requestDto){
-        List<Team> groups = teamRepository.findAllByUserId(requestDto.userId());
+    public List<TeamResponseDto> getAllUserGroups(String userId){
+        List<Team> groups = teamRepository.findAllByUserId(userId);
         List<TeamResponseDto> teamList = groups.stream()
                 .map(team -> TeamResponseDto.builder()
                         .groupId(team.getGroupId())

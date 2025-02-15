@@ -7,6 +7,8 @@ import com.dnd.reevserver.domain.member.exception.MemberNotFoundException;
 import com.dnd.reevserver.domain.member.repository.MemberRepository;
 import com.dnd.reevserver.domain.team.dto.response.TeamResponseDto;
 import com.dnd.reevserver.domain.team.entity.Team;
+import com.dnd.reevserver.domain.team.repository.TeamRepository;
+import com.dnd.reevserver.domain.team.service.TeamService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +21,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MemberService {
     private final MemberRepository memberRepository;
+    private final TeamRepository teamRepository;
 
     // 모임 관련 API 작성 예정
 
@@ -77,7 +80,7 @@ public class MemberService {
     //내가 속한 모임 조회
     @Transactional(readOnly = true)
     public List<TeamResponseDto> getAllGroups(String userId){
-        List<Team> groups = memberRepository.findGroupsByUserId(userId);
+        List<Team> groups = teamRepository.findAllByUserId(userId);
         List<TeamResponseDto> groupList = groups.stream()
                 .map(team -> TeamResponseDto.builder()
                         .groupId(team.getGroupId())

@@ -77,6 +77,8 @@ jobs:
             docker stop reev-server || true
             # 중지된 Docker 컨테이너를 삭제합니다. 이미 컨테이너가 없더라도 오류를 무시하도록 '|| true'를 추가했습니다.
             docker rm reev-server || true
+            # 사용하지 않는 이미지를 삭제합니다.
+            docker image prune -a -y
             # ECR로부터 최신 Docker 이미지를 가져옵니다.
             docker pull ${{ steps.login-ecr.outputs.registry }}/reev-server:latest
             # 새로운 Docker 컨테이너를 실행합니다. 8080 포트를 매핑하여 외부에서 접근할 수 있도록 설정했습니다.

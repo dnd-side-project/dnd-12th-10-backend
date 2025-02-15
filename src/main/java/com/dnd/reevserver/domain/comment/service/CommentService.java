@@ -2,6 +2,7 @@ package com.dnd.reevserver.domain.comment.service;
 
 import com.dnd.reevserver.domain.comment.dto.request.AddCommentRequestDto;
 import com.dnd.reevserver.domain.comment.dto.response.CommentResponseDto;
+import com.dnd.reevserver.domain.comment.dto.response.ReplyResponseDto;
 import com.dnd.reevserver.domain.comment.entity.Comment;
 import com.dnd.reevserver.domain.comment.repository.CommentRepository;
 import com.dnd.reevserver.domain.member.entity.Member;
@@ -75,5 +76,23 @@ public class CommentService {
                 .timeMessage(getTimeString(comment.getUpdatedAt()))
                 .build();
         return responseDto;
+    }
+
+    //대댓글 조회
+    @Transactional(readOnly = true)
+    public List<ReplyResponseDto> getAllReply(Long retrospectId, Long commentId) {
+        Retrospect retrospect = retrospectService.findById(retrospectId);
+        List<Comment> replyList = commentRepository.findAllByParentCommentId(commentId);
+        List<ReplyResponseDto> ResponseDtoList = replyList.stream()
+                .map(reply -> ReplyResponseDto.builder()
+                        .commentId(reply.getCommentId())
+                        .userId(reply.getMember().getUserId())
+                        .retrospectId(reply.getRetrospect().getRetrospectId())
+                        .content(reply.getContent())
+                        .nickName(reply.getMember().getNickname())
+                        .timeMessage(getTimeString(reply.getUpdatedAt()))
+                        .build())
+                .toList();
+        return ResponseDtoList;
     }
 }

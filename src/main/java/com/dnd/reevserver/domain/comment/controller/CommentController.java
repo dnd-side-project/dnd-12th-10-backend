@@ -35,4 +35,8 @@ public class CommentController {
         return ResponseEntity.ok().body(responseDtoList);
     }
 
+    @PostMapping
+    public ResponseEntity<ReplyResponseDto> addReply()
+
+
 }

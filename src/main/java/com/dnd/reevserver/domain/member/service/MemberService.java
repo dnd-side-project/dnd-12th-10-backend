@@ -1,16 +1,19 @@
 package com.dnd.reevserver.domain.member.service;
 
-import com.dnd.reevserver.domain.member.dto.request.InsertInfoRequestDto;
-import com.dnd.reevserver.domain.member.dto.request.UpdateMemberJobRequestDto;
-import com.dnd.reevserver.domain.member.dto.request.UpdateMemberNicknameRequestDto;
-import com.dnd.reevserver.domain.member.dto.request.UpdateMemberProfileUrlRequestDto;
+import com.dnd.reevserver.domain.member.dto.request.*;
 import com.dnd.reevserver.domain.member.dto.response.MemberResponseDto;
 import com.dnd.reevserver.domain.member.entity.Member;
 import com.dnd.reevserver.domain.member.exception.MemberNotFoundException;
 import com.dnd.reevserver.domain.member.repository.MemberRepository;
+import com.dnd.reevserver.domain.team.dto.response.TeamResponseDto;
+import com.dnd.reevserver.domain.team.entity.Team;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -70,4 +73,41 @@ public class MemberService {
     public void save(Member member) {
         memberRepository.save(member);
     }
+
+    //내가 속한 모임 조회
+    @Transactional(readOnly = true)
+    public List<TeamResponseDto> getAllGroups(String userId){
+        List<Team> groups = memberRepository.findGroupsByUserId(userId);
+        List<TeamResponseDto> groupList = groups.stream()
+                .map(team -> TeamResponseDto.builder()
+                        .groupId(team.getGroupId())
+                        .groupName(team.getGroupName())
+                        .description(team.getDescription())
+                        .userCount(team.getUserTeams().size())
+                        .recentActString(getRecentActString(team.getRecentAct()))
+                        .categoryNames(
+                                team.getTeamCategories().stream()
+                                        .map(teamCategory -> teamCategory.getCategory().getCategoryName())
+                                        .toList()
+                        )
+                        .build())
+                .toList();
+        return groupList;
+    }
+
+    //최근 활동 시간 문자열
+    private String getRecentActString(LocalDateTime recentAct){
+        LocalDateTime now = LocalDateTime.now();
+        long timeGap = ChronoUnit.MINUTES.between(recentAct, now);
+
+        if(timeGap < 60){
+            return timeGap + "분 전";
+        }
+        if(timeGap < 1440){
+            return ChronoUnit.HOURS.between(recentAct, now) + "시간 전";
+        }
+        return ChronoUnit.DAYS.between(recentAct, now) + "일 전";
+
+    }
+
 }

@@ -10,6 +10,7 @@ import com.dnd.reevserver.domain.retrospect.entity.Retrospect;
 import com.dnd.reevserver.domain.retrospect.service.RetrospectService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -25,6 +26,7 @@ public class CommentService {
     private final MemberService memberService;
 
     //댓글 목록 조회
+    @Transactional(readOnly = true)
     public List<CommentResponseDto> getAllComment(Long retrospectId) {
         Retrospect retrospect = retrospectService.findById(retrospectId);
         List<Comment> list = commentRepository.findAllByRetrospectId(retrospectId);

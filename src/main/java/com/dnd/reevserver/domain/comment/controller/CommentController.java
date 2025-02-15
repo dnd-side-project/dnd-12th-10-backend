@@ -1,6 +1,7 @@
 package com.dnd.reevserver.domain.comment.controller;
 
 import com.dnd.reevserver.domain.comment.dto.request.AddCommentRequestDto;
+import com.dnd.reevserver.domain.comment.dto.request.AddReplyRequestDto;
 import com.dnd.reevserver.domain.comment.dto.response.CommentResponseDto;
 import com.dnd.reevserver.domain.comment.dto.response.ReplyResponseDto;
 import com.dnd.reevserver.domain.comment.service.CommentService;
@@ -36,7 +37,10 @@ public class CommentController {
     }
 
     @PostMapping
-    public ResponseEntity<ReplyResponseDto> addReply()
+    public ResponseEntity<ReplyResponseDto> addReply(@RequestBody AddReplyRequestDto requestDto) {
+        ReplyResponseDto replyResponseDto = commentService.addReply(requestDto);
+        return ResponseEntity.ok().body(replyResponseDto);
+    }
 
 
 }

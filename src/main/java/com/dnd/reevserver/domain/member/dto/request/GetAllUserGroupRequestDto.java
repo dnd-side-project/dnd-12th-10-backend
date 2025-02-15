@@ -1,4 +1,4 @@
-package com.dnd.reevserver.domain.team.dto.request;
+package com.dnd.reevserver.domain.member.dto.request;
 
 public record GetAllUserGroupRequestDto(String userId) {
 }

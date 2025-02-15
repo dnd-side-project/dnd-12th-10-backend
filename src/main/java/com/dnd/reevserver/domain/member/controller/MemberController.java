@@ -1,15 +1,15 @@
 package com.dnd.reevserver.domain.member.controller;
 
-import com.dnd.reevserver.domain.member.dto.request.InsertInfoRequestDto;
-import com.dnd.reevserver.domain.member.dto.request.UpdateMemberJobRequestDto;
-import com.dnd.reevserver.domain.member.dto.request.UpdateMemberNicknameRequestDto;
-import com.dnd.reevserver.domain.member.dto.request.UpdateMemberProfileUrlRequestDto;
+import com.dnd.reevserver.domain.member.dto.request.*;
 import com.dnd.reevserver.domain.member.dto.response.MemberResponseDto;
 import com.dnd.reevserver.domain.member.service.MemberService;
+import com.dnd.reevserver.domain.team.dto.response.TeamResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/user")
@@ -57,5 +57,12 @@ public class MemberController {
     public ResponseEntity<Void> deleteMember(@PathVariable String userId) {
         memberService.deleteMember(userId);
         return ResponseEntity.noContent().build();
+    }
+
+    @Operation(summary = "내가 속한 모임 조회")
+    @GetMapping("/group/list/{userId}")
+    public ResponseEntity<List<TeamResponseDto>> getTeamList(@PathVariable String userId) {
+        List<TeamResponseDto> responseList = memberService.getAllGroups(userId);
+        return ResponseEntity.ok().body(responseList);
     }
 }

@@ -1,5 +1,6 @@
 package com.dnd.reevserver.domain.team.controller;
 
+import com.dnd.reevserver.domain.member.dto.request.GetAllUserGroupRequestDto;
 import com.dnd.reevserver.domain.team.dto.request.*;
 import com.dnd.reevserver.domain.team.dto.response.*;
 import com.dnd.reevserver.domain.team.service.TeamService;
@@ -58,9 +59,4 @@ public class TeamController {
         return ResponseEntity.ok().body(responseDto);
     }
 
-    @GetMapping("/user/list")
-    public ResponseEntity<List<TeamResponseDto>> getAllMemberGroups(@RequestBody GetAllUserGroupRequestDto requestDto){
-        List<TeamResponseDto> responseList = groupService.getAllUserGroups(requestDto);
-        return ResponseEntity.ok().body(responseList);
-    }
 }

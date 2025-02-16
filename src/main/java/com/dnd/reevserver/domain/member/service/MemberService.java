@@ -67,7 +67,7 @@ public class MemberService {
         member.updateJob(dto.job());
 
         List<String> keywordStr = dto.featureKeyword();
-        if(!keywordStr.isEmpty()){
+        if(keywordStr != null){
             List<FeatureKeyword> keywords = new ArrayList<>();
             for(String name : keywordStr){
                 FeatureKeyword keyword = FeatureKeyword.builder()

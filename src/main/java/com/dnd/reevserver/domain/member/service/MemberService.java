@@ -2,8 +2,10 @@ package com.dnd.reevserver.domain.member.service;
 
 import com.dnd.reevserver.domain.member.dto.request.*;
 import com.dnd.reevserver.domain.member.dto.response.MemberResponseDto;
+import com.dnd.reevserver.domain.member.entity.FeatureKeyword;
 import com.dnd.reevserver.domain.member.entity.Member;
 import com.dnd.reevserver.domain.member.exception.MemberNotFoundException;
+import com.dnd.reevserver.domain.member.repository.FeatureKeywordRepository;
 import com.dnd.reevserver.domain.member.repository.MemberRepository;
 import com.dnd.reevserver.domain.team.dto.response.TeamResponseDto;
 import com.dnd.reevserver.domain.team.entity.Team;
@@ -15,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -22,6 +25,7 @@ import java.util.List;
 public class MemberService {
     private final MemberRepository memberRepository;
     private final TeamRepository teamRepository;
+    private final FeatureKeywordRepository featureKeywordRepository;
 
     // 모임 관련 API 작성 예정
 
@@ -55,11 +59,23 @@ public class MemberService {
     }
 
     // 로그인 이후 정보 기입
+    // todo : 이건 추후 자료 구조에 대해서 더 생각해봐야 할 듯, 키워드는 한정적인데 데이터가 많이 늘어남
     @Transactional
     public void insertInfoAfterLogin(InsertInfoRequestDto dto){
         Member member = findById(dto.userId());
         member.updateNickname(dto.nickname());
         member.updateJob(dto.job());
+
+        List<String> keywordStr = dto.featureKeyword();
+        List<FeatureKeyword> keywords = new ArrayList<>();
+        for(String name : keywordStr){
+            FeatureKeyword keyword = FeatureKeyword.builder()
+                    .keywordName(name)
+                    .member(member)
+                    .build();
+            keywords.add(keyword);
+        }
+        featureKeywordRepository.saveAll(keywords);
     }
 
     // 회원 탈퇴

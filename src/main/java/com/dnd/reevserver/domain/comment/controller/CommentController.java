@@ -1,7 +1,9 @@
 package com.dnd.reevserver.domain.comment.controller;
 
 import com.dnd.reevserver.domain.comment.dto.request.AddCommentRequestDto;
+import com.dnd.reevserver.domain.comment.dto.request.AddReplyRequestDto;
 import com.dnd.reevserver.domain.comment.dto.response.CommentResponseDto;
+import com.dnd.reevserver.domain.comment.dto.response.ReplyResponseDto;
 import com.dnd.reevserver.domain.comment.service.CommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -27,5 +29,18 @@ public class CommentController {
         CommentResponseDto commentResponseDto = commentService.addComment(requestDto);
         return ResponseEntity.ok().body(commentResponseDto);
     }
+
+    @GetMapping("/{retrospectId}/{commentId}")
+    public ResponseEntity<List<ReplyResponseDto>> getAllReply(@PathVariable Long retrospectId, @PathVariable Long commentId){
+        List<ReplyResponseDto> responseDtoList = commentService.getAllReply(retrospectId, commentId);
+        return ResponseEntity.ok().body(responseDtoList);
+    }
+
+    @PostMapping("/{commentId}")
+    public ResponseEntity<ReplyResponseDto> addReply(@PathVariable Long commentId, @RequestBody AddReplyRequestDto requestDto) {
+        ReplyResponseDto replyResponseDto = commentService.addReply(requestDto, commentId);
+        return ResponseEntity.ok().body(replyResponseDto);
+    }
+
 
 }

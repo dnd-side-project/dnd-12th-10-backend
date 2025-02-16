@@ -12,6 +12,7 @@ import com.dnd.reevserver.domain.team.entity.Team;
 import com.dnd.reevserver.domain.team.repository.TeamRepository;
 import com.dnd.reevserver.domain.team.service.TeamService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +23,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class MemberService {
     private final MemberRepository memberRepository;
     private final TeamRepository teamRepository;
@@ -62,6 +64,10 @@ public class MemberService {
     // todo : 이건 추후 자료 구조에 대해서 더 생각해봐야 할 듯, 키워드는 한정적인데 데이터가 많이 늘어남
     @Transactional
     public void insertInfoAfterLogin(String userId, InsertInfoRequestDto dto){
+        log.info("userId : {}", userId);
+        log.info("nickname : {}", dto.nickname());
+        log.info("job : {}", dto.job());
+        log.info("keyword : {}", dto.featureKeyword());
         Member member = findById(userId);
         member.updateNickname(dto.nickname());
         member.updateJob(dto.job());

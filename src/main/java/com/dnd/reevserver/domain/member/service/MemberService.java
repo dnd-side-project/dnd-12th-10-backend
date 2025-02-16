@@ -61,8 +61,8 @@ public class MemberService {
     // 로그인 이후 정보 기입
     // todo : 이건 추후 자료 구조에 대해서 더 생각해봐야 할 듯, 키워드는 한정적인데 데이터가 많이 늘어남
     @Transactional
-    public void insertInfoAfterLogin(InsertInfoRequestDto dto){
-        Member member = findById(dto.userId());
+    public void insertInfoAfterLogin(String userId, InsertInfoRequestDto dto){
+        Member member = findById(userId);
         member.updateNickname(dto.nickname());
         member.updateJob(dto.job());
 

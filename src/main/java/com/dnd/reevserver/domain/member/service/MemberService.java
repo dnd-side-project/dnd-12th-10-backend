@@ -67,15 +67,17 @@ public class MemberService {
         member.updateJob(dto.job());
 
         List<String> keywordStr = dto.featureKeyword();
-        List<FeatureKeyword> keywords = new ArrayList<>();
-        for(String name : keywordStr){
-            FeatureKeyword keyword = FeatureKeyword.builder()
-                    .keywordName(name)
-                    .member(member)
-                    .build();
-            keywords.add(keyword);
+        if(!keywordStr.isEmpty()){
+            List<FeatureKeyword> keywords = new ArrayList<>();
+            for(String name : keywordStr){
+                FeatureKeyword keyword = FeatureKeyword.builder()
+                        .keywordName(name)
+                        .member(member)
+                        .build();
+                keywords.add(keyword);
+            }
+            featureKeywordRepository.saveAll(keywords);
         }
-        featureKeywordRepository.saveAll(keywords);
     }
 
     // 회원 탈퇴

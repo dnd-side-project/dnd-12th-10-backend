@@ -14,7 +14,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/retrospect")
-public class RetrospectController {
+public class RetrospectController implements RetrospectControllerDocs{
 
     private final RetrospectService retrospectService;
 

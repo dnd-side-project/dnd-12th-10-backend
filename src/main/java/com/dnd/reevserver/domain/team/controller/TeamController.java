@@ -13,7 +13,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/group")
 @RequiredArgsConstructor
-public class TeamController {
+public class TeamController implements TeamControllerDocs{
 
     private final TeamService groupService;
 

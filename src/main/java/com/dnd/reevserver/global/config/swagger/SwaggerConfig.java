@@ -59,7 +59,7 @@ public class SwaggerConfig {
     @Bean
     public GroupedOpenApi teamGroup(){
         return GroupedOpenApi.builder()
-                .group("Team")
+                .group("Group")
                 .pathsToMatch("/api/v1/group/**")
                 .build();
     }
@@ -86,5 +86,13 @@ public class SwaggerConfig {
                 .group("Category")
                 .pathsToMatch("/api/v1/category/**")
                 .build();
+    }
+
+    @Bean
+    public GroupedOpenApi commentGroup(){
+        return GroupedOpenApi.builder()
+            .group("Comment")
+            .pathsToMatch("/api/v1/comment/**")
+            .build();
     }
 }

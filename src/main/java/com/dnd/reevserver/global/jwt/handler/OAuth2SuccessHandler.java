@@ -11,12 +11,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 @Component
 @RequiredArgsConstructor
@@ -31,6 +32,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         Member oauth2User = (Member) authentication.getPrincipal();
 
         String userId = oauth2User.getUserId();
+        String kakaoName = oauth2User.getKakaoName();
 
         String refreshToken = refreshTokenService.getOrCreateRefreshToken(userId);
         String accessToken = jwtProvider.createAccessToken(userId);
@@ -39,11 +41,13 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         //response.addHeader(HttpHeaders.AUTHORIZATION, accessToken);
 
         String redirectUrl = getRedirectUrl(request);
-        if("NA".equals(oauth2User.getJob())){
-            response.sendRedirect(redirectUrl+"?access_token="+accessToken+"&isRegistered=true");
-        }
-        else{
-            response.sendRedirect(redirectUrl+"?access_token="+accessToken+"&isRegistered=false");
+
+        String encodedName = URLEncoder.encode(kakaoName, StandardCharsets.UTF_8);
+
+        if ("NA".equals(oauth2User.getJob())) {
+            response.sendRedirect(redirectUrl + "?access_token=" + accessToken + "&isRegistered=true&name=" + encodedName);
+        } else {
+            response.sendRedirect(redirectUrl + "?access_token=" + accessToken + "&isRegistered=false&name=" + encodedName);
         }
 
     }

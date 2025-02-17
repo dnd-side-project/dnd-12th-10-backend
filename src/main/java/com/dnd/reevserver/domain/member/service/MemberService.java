@@ -10,9 +10,7 @@ import com.dnd.reevserver.domain.member.repository.MemberRepository;
 import com.dnd.reevserver.domain.team.dto.response.TeamResponseDto;
 import com.dnd.reevserver.domain.team.entity.Team;
 import com.dnd.reevserver.domain.team.repository.TeamRepository;
-import com.dnd.reevserver.domain.team.service.TeamService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,7 +21,6 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class MemberService {
     private final MemberRepository memberRepository;
     private final TeamRepository teamRepository;

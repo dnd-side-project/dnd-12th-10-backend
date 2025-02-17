@@ -59,17 +59,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         String userId = jwtProvider.validateToken(token);
-        log.info("token : {}", token);
-        log.info("userId : {}", userId);
         if (Strings.isEmpty(userId)) {
             filterChain.doFilter(request, response);
             return;
         }
 
         authenticateUser(userId, request);
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        log.info("userId in auth: {}", authentication.getPrincipal());
 
         filterChain.doFilter(request, response);
     }

@@ -11,6 +11,7 @@ import com.dnd.reevserver.domain.member.entity.Member;
 import com.dnd.reevserver.domain.member.service.MemberService;
 import com.dnd.reevserver.domain.retrospect.entity.Retrospect;
 import com.dnd.reevserver.domain.retrospect.service.RetrospectService;
+import com.dnd.reevserver.global.util.TimeStringUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +28,7 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final RetrospectService retrospectService;
     private final MemberService memberService;
+    private final TimeStringUtil timeStringUtil;
 
     //댓글 목록 조회
     @Transactional(readOnly = true)
@@ -40,24 +42,12 @@ public class CommentService {
                         .retrospectId(comment.getRetrospect().getRetrospectId())
                         .content(comment.getContent())
                         .nickName(comment.getMember().getNickname())
-                        .timeMessage(getTimeString(comment.getUpdatedAt()))
+                        .timeMessage(timeStringUtil.getTimeString(comment.getUpdatedAt()))
                         .build())
                 .toList();
         return commentResponseDtoList;
     }
 
-    private String getTimeString(LocalDateTime time){
-        LocalDateTime now = LocalDateTime.now();
-        long timeGap = ChronoUnit.MINUTES.between(time, now);
-
-        if(timeGap < 60){
-            return timeGap + "분 전";
-        }
-        if(timeGap < 1440){
-            return ChronoUnit.HOURS.between(time, now) + "시간 전";
-        }
-        return ChronoUnit.DAYS.between(time, now) + "일 전";
-    }
 
     //댓글 작성
     public CommentResponseDto addComment(AddCommentRequestDto requestDto) {
@@ -76,7 +66,7 @@ public class CommentService {
                 .retrospectId(retrospect.getRetrospectId())
                 .content(comment.getContent())
                 .nickName(member.getNickname())
-                .timeMessage(getTimeString(comment.getUpdatedAt()))
+                .timeMessage(timeStringUtil.getTimeString(comment.getUpdatedAt()))
                 .build();
         return responseDto;
     }
@@ -93,7 +83,7 @@ public class CommentService {
                         .retrospectId(reply.getRetrospect().getRetrospectId())
                         .content(reply.getContent())
                         .nickName(reply.getMember().getNickname())
-                        .timeMessage(getTimeString(reply.getUpdatedAt()))
+                        .timeMessage(timeStringUtil.getTimeString(reply.getUpdatedAt()))
                         .build())
                 .toList();
         return ResponseDtoList;
@@ -119,7 +109,7 @@ public class CommentService {
                 .retrospectId(retrospect.getRetrospectId())
                 .content(comment.getContent())
                 .nickName(member.getNickname())
-                .timeMessage(getTimeString(comment.getUpdatedAt()))
+                .timeMessage(timeStringUtil.getTimeString(comment.getUpdatedAt()))
                 .build();
         return responseDto;
 

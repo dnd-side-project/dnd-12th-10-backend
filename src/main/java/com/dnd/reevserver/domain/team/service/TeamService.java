@@ -16,6 +16,7 @@ import com.dnd.reevserver.domain.userTeam.entity.UserTeam;
 import com.dnd.reevserver.domain.userTeam.exception.UserGroupExistException;
 import com.dnd.reevserver.domain.userTeam.exception.UserGroupNotFoundException;
 import com.dnd.reevserver.domain.userTeam.repository.UserTeamRepository;
+import com.dnd.reevserver.global.util.TimeStringUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,6 +35,7 @@ public class TeamService {
     private final MemberService memberService;
     private final CategoryService categoryService;
     private final TeamCategoryRepository teamCategoryRepository;
+    private final TimeStringUtil timeStringUtil;
 
     //모든 그룹조회
     @Transactional(readOnly = true)
@@ -45,7 +47,7 @@ public class TeamService {
                         .groupName(team.getGroupName())
                         .description(team.getDescription())
                         .userCount(team.getUserTeams().size())
-                        .recentActString(getRecentActString(team.getRecentAct()))
+                        .recentActString(timeStringUtil.getTimeString(team.getRecentAct()))
                         .categoryNames(
                                 team.getTeamCategories().stream()
                                         .map(teamCategory -> teamCategory.getCategory().getCategoryName())
@@ -65,7 +67,7 @@ public class TeamService {
                 .groupName(team.getGroupName())
                 .description(team.getDescription())
                 .userCount(team.getUserTeams().size())
-                .recentActString(getRecentActString(team.getRecentAct()))
+                .recentActString(timeStringUtil.getTimeString(team.getRecentAct()))
                 .categoryNames(
                         team.getTeamCategories().stream()
                                 .map(teamCategory -> teamCategory.getCategory().getCategoryName())
@@ -84,7 +86,7 @@ public class TeamService {
                         .groupName(team.getGroupName())
                         .description(team.getDescription())
                         .userCount(team.getUserTeams().size())
-                        .recentActString(getRecentActString(team.getRecentAct()))
+                        .recentActString(timeStringUtil.getTimeString(team.getRecentAct()))
                         .categoryNames(
                                 team.getTeamCategories().stream()
                                         .map(teamCategory -> teamCategory.getCategory().getCategoryName())
@@ -93,21 +95,6 @@ public class TeamService {
                         .build())
                 .toList();
         return teamList;
-    }
-
-    //최근 활동 시간 문자열
-    private String getRecentActString(LocalDateTime recentAct){
-        LocalDateTime now = LocalDateTime.now();
-        long timeGap = ChronoUnit.MINUTES.between(recentAct, now);
-
-        if(timeGap < 60){
-            return timeGap + "분 전";
-        }
-        if(timeGap < 1440){
-            return ChronoUnit.HOURS.between(recentAct, now) + "시간 전";
-        }
-        return ChronoUnit.DAYS.between(recentAct, now) + "일 전";
-
     }
 
     //모임 생성
@@ -177,7 +164,7 @@ public class TeamService {
                             .groupName(team.getGroupName())
                             .description(team.getDescription())
                             .userCount(team.getUserTeams().size())
-                            .recentActString(getRecentActString(team.getRecentAct()))
+                            .recentActString(timeStringUtil.getTimeString(team.getRecentAct()))
                             .categoryNames(
                                     team.getTeamCategories().stream()
                                             .map(teamCategory -> teamCategory.getCategory().getCategoryName())

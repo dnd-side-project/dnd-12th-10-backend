@@ -6,6 +6,7 @@ import com.dnd.reevserver.domain.member.service.MemberService;
 import com.dnd.reevserver.domain.team.dto.response.TeamResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +16,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/user")
 @RequiredArgsConstructor
+@Slf4j
 public class MemberController {
     private final MemberService memberService;
 
@@ -28,6 +30,7 @@ public class MemberController {
     @Operation(summary = "로그인 이후 정보 기입, 이 API를 악성 이용자가 지나치면 nickname은 기본닉네임+UUID으로, Job은 NA로 구성됩니다.")
     @PatchMapping("/after-login")
     public ResponseEntity<Void> insertInfoAfterLogin(@AuthenticationPrincipal String userId, @RequestBody InsertInfoRequestDto dto){
+        log.info("userId = {}", userId);
         memberService.insertInfoAfterLogin(userId, dto);
         return ResponseEntity.ok().build();
     }

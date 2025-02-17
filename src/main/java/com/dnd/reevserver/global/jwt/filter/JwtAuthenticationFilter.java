@@ -10,9 +10,11 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -23,25 +25,14 @@ import org.springframework.util.PatternMatchUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtProvider jwtProvider;
     private final MemberRepository memberRepository;
-
-    /**
-     * 화이트 리스트에 포함된 요청은 필터링하지 않습니다.
-     */
-    @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-
-        return Arrays.stream(SecurityEndpointPaths.WHITE_LIST)
-                .anyMatch(path ->
-                        PatternMatchUtils.simpleMatch(path, request.getRequestURI()));
-    }
 
     /**
      * 요청에 대해 JWT 인증을 수행합니다.
@@ -51,17 +42,23 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String token = parseBearerToken(request);
         if (token == null) {
+            log.info("token is null");
             filterChain.doFilter(request, response);
             return;
         }
 
-        String kakaoId = jwtProvider.validateToken(token);
-        if (Strings.isEmpty(kakaoId)) {
+        String userId = jwtProvider.validateToken(token);
+        log.info("userId : {}", userId);
+        if (Strings.isEmpty(userId)) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        authenticateUser(kakaoId, request);
+        authenticateUser(userId, request);
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        log.info("userId in auth : {}", authentication.getPrincipal());
+
         filterChain.doFilter(request, response);
     }
 

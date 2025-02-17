@@ -33,9 +33,9 @@ public class MemoService {
     }
 
     // 메모 생성
-    public void createMemo(CreateMemoRequestDto dto){
+    public void createMemo(String userId, CreateMemoRequestDto dto){
         memoRepository.save(Memo.builder()
-                .member(memberService.findById(dto.userId()))
+                .member(memberService.findById(userId))
                 .content(dto.content())
                 .build());
     }

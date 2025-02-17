@@ -1,4 +1,4 @@
 package com.dnd.reevserver.domain.member.dto.request;
 
-public record UpdateMemberProfileUrlRequestDto(String userId, String profileUrl) {
+public record UpdateMemberProfileUrlRequestDto(String profileUrl) {
 }

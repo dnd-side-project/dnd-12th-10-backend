@@ -19,8 +19,8 @@ public class MemberController {
     private final MemberService memberService;
 
     @Operation(summary = "유저 개별 정보 불러오기, profile_url이 NA면 기본 이미지입니다.")
-    @GetMapping("/{userId}")
-    public ResponseEntity<MemberResponseDto> getMemberById(@PathVariable String userId) {
+    @GetMapping
+    public ResponseEntity<MemberResponseDto> getMemberById(@AuthenticationPrincipal String userId) {
         MemberResponseDto response = memberService.findByUserId(userId);
         return ResponseEntity.ok(response);
     }
@@ -34,35 +34,35 @@ public class MemberController {
 
     @Operation(summary = "닉네임 수정")
     @PatchMapping("/nickname")
-    public ResponseEntity<Void> updateNickname(@RequestBody UpdateMemberNicknameRequestDto dto) {
-        memberService.updateNickname(dto);
+    public ResponseEntity<Void> updateNickname(@AuthenticationPrincipal String userId, @RequestBody UpdateMemberNicknameRequestDto dto) {
+        memberService.updateNickname(userId, dto);
         return ResponseEntity.ok().build();
     }
 
     @Operation(summary = "프로필 사진 수정")
     @PatchMapping("/profile-url")
-    public ResponseEntity<Void> updateProfileUrl(@RequestBody UpdateMemberProfileUrlRequestDto dto) {
-        memberService.updateProfileUrl(dto);
+    public ResponseEntity<Void> updateProfileUrl(@AuthenticationPrincipal String userId, @RequestBody UpdateMemberProfileUrlRequestDto dto) {
+        memberService.updateProfileUrl(userId, dto);
         return ResponseEntity.ok().build();
     }
 
     @Operation(summary = "회원 수정")
     @PatchMapping("/job")
-    public ResponseEntity<Void> updateJob(@RequestBody UpdateMemberJobRequestDto dto) {
-        memberService.updateJob(dto);
+    public ResponseEntity<Void> updateJob(@AuthenticationPrincipal String userId, @RequestBody UpdateMemberJobRequestDto dto) {
+        memberService.updateJob(userId, dto);
         return ResponseEntity.ok().build();
     }
 
     @Operation(summary = "회원 탈퇴")
-    @DeleteMapping("/{userId}")
-    public ResponseEntity<Void> deleteMember(@PathVariable String userId) {
+    @DeleteMapping
+    public ResponseEntity<Void> deleteMember(@AuthenticationPrincipal String userId) {
         memberService.deleteMember(userId);
         return ResponseEntity.ok().build();
     }
 
     @Operation(summary = "내가 속한 모임 조회")
-    @GetMapping("/group/list/{userId}")
-    public ResponseEntity<List<TeamResponseDto>> getTeamList(@PathVariable String userId) {
+    @GetMapping("/group/list")
+    public ResponseEntity<List<TeamResponseDto>> getTeamList(@AuthenticationPrincipal String userId) {
         List<TeamResponseDto> responseList = memberService.getAllGroups(userId);
         return ResponseEntity.ok().body(responseList);
     }

@@ -60,8 +60,8 @@ public class CommentService {
     }
 
     //댓글 작성
-    public CommentResponseDto addComment(AddCommentRequestDto requestDto) {
-        Member member = memberService.findById(requestDto.userId());
+    public CommentResponseDto addComment(String userId, AddCommentRequestDto requestDto) {
+        Member member = memberService.findById(userId);
         Retrospect retrospect = retrospectService.findById(requestDto.retrospectId());
 
         Comment comment = Comment.builder()
@@ -100,8 +100,8 @@ public class CommentService {
     }
 
     //대댓글 생성
-    public ReplyResponseDto addReply(AddReplyRequestDto requestDto, Long parentCommentId) {
-        Member member = memberService.findById(requestDto.userId());
+    public ReplyResponseDto addReply(String userId, AddReplyRequestDto requestDto, Long parentCommentId) {
+        Member member = memberService.findById(userId);
         Retrospect retrospect = retrospectService.findById(requestDto.retrospectId());
         Comment parentComment = findById(parentCommentId);
 

@@ -111,11 +111,11 @@ public class TeamService {
     }
 
     //모임 생성
-    public AddTeamResponseDto addGroup(AddTeamRequestDto addTeamRequestDto) {
+    public AddTeamResponseDto addGroup(String userId, AddTeamRequestDto addTeamRequestDto) {
         Team team = Team.builder().groupName(addTeamRequestDto.groupName())
                 .description(addTeamRequestDto.description())
                 .maxNum(addTeamRequestDto.maxNum())
-                .ownerId(addTeamRequestDto.userId())
+                .ownerId(userId)
                 .isPublic(addTeamRequestDto.isPublic())
                 .build();
         teamRepository.save(team);
@@ -133,7 +133,7 @@ public class TeamService {
         }
 
 
-        Member member = memberService.findById(addTeamRequestDto.userId());
+        Member member = memberService.findById(userId);
         UserTeam userTeam = new UserTeam(member,team);
         member.addUserTeam(userTeam);
         team.addUserTeam(userTeam);
@@ -154,8 +154,8 @@ public class TeamService {
 
     //모임 즐겨찾기
     @Transactional
-    public AddFavoriteGroupResponseDto addFavorite(AddFavoriteGroupRequestDto requestDto) {
-        UserTeam userTeam = findByUserIdAndGroupId(requestDto.userId(),requestDto.groupId());
+    public AddFavoriteGroupResponseDto addFavorite(String userId, AddFavoriteGroupRequestDto requestDto) {
+        UserTeam userTeam = findByUserIdAndGroupId(userId,requestDto.groupId());
         if(userTeam.isFavorite()){
             userTeam.removeIsFavorite();
             return new AddFavoriteGroupResponseDto("즐겨찾기 해제");
@@ -166,8 +166,8 @@ public class TeamService {
 
     //즐겨찾기한 모임 모음
     @Transactional(readOnly = true)
-    public List<TeamResponseDto> getAllFavoriteGroups(GetAllFavoriteGroupRequestDto requestDto) {
-        List<UserTeam> list = userTeamRepository.findAllFavoriteGroupsByUserId(requestDto.userId());
+    public List<TeamResponseDto> getAllFavoriteGroups(String userId) {
+        List<UserTeam> list = userTeamRepository.findAllFavoriteGroupsByUserId(userId);
 
         List<TeamResponseDto> favoriteTeamList = list.stream()
                 .map(userTeam -> {
@@ -193,12 +193,12 @@ public class TeamService {
 
     //모임 가입
     @Transactional
-    public JoinGroupResponseDto joinGroup(JoinGroupRequestDto requestDto) {
-        Optional<UserTeam> userTeam = userTeamRepository.findByUserIdAndGroupId(requestDto.userId(),requestDto.groupId());
+    public JoinGroupResponseDto joinGroup(String userId, JoinGroupRequestDto requestDto) {
+        Optional<UserTeam> userTeam = userTeamRepository.findByUserIdAndGroupId(userId,requestDto.groupId());
         if(userTeam.isPresent()){
             throw new UserGroupExistException();
         }
-        Member member = memberService.findById(requestDto.userId());
+        Member member = memberService.findById(userId);
         Team team = findById(requestDto.groupId());
         UserTeam join = new UserTeam(member,team);
         userTeamRepository.save(join);
@@ -209,10 +209,10 @@ public class TeamService {
 
     //모임 탈퇴
     @Transactional
-    public LeaveGroupResponseDto leaveGroup(LeaveGroupRequestDto requestDto) {
-        UserTeam userTeam = findByUserIdAndGroupId(requestDto.userId(),requestDto.groupId());
+    public LeaveGroupResponseDto leaveGroup(String userId, LeaveGroupRequestDto requestDto) {
+        UserTeam userTeam = findByUserIdAndGroupId(userId,requestDto.groupId());
 
-        Member member = memberService.findById(requestDto.userId());
+        Member member = memberService.findById(userId);
         Team team = findById(requestDto.groupId());
         member.getUserGroups().remove(userTeam);
         team.getUserTeams().remove(userTeam);

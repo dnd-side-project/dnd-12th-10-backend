@@ -30,8 +30,8 @@ public class RetrospectService {
     private final TeamService teamService;
 
     //단일회고 조회
-    public RetrospectResponseDto getRetrospectById(GetRetrospectRequestDto requestDto) {
-        UserTeam userTeam = teamService.findByUserIdAndGroupId(requestDto.userId(),requestDto.groupId());
+    public RetrospectResponseDto getRetrospectById(String userId, GetRetrospectRequestDto requestDto) {
+        UserTeam userTeam = teamService.findByUserIdAndGroupId(userId,requestDto.groupId());
         Retrospect retrospect = findById(requestDto.retrospectId());
         return RetrospectResponseDto.builder()
                 .retrospectId(retrospect.getRetrospectId())
@@ -61,10 +61,10 @@ public class RetrospectService {
 
 
     //회고 작성
-    public AddRetrospectResponseDto addRetrospect(AddRetrospectRequestDto requestDto) {
-        Member member = memberService.findById(requestDto.userId());
+    public AddRetrospectResponseDto addRetrospect(String userId, AddRetrospectRequestDto requestDto) {
+        Member member = memberService.findById(userId);
         Team team = teamService.findById(requestDto.groupId());
-        UserTeam userTeam = teamService.findByUserIdAndGroupId(requestDto.userId(),requestDto.groupId());
+        UserTeam userTeam = teamService.findByUserIdAndGroupId(userId,requestDto.groupId());
         Retrospect retrospect = Retrospect.builder()
                 .member(member)
                 .team(team)
@@ -96,9 +96,9 @@ public class RetrospectService {
     }
 
     @Transactional
-    public RetrospectResponseDto updateRetrospect(UpdateRetrospectRequestDto requestDto) {
+    public RetrospectResponseDto updateRetrospect(String userId, UpdateRetrospectRequestDto requestDto) {
         Retrospect retrospect = findById(requestDto.retrospectId());
-        if(!retrospect.getMember().getUserId().equals(requestDto.userId())){
+        if(!retrospect.getMember().getUserId().equals(userId)){
             throw new RetrospectAuthorException();
         }
         retrospect.updateRetrospect(requestDto.title(), requestDto.content());
@@ -113,9 +113,9 @@ public class RetrospectService {
     }
 
     @Transactional
-    public DeleteRetrospectResponseDto deleteRetrospect(DeleteRetrospectRequestDto requestDto) {
+    public DeleteRetrospectResponseDto deleteRetrospect(String userId, DeleteRetrospectRequestDto requestDto) {
         Retrospect retrospect = findById(requestDto.retrospectId());
-        if(!retrospect.getMember().getUserId().equals(requestDto.userId())){
+        if(!retrospect.getMember().getUserId().equals(userId)){
             throw new RetrospectAuthorException();
         }
         long RetrospectId = retrospect.getRetrospectId();

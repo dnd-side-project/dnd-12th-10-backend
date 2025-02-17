@@ -6,6 +6,7 @@ import com.dnd.reevserver.domain.team.dto.response.*;
 import com.dnd.reevserver.domain.team.service.TeamService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,32 +31,32 @@ public class TeamController {
     }
 
     @PostMapping
-    public ResponseEntity<AddTeamResponseDto> addGroup(@RequestBody AddTeamRequestDto requestDto){
-        AddTeamResponseDto response = groupService.addGroup(requestDto);
+    public ResponseEntity<AddTeamResponseDto> addGroup(@AuthenticationPrincipal String userId, @RequestBody AddTeamRequestDto requestDto){
+        AddTeamResponseDto response = groupService.addGroup(userId, requestDto);
         return ResponseEntity.ok().body(response);
     }
 
     @PatchMapping("/favorite")
-    public ResponseEntity<AddFavoriteGroupResponseDto> addGroupFavorite(@RequestBody AddFavoriteGroupRequestDto requestDto){
-        AddFavoriteGroupResponseDto responseDto = groupService.addFavorite(requestDto);
+    public ResponseEntity<AddFavoriteGroupResponseDto> addGroupFavorite(@AuthenticationPrincipal String userId, @RequestBody AddFavoriteGroupRequestDto requestDto){
+        AddFavoriteGroupResponseDto responseDto = groupService.addFavorite(userId, requestDto);
         return ResponseEntity.ok().body(responseDto);
     }
 
     @GetMapping("/favorite")
-    public ResponseEntity<List<TeamResponseDto>> getAllFavoriteGroups(@RequestBody GetAllFavoriteGroupRequestDto requestDto){
-        List<TeamResponseDto> groups = groupService.getAllFavoriteGroups(requestDto);
+    public ResponseEntity<List<TeamResponseDto>> getAllFavoriteGroups(@AuthenticationPrincipal String userId){
+        List<TeamResponseDto> groups = groupService.getAllFavoriteGroups(userId);
         return ResponseEntity.ok().body(groups);
     }
 
     @PostMapping("/join")
-    public ResponseEntity<JoinGroupResponseDto> joinGroup(@RequestBody JoinGroupRequestDto requestDto){
-        JoinGroupResponseDto responseDto = groupService.joinGroup(requestDto);
+    public ResponseEntity<JoinGroupResponseDto> joinGroup(@AuthenticationPrincipal String userId, @RequestBody JoinGroupRequestDto requestDto){
+        JoinGroupResponseDto responseDto = groupService.joinGroup(userId, requestDto);
         return ResponseEntity.ok().body(responseDto);
     }
 
     @DeleteMapping("/leave")
-    public ResponseEntity<LeaveGroupResponseDto> LeaveGroup(@RequestBody LeaveGroupRequestDto requestDto){
-        LeaveGroupResponseDto responseDto = groupService.leaveGroup(requestDto);
+    public ResponseEntity<LeaveGroupResponseDto> LeaveGroup(@AuthenticationPrincipal String userId, @RequestBody LeaveGroupRequestDto requestDto){
+        LeaveGroupResponseDto responseDto = groupService.leaveGroup(userId, requestDto);
         return ResponseEntity.ok().body(responseDto);
     }
 

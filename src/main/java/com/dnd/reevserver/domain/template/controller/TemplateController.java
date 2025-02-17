@@ -6,6 +6,7 @@ import com.dnd.reevserver.domain.template.dto.response.TemplateResponseDto;
 import com.dnd.reevserver.domain.template.service.TemplateService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -23,7 +24,7 @@ public class TemplateController {
     // 유저의 커스텀 템플릿 조회
     @Operation(summary = "유저의 커스텀 템플릿 조회")
     @GetMapping("/custom")
-    public ResponseEntity<List<TemplateResponseDto>> findCustomTemplatesByUser(@RequestParam String userId) {
+    public ResponseEntity<List<TemplateResponseDto>> findCustomTemplatesByUser(@AuthenticationPrincipal String userId) {
         return ResponseEntity.ok(templateService.findCustomTemplatesByUser(userId));
     }
 
@@ -44,16 +45,16 @@ public class TemplateController {
     // 커스텀 템플릿 추가
     @Operation(summary = "커스텀 템플릿 추가, content는 마크다운 형식이기에 markdownContent.replace(/\\n/g, \"\\\\n\")로 처리하셔야 합니다.")
     @PostMapping("/custom")
-    public ResponseEntity<String> createCustomTemplate(@RequestBody CreateTemplateRequestDto dto) {
-        templateService.createCustomTemplate(dto);
+    public ResponseEntity<String> createCustomTemplate(@AuthenticationPrincipal String userId, @RequestBody CreateTemplateRequestDto dto) {
+        templateService.createCustomTemplate(userId, dto);
         return ResponseEntity.ok().body("템플릿 생성이 성공적으로 완료되었습니다.");
     }
 
     // 템플릿 수정
     @Operation(summary = "템플릿 수정, isPublic이 True, 즉 공용 템플릿일 경우 불가능합니다.")
     @PutMapping
-    public ResponseEntity<String> updateTemplate(@RequestBody UpdateTemplateRequestDto dto) {
-        templateService.updateTemplate(dto);
+    public ResponseEntity<String> updateTemplate(@AuthenticationPrincipal String userId, @RequestBody UpdateTemplateRequestDto dto) {
+        templateService.updateTemplate(userId, dto);
         return ResponseEntity.ok().body("템플릿 수정이 성공적으로 완료되었습니다.");
     }
 

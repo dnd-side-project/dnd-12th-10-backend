@@ -54,7 +54,7 @@ public class RetrospectService {
                         .title(retro.getTitle())
                         .content(retro.getContent())
                         .userName(retro.getMember().getNickname())
-                        .timeString(getTimeString(retro.getUpdatedAt()))
+                        .timeString(timeStringUtil.getTimeString(retro.getUpdatedAt()))
                         .likeCount(retro.getLikeCount())
                         .build())
                 .toList();

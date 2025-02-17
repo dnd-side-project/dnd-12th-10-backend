@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -19,6 +20,7 @@ public interface CommentControllerDocs {
 
     @Operation(summary = "댓글 작성 API", description = "회고에 댓글을 작성합니다.")
     public ResponseEntity<CommentResponseDto> addComment(
+            @AuthenticationPrincipal String userId,
         @RequestBody AddCommentRequestDto requestDto);
 
     @Operation(summary = "답글 조회 API", description = "해당 댓글의 답글들을 조회합니다.")
@@ -26,7 +28,7 @@ public interface CommentControllerDocs {
         @PathVariable Long commentId);
 
     @Operation(summary = "답글 작성 API", description = "해당 댓글에 답글을 작성합니다.")
-    public ResponseEntity<ReplyResponseDto> addReply(@PathVariable Long commentId,
+    public ResponseEntity<ReplyResponseDto> addReply(@AuthenticationPrincipal String userId, @PathVariable Long commentId,
         @RequestBody AddReplyRequestDto requestDto);
 
 }

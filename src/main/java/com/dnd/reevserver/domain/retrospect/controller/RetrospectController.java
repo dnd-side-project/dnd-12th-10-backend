@@ -7,6 +7,7 @@ import com.dnd.reevserver.domain.retrospect.dto.response.RetrospectResponseDto;
 import com.dnd.reevserver.domain.retrospect.service.RetrospectService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,26 +27,26 @@ public class RetrospectController implements RetrospectControllerDocs{
     }
 
     @GetMapping
-    public ResponseEntity<RetrospectResponseDto> getRetrospect(@RequestBody GetRetrospectRequestDto requestDto) {
-        RetrospectResponseDto responseDto = retrospectService.getRetrospectById(requestDto);
+    public ResponseEntity<RetrospectResponseDto> getRetrospect(@AuthenticationPrincipal String userId, @RequestBody GetRetrospectRequestDto requestDto) {
+        RetrospectResponseDto responseDto = retrospectService.getRetrospectById(userId, requestDto);
         return ResponseEntity.ok().body(responseDto);
     }
 
     @PostMapping("/add")
-    public ResponseEntity<AddRetrospectResponseDto> addRetrospect(@RequestBody AddRetrospectRequestDto requestDto) {
-       AddRetrospectResponseDto responseDto = retrospectService.addRetrospect(requestDto);
+    public ResponseEntity<AddRetrospectResponseDto> addRetrospect(@AuthenticationPrincipal String userId, @RequestBody AddRetrospectRequestDto requestDto) {
+       AddRetrospectResponseDto responseDto = retrospectService.addRetrospect(userId, requestDto);
        return ResponseEntity.ok().body(responseDto);
     }
 
     @PatchMapping
-    public ResponseEntity<RetrospectResponseDto> updateRetrospect(@RequestBody UpdateRetrospectRequestDto requestDto){
-        RetrospectResponseDto responseDto = retrospectService.updateRetrospect(requestDto);
+    public ResponseEntity<RetrospectResponseDto> updateRetrospect(@AuthenticationPrincipal String userId, @RequestBody UpdateRetrospectRequestDto requestDto){
+        RetrospectResponseDto responseDto = retrospectService.updateRetrospect(userId, requestDto);
         return ResponseEntity.ok().body(responseDto);
     }
 
     @DeleteMapping
-    public ResponseEntity<DeleteRetrospectResponseDto>  deleteRetrospect(@RequestBody DeleteRetrospectRequestDto requestDto){
-        DeleteRetrospectResponseDto responseDto = retrospectService.deleteRetrospect(requestDto);
+    public ResponseEntity<DeleteRetrospectResponseDto>  deleteRetrospect(@AuthenticationPrincipal String userId, @RequestBody DeleteRetrospectRequestDto requestDto){
+        DeleteRetrospectResponseDto responseDto = retrospectService.deleteRetrospect(userId, requestDto);
         return ResponseEntity.ok().body(responseDto);
     }
 

@@ -43,20 +43,20 @@ public class MemberService {
 
     // 회원 정보 수정 (nickname, profileUrl)
     @Transactional
-    public void updateNickname(UpdateMemberNicknameRequestDto dto){
-        Member member = findById(dto.userId());
+    public void updateNickname(String userId, UpdateMemberNicknameRequestDto dto){
+        Member member = findById(userId);
         member.updateNickname(dto.nickname());
     }
 
     @Transactional
-    public void updateProfileUrl(UpdateMemberProfileUrlRequestDto dto){
-        Member member = findById(dto.userId());
+    public void updateProfileUrl(String userId, UpdateMemberProfileUrlRequestDto dto){
+        Member member = findById(userId);
         member.updateProfileUrl(dto.profileUrl());
     }
 
     @Transactional
-    public void updateJob(UpdateMemberJobRequestDto dto){
-        Member member = findById(dto.userId());
+    public void updateJob(String userId, UpdateMemberJobRequestDto dto){
+        Member member = findById(userId);
         member.updateJob(dto.job());
     }
 
@@ -64,10 +64,6 @@ public class MemberService {
     // todo : 이건 추후 자료 구조에 대해서 더 생각해봐야 할 듯, 키워드는 한정적인데 데이터가 많이 늘어남
     @Transactional
     public void insertInfoAfterLogin(String userId, InsertInfoRequestDto dto){
-        log.info("userId : {}", userId);
-        log.info("nickname : {}", dto.nickname());
-        log.info("job : {}", dto.job());
-        log.info("keyword : {}", dto.featureKeyword());
         Member member = findById(userId);
         member.updateNickname(dto.nickname());
         member.updateJob(dto.job());

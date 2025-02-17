@@ -16,7 +16,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/user")
 @RequiredArgsConstructor
-@Slf4j
 public class MemberController {
     private final MemberService memberService;
 
@@ -30,7 +29,6 @@ public class MemberController {
     @Operation(summary = "로그인 이후 정보 기입, 이 API를 악성 이용자가 지나치면 nickname은 기본닉네임+UUID으로, Job은 NA로 구성됩니다.")
     @PatchMapping("/after-login")
     public ResponseEntity<Void> insertInfoAfterLogin(@AuthenticationPrincipal String userId, @RequestBody InsertInfoRequestDto dto){
-        log.info("userId = {}", userId);
         memberService.insertInfoAfterLogin(userId, dto);
         return ResponseEntity.ok().build();
     }

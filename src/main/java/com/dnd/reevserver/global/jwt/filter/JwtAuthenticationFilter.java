@@ -25,6 +25,7 @@ import org.springframework.util.PatternMatchUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 @Component
@@ -35,6 +36,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final MemberRepository memberRepository;
 
     /**
+     * 화이트 리스트에 포함된 요청은 필터링하지 않습니다.
+     */
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+
+        return Arrays.stream(SecurityEndpointPaths.WHITE_LIST)
+                .anyMatch(path ->
+                        PatternMatchUtils.simpleMatch(path, request.getRequestURI()));
+    }
+
+    /**
      * 요청에 대해 JWT 인증을 수행합니다.
      */
     @Override
@@ -42,12 +54,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String token = parseBearerToken(request);
         if (token == null) {
-            log.info("token is null");
             filterChain.doFilter(request, response);
             return;
         }
 
         String userId = jwtProvider.validateToken(token);
+        log.info("token : {}", token);
         log.info("userId : {}", userId);
         if (Strings.isEmpty(userId)) {
             filterChain.doFilter(request, response);
@@ -57,7 +69,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         authenticateUser(userId, request);
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        log.info("userId in auth : {}", authentication.getPrincipal());
+        log.info("userId in auth: {}", authentication.getPrincipal());
 
         filterChain.doFilter(request, response);
     }

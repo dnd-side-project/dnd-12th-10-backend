@@ -1,6 +1,5 @@
 package com.dnd.reevserver.domain.team.controller;
 
-import com.dnd.reevserver.domain.member.dto.request.GetAllUserGroupRequestDto;
 import com.dnd.reevserver.domain.team.dto.request.*;
 import com.dnd.reevserver.domain.team.dto.response.*;
 import com.dnd.reevserver.domain.team.service.TeamService;

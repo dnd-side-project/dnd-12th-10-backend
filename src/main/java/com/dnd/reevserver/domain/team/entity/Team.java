@@ -25,9 +25,6 @@ public class Team extends BaseEntity {
     @Column(name = "group_name", nullable = false, length = 100)
     private String groupName;
 
-    @Column(nullable = false, length = 100)
-    private String introduce;
-
     @Column(nullable = false, length = 1000)
     private String description;
 

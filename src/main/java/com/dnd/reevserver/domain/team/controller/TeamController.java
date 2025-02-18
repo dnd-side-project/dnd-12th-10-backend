@@ -59,4 +59,11 @@ public class TeamController implements TeamControllerDocs{
         return ResponseEntity.ok().body(responseDto);
     }
 
+    //todo:임시메서드입니다. 연동완료시 삭제
+    @PostMapping("/mapping/{userId}")
+    public ResponseEntity<AddTeamResponseDto> addtestGroup(@PathVariable String userId, @RequestBody AddTeamRequestDto requestDto){
+        AddTeamResponseDto response = groupService.addGroup(userId, requestDto);
+        return ResponseEntity.ok().body(response);
+    }
+
 }

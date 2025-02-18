@@ -50,11 +50,9 @@ public class Team extends BaseEntity {
     private List<TeamCategory> teamCategories = new ArrayList<>();
 
     @Builder
-    public Team(String groupName, String description, String introduce,
-        Boolean isPublic, int maxNum, String ownerId) {
+    public Team(String groupName, String description, Boolean isPublic, int maxNum, String ownerId) {
         this.groupName = groupName;
         this.description = description;
-        this.introduce = introduce;
         this.isPublic = isPublic;
         this.maxNum = maxNum;
         this.recentAct = LocalDateTime.now();

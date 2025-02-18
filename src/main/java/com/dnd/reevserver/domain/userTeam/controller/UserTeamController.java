@@ -1,5 +1,6 @@
 package com.dnd.reevserver.domain.userTeam.controller;
 
+import com.dnd.reevserver.domain.userTeam.service.UserTeamService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

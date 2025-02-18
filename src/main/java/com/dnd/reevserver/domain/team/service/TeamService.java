@@ -46,6 +46,7 @@ public class TeamService {
                         .groupId(team.getGroupId())
                         .groupName(team.getGroupName())
                         .description(team.getDescription())
+                        .introduce(team.getIntroduce())
                         .userCount(team.getUserTeams().size())
                         .recentActString(timeStringUtil.getTimeString(team.getRecentAct()))
                         .categoryNames(
@@ -66,6 +67,7 @@ public class TeamService {
                 .groupId(team.getGroupId())
                 .groupName(team.getGroupName())
                 .description(team.getDescription())
+                .introduce(team.getIntroduce())
                 .userCount(team.getUserTeams().size())
                 .recentActString(timeStringUtil.getTimeString(team.getRecentAct()))
                 .categoryNames(
@@ -85,6 +87,7 @@ public class TeamService {
                         .groupId(team.getGroupId())
                         .groupName(team.getGroupName())
                         .description(team.getDescription())
+                        .introduce(team.getIntroduce())
                         .userCount(team.getUserTeams().size())
                         .recentActString(timeStringUtil.getTimeString(team.getRecentAct()))
                         .categoryNames(
@@ -101,6 +104,7 @@ public class TeamService {
     public AddTeamResponseDto addGroup(String userId, AddTeamRequestDto addTeamRequestDto) {
         Team team = Team.builder().groupName(addTeamRequestDto.groupName())
                 .description(addTeamRequestDto.description())
+                .introduce(addTeamRequestDto.introduce())
                 .maxNum(addTeamRequestDto.maxNum())
                 .ownerId(userId)
                 .isPublic(addTeamRequestDto.isPublic())
@@ -163,6 +167,7 @@ public class TeamService {
                             .groupId(team.getGroupId())
                             .groupName(team.getGroupName())
                             .description(team.getDescription())
+                            .introduce(team.getIntroduce())
                             .userCount(team.getUserTeams().size())
                             .recentActString(timeStringUtil.getTimeString(team.getRecentAct()))
                             .categoryNames(

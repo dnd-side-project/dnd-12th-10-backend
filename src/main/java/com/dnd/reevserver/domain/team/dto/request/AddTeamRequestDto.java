@@ -5,6 +5,6 @@ import lombok.Builder;
 import java.util.List;
 
 @Builder
-public record AddTeamRequestDto(String groupName, String description,
+public record AddTeamRequestDto(String groupName, String description, String introduce,
                                 boolean isPublic, int maxNum, List<String> categoryNames) {
 }

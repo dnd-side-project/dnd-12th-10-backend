@@ -17,7 +17,7 @@ public class UserTeamController {
     private final UserTeamService userTeamService;
 
     @Operation(summary = "임시 연관관계 매핑용")
-    @PostMapping("/mapping/{userId}/{teadId}")
+    @PostMapping("/mapping/{userId}/{groupId}")
     public ResponseEntity<String> mapping(@PathVariable String userId, @PathVariable Long groupId) {
         String str = userTeamService.mapping(userId,groupId);
         return ResponseEntity.ok(str);

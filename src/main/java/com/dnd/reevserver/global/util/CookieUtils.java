@@ -14,7 +14,7 @@ public class CookieUtils {
         return ResponseCookie.from(name, value)
                 .secure(true)
                 .sameSite("None")
-                .domain("localhost")
+                .domain(".reevserver.site")
                 .httpOnly(true)
                 .path("/")
                 .maxAge(maxAge)
@@ -26,7 +26,7 @@ public class CookieUtils {
                 .sameSite("None")
                 .secure(true)
                 .httpOnly(true)
-                .domain("localhost")
+                .domain(".reevserver.site")
                 .path("/")
                 .maxAge(maxAge)
                 .build();

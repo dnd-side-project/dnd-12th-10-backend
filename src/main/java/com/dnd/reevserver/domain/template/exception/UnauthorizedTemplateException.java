@@ -11,6 +11,6 @@ public class UnauthorizedTemplateException extends GeneralException {
 
     @Override
     public int getStatusCode() {
-        return 404;
+        return 401;
     }
 }

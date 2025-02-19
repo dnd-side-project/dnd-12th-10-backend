@@ -4,6 +4,7 @@ import com.dnd.reevserver.domain.member.dto.request.*;
 import com.dnd.reevserver.domain.member.dto.response.MemberResponseDto;
 import com.dnd.reevserver.domain.member.entity.FeatureKeyword;
 import com.dnd.reevserver.domain.member.entity.Member;
+import com.dnd.reevserver.domain.member.exception.MemberNicknameAlreadyExistedException;
 import com.dnd.reevserver.domain.member.exception.MemberNotFoundException;
 import com.dnd.reevserver.domain.member.repository.FeatureKeywordRepository;
 import com.dnd.reevserver.domain.member.repository.MemberRepository;
@@ -42,6 +43,9 @@ public class MemberService {
     @Transactional
     public void updateNickname(String userId, UpdateMemberNicknameRequestDto dto){
         Member member = findById(userId);
+        if(memberRepository.existsByNickname(dto.nickname())){
+            throw new MemberNicknameAlreadyExistedException();
+        }
         member.updateNickname(dto.nickname());
     }
 
@@ -62,6 +66,9 @@ public class MemberService {
     @Transactional
     public void insertInfoAfterLogin(String userId, InsertInfoRequestDto dto){
         Member member = findById(userId);
+        if(memberRepository.existsByNickname(dto.nickname())){
+            throw new MemberNicknameAlreadyExistedException();
+        }
         member.updateNickname(dto.nickname());
         member.updateJob(dto.job());
 
@@ -129,5 +136,4 @@ public class MemberService {
         return ChronoUnit.DAYS.between(recentAct, now) + "일 전";
 
     }
-
 }

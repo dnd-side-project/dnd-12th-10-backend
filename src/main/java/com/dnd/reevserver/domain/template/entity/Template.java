@@ -1,12 +1,15 @@
 package com.dnd.reevserver.domain.template.entity;
 
+import com.dnd.reevserver.domain.category.entity.TemplateCategory;
 import com.dnd.reevserver.domain.member.entity.Member;
 import com.dnd.reevserver.global.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
-@Table(name = "Template")
 @Getter
 @Builder
 @AllArgsConstructor
@@ -33,6 +36,8 @@ public class Template extends BaseEntity {
     @Column(name = "description", nullable = false)
     private String description;
 
+    @OneToMany(mappedBy = "template")
+    private List<TemplateCategory> templateCategories = new ArrayList<>();
 
     public void updateTemplateName(String newTemplateName) {
         this.templateName = newTemplateName;
@@ -43,4 +48,13 @@ public class Template extends BaseEntity {
     }
 
     public void updateDescription(String newDescription) { this.description = newDescription; }
+
+    public void clearTemplateCategory(){
+        this.templateCategories.clear();
+    }
+
+    public void addTemplateCategory(TemplateCategory templateCategory) {
+        templateCategories.add(templateCategory);
+        templateCategory.updateTemplate(this);
+    }
 }

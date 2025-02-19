@@ -56,7 +56,7 @@ public class TeamService {
                             .map(teamCategory -> teamCategory.getCategory().getCategoryName())
                             .toList()
                     )
-                    .retrospectCount(retrospectService.)
+                    .retrospectCount(retrospectService.countByGroupId(team.getGroupId()))
                     .build())
                 .toList();
         return teamList;
@@ -78,6 +78,7 @@ public class TeamService {
                                 .map(teamCategory -> teamCategory.getCategory().getCategoryName())
                                 .toList()
                 )
+                .retrospectCount(retrospectService.countByGroupId(team.getGroupId()))
                 .build();
     }
 
@@ -98,6 +99,7 @@ public class TeamService {
                                         .map(teamCategory -> teamCategory.getCategory().getCategoryName())
                                         .toList()
                         )
+                        .retrospectCount(retrospectService.countByGroupId(team.getGroupId()))
                         .build())
                 .toList();
         return teamList;
@@ -178,6 +180,7 @@ public class TeamService {
                                             .map(teamCategory -> teamCategory.getCategory().getCategoryName())
                                             .toList()
                             )
+                            .retrospectCount(retrospectService.countByGroupId(team.getGroupId()))
                             .build();
                 })
                 .toList();

@@ -84,17 +84,28 @@ public class RetrospectService {
     //회고 작성
     public AddRetrospectResponseDto addRetrospect(String userId, AddRetrospectRequestDto requestDto) {
         Member member = memberService.findById(userId);
-        Team team = teamService.findById(requestDto.groupId());
-        UserTeam userTeam = teamService.findByUserIdAndGroupId(userId,requestDto.groupId());
-        Retrospect retrospect = Retrospect.builder()
+        if(requestDto.groupId()!=null) {
+            Team team = teamService.findById(requestDto.groupId());
+            UserTeam userTeam = teamService.findByUserIdAndGroupId(userId, requestDto.groupId());
+            Retrospect retrospect = Retrospect.builder()
                 .member(member)
                 .team(team)
                 .title(requestDto.title())
                 .content(requestDto.content())
                 .build();
+            retrospectRepository.save(retrospect);
+
+            return new AddRetrospectResponseDto(retrospect.getRetrospectId());
+        }
+        Retrospect retrospect = Retrospect.builder()
+            .member(member)
+            .title(requestDto.title())
+            .content(requestDto.content())
+            .build();
         retrospectRepository.save(retrospect);
 
         return new AddRetrospectResponseDto(retrospect.getRetrospectId());
+
     }
 
     public Retrospect findById(Long retrospectId) {

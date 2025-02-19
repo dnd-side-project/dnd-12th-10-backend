@@ -219,4 +219,27 @@ public class TeamService {
         userTeamRepository.delete(userTeam);
         return new LeaveGroupResponseDto("그룹탈퇴가 완료되었습니다.");
     }
+
+    //인기모임 조회
+    @Transactional(readOnly = true)
+    public List<TeamResponseDto> getPopularGroups(){
+        List<Team> groups = teamRepository.findAllPopluarGroups();
+        List<TeamResponseDto> groupList = groups.stream()
+            .map(team -> TeamResponseDto.builder()
+                .groupId(team.getGroupId())
+                .groupName(team.getGroupName())
+                .description(team.getDescription())
+                .introduction(team.getIntroduction())
+                .userCount(team.getUserTeams().size())
+                .recentActString(timeStringUtil.getTimeString(team.getRecentAct()))
+                .categoryNames(
+                    team.getTeamCategories().stream()
+                        .map(teamCategory -> teamCategory.getCategory().getCategoryName())
+                        .toList()
+                )
+                .retrospectCount(retrospectRepository.countByGroupId(team.getGroupId()))
+                .build())
+            .toList();
+        return groupList;
+    }
 }

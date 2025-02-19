@@ -6,6 +6,7 @@ import com.dnd.reevserver.domain.member.service.AuthService;
 import com.dnd.reevserver.global.util.CookieUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
@@ -18,6 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @RestController
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
+@Slf4j
 public class AuthController {
     private final AuthService authService;
 
@@ -39,6 +41,7 @@ public class AuthController {
     @GetMapping("/reissue")
     public ResponseEntity<Void> reissueToken(@CookieValue(value = "refresh_token", required = false) String refreshToken) {
 
+        log.info("reissueToken : {}", refreshToken);
         if (Strings.isEmpty(refreshToken)) {
             throw new UnauthorizedException();
         }

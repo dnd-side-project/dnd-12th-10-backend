@@ -12,6 +12,7 @@ public class TemplateResponseDto {
     private final Long templateId;
     private final String templateName;
     private final String content;
+    private final String preset;
     private final boolean isPublic;
     private final String userId;
     private final List<String> categories;
@@ -21,6 +22,7 @@ public class TemplateResponseDto {
         this.templateName = template.getTemplateName();
         this.content = template.getContent();
         this.isPublic = template.isPublic();
+        this.preset = template.getPreset();
         this.userId = template.isPublic() ? "public" : template.getMember().getUserId();
 
         // 스트림 API를 사용하여 categories 리스트 변환 & 불변 리스트로 저장

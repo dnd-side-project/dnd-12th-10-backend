@@ -33,8 +33,8 @@ public class Template extends BaseEntity {
     @JoinColumn(name = "user_id")
     private Member member; // 유저 전용 템플릿의 소유자 (공용 템플릿일 경우 null)
 
-    @Column(name = "description", nullable = false)
-    private String description;
+    @Column(name = "preset", nullable = false, columnDefinition = "TEXT")
+    private String preset;
 
     @OneToMany(mappedBy = "template")
     private List<TemplateCategory> templateCategories = new ArrayList<>();
@@ -47,7 +47,7 @@ public class Template extends BaseEntity {
         this.content = newContent;
     }
 
-    public void updateDescription(String newDescription) { this.description = newDescription; }
+    public void updateDescription(String newDescription) { this.preset = newDescription; }
 
     public void clearTemplateCategory(){
         this.templateCategories.clear();

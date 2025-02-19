@@ -64,7 +64,7 @@ public class TemplateService {
                 .content(dto.content())
                 .isPublic(false)
                 .member(member)
-                .description(dto.description())
+                .preset(dto.preset())
                 .templateCategories(new ArrayList<>())
                 .build();
         templateRepository.save(template);
@@ -94,7 +94,7 @@ public class TemplateService {
 
         template.updateTemplateName(dto.templateName());
         template.updateContent(dto.content());
-        template.updateDescription(dto.description());
+        template.updateDescription(dto.preset());
 
         templateCategoryRepository.deleteAllByTemplate(template);
         template.clearTemplateCategory();

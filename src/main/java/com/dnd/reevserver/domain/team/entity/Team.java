@@ -28,6 +28,9 @@ public class Team extends BaseEntity {
     @Column(nullable = false, length = 1000)
     private String description;
 
+    @Column(nullable = false, length = 100)
+    private String introduction;
+
     @Column(name = "is_public", nullable = false)
     private Boolean isPublic;
 
@@ -47,9 +50,11 @@ public class Team extends BaseEntity {
     private List<TeamCategory> teamCategories = new ArrayList<>();
 
     @Builder
-    public Team(String groupName, String description, Boolean isPublic, int maxNum, String ownerId) {
+    public Team(String groupName, String description, String introduction,
+        Boolean isPublic, int maxNum, String ownerId) {
         this.groupName = groupName;
         this.description = description;
+        this.introduction = introduction;
         this.isPublic = isPublic;
         this.maxNum = maxNum;
         this.recentAct = LocalDateTime.now();

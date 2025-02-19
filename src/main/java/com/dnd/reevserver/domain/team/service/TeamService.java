@@ -43,17 +43,18 @@ public class TeamService {
         List<Team> groups = teamRepository.findAll();
         List<TeamResponseDto> teamList = groups.stream()
                 .map(team -> TeamResponseDto.builder()
-                        .groupId(team.getGroupId())
-                        .groupName(team.getGroupName())
-                        .description(team.getDescription())
-                        .userCount(team.getUserTeams().size())
-                        .recentActString(timeStringUtil.getTimeString(team.getRecentAct()))
-                        .categoryNames(
-                                team.getTeamCategories().stream()
-                                        .map(teamCategory -> teamCategory.getCategory().getCategoryName())
-                                        .toList()
+                    .groupId(team.getGroupId())
+                    .groupName(team.getGroupName())
+                    .description(team.getDescription())
+                    .introduction(team.getIntroduction())
+                    .userCount(team.getUserTeams().size())
+                    .recentActString(timeStringUtil.getTimeString(team.getRecentAct()))
+                    .categoryNames(
+                        team.getTeamCategories().stream()
+                            .map(teamCategory -> teamCategory.getCategory().getCategoryName())
+                            .toList()
                         )
-                        .build())
+                    .build())
                 .toList();
         return teamList;
     }
@@ -66,6 +67,7 @@ public class TeamService {
                 .groupId(team.getGroupId())
                 .groupName(team.getGroupName())
                 .description(team.getDescription())
+                .introduction(team.getIntroduction())
                 .userCount(team.getUserTeams().size())
                 .recentActString(timeStringUtil.getTimeString(team.getRecentAct()))
                 .categoryNames(
@@ -85,6 +87,7 @@ public class TeamService {
                         .groupId(team.getGroupId())
                         .groupName(team.getGroupName())
                         .description(team.getDescription())
+                        .introduction(team.getIntroduction())
                         .userCount(team.getUserTeams().size())
                         .recentActString(timeStringUtil.getTimeString(team.getRecentAct()))
                         .categoryNames(
@@ -98,17 +101,18 @@ public class TeamService {
     }
 
     //모임 생성
-    public AddTeamResponseDto addGroup(String userId, AddTeamRequestDto addTeamRequestDto) {
-        Team team = Team.builder().groupName(addTeamRequestDto.groupName())
-                .description(addTeamRequestDto.description())
-                .maxNum(addTeamRequestDto.maxNum())
+    public AddTeamResponseDto addGroup(String userId, AddTeamRequestDto addTeamRequest) {
+        Team team = Team.builder().groupName(addTeamRequest.groupName())
+                .description(addTeamRequest.description())
+                .introduction(addTeamRequest.introduction())
+                .maxNum(addTeamRequest.maxNum())
                 .ownerId(userId)
-                .isPublic(addTeamRequestDto.isPublic())
+                .isPublic(addTeamRequest.isPublic())
                 .build();
         teamRepository.save(team);
 
 
-        List<String> categories = addTeamRequestDto.categoryNames();
+        List<String> categories = addTeamRequest.categoryNames();
         if(categories != null){
             for(String categoryName : categories){
                 Category category = categoryService.findByCategoryName(categoryName);
@@ -163,6 +167,7 @@ public class TeamService {
                             .groupId(team.getGroupId())
                             .groupName(team.getGroupName())
                             .description(team.getDescription())
+                            .introduction(team.getIntroduction())
                             .userCount(team.getUserTeams().size())
                             .recentActString(timeStringUtil.getTimeString(team.getRecentAct()))
                             .categoryNames(

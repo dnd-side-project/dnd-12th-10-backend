@@ -50,8 +50,22 @@ public class RetrospectService {
 
     //회고 목록 조회
     @Transactional(readOnly = true)
-    public List<RetrospectResponseDto> getAllRetrospectByGruopId(GetAllGroupRetrospectRequestDto requestDto) {
-        List<Retrospect> list = retrospectRepository.findAllByTeamId(requestDto.groupId());
+    public List<RetrospectResponseDto> getAllRetrospectByGruopId(String userId, GetAllGroupRetrospectRequestDto requestDto) {
+        if(requestDto.groupId()!=null) {
+            List<Retrospect> list = retrospectRepository.findAllByTeamId(requestDto.groupId());
+            List<RetrospectResponseDto> responseDtoList = list.stream()
+                .map(retro -> RetrospectResponseDto.builder()
+                    .retrospectId(retro.getRetrospectId())
+                    .title(retro.getTitle())
+                    .content(retro.getContent())
+                    .userName(retro.getMember().getNickname())
+                    .timeString(timeStringUtil.getTimeString(retro.getUpdatedAt()))
+                    .likeCount(retro.getLikeCount())
+                    .build())
+                .toList();
+            return responseDtoList;
+        }
+
         List<Retrospect> list = retrospectRepository.findAllByUserId(userId);
         List<RetrospectResponseDto> responseDtoList = list.stream()
                 .map(retro -> RetrospectResponseDto.builder()

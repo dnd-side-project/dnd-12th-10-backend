@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 public interface RetrospectControllerDocs {
 
     @Operation(summary = "회고 목록 조회 API", description = "모든 회고들을 불러옵니다.")
-    public ResponseEntity<List<RetrospectResponseDto>> retrospect(@RequestBody GetAllGroupRetrospectRequestDto requestDto);
+    public ResponseEntity<List<RetrospectResponseDto>> retrospect(@AuthenticationPrincipal String userId, @RequestBody GetAllGroupRetrospectRequestDto requestDto);
 
     @Operation(summary = "단일 회고 조회 API", description = "선택한 회고를 불러옵니다.")
     public ResponseEntity<RetrospectResponseDto> getRetrospect(@AuthenticationPrincipal String userId, @RequestBody GetRetrospectRequestDto requestDto);

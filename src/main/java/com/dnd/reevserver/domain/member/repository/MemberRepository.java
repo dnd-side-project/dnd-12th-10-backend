@@ -19,4 +19,6 @@ public interface MemberRepository extends JpaRepository<Member, String> {
             "join ut.team t " +
             "where m.userId = :userId ")
     List<Team> findGroupsByUserId(@Param("userId") String userId);
+
+    boolean existsByNickname(String nickname);
 }

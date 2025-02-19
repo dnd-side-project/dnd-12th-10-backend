@@ -39,7 +39,7 @@ public class CookieUtils {
                 .sameSite("None")
                 .secure(true)
                 .httpOnly(true)
-                .domain("reevserver.site")
+                .domain(".reevserver.site")
                 .path("/")
                 .maxAge(0) // 쿠키 즉시 만료
                 .build();

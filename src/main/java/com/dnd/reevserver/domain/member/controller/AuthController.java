@@ -41,7 +41,6 @@ public class AuthController {
     @GetMapping("/reissue")
     public ResponseEntity<Void> reissueToken(@CookieValue(value = "refresh_token", required = false) String refreshToken) {
 
-        log.info("reissueToken : {}", refreshToken);
         if (Strings.isEmpty(refreshToken)) {
             throw new UnauthorizedException();
         }

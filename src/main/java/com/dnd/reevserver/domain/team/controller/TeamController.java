@@ -66,8 +66,8 @@ public class TeamController implements TeamControllerDocs{
     }
 
     @GetMapping("/recommend")
-    public ResponseEntity<List<TeamResponseDto>> getRecommendGroups(@RequestBody GetRecommendGroupRequestDto requestDto){
-        List<TeamResponseDto> recommendGroup = groupService.getRecommendGroups(requestDto);
+    public ResponseEntity<List<TeamResponseDto>> getRecommendGroups(@AuthenticationPrincipal String userId){
+        List<TeamResponseDto> recommendGroup = groupService.getRecommendGroups(userId);
         return ResponseEntity.ok().body(recommendGroup);
     }
 

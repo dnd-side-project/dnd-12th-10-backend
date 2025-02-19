@@ -249,9 +249,9 @@ public class TeamService {
 
     //추천 모임 조회
     @Transactional(readOnly = true)
-    public List<TeamResponseDto> getRecommendGroups(GetRecommendGroupRequestDto requestDto){
-        Member member = memberService.findById(requestDto.userId());
-        List<String> featureKeywords = featureKeywordService.findAllNames(requestDto.userId());
+    public List<TeamResponseDto> getRecommendGroups(String userId){
+        Member member = memberService.findById(userId);
+        List<String> featureKeywords = featureKeywordService.findAllNames(userId);
         List<Team> groups = teamRepository.findGroupsByCategoryNames(featureKeywords);
         List<TeamResponseDto> groupList = groups.stream()
             .map(team -> TeamResponseDto.builder()

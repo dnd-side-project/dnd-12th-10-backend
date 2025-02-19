@@ -117,4 +117,9 @@ public class RetrospectService {
         if(isLike) retrospect.updateLikeCount(retrospect.getLikeCount() + 1);
         else retrospect.updateLikeCount(retrospect.getLikeCount() - 1);
     }
+
+    @Transactional(readOnly = true)
+    public long countByGroupId(Long groupId) {
+        return retrospectRepository.countByGroupId(groupId);
+    }
 }

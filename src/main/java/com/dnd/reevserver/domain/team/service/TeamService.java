@@ -5,6 +5,8 @@ import com.dnd.reevserver.domain.category.entity.TeamCategory;
 import com.dnd.reevserver.domain.category.repository.TeamCategoryRepository;
 import com.dnd.reevserver.domain.category.service.CategoryService;
 import com.dnd.reevserver.domain.member.dto.request.GetAllUserGroupRequestDto;
+import com.dnd.reevserver.domain.retrospect.repository.RetrospectRepository;
+import com.dnd.reevserver.domain.retrospect.service.RetrospectService;
 import com.dnd.reevserver.domain.team.dto.request.*;
 import com.dnd.reevserver.domain.team.dto.response.*;
 import com.dnd.reevserver.domain.team.entity.Team;
@@ -36,6 +38,7 @@ public class TeamService {
     private final CategoryService categoryService;
     private final TeamCategoryRepository teamCategoryRepository;
     private final TimeStringUtil timeStringUtil;
+    private final RetrospectRepository retrospectRepository;
 
     //모든 그룹조회
     @Transactional(readOnly = true)
@@ -53,7 +56,8 @@ public class TeamService {
                         team.getTeamCategories().stream()
                             .map(teamCategory -> teamCategory.getCategory().getCategoryName())
                             .toList()
-                        )
+                    )
+                    .retrospectCount(retrospectRepository.countByGroupId(team.getGroupId()))
                     .build())
                 .toList();
         return teamList;
@@ -75,6 +79,7 @@ public class TeamService {
                                 .map(teamCategory -> teamCategory.getCategory().getCategoryName())
                                 .toList()
                 )
+                .retrospectCount(retrospectRepository.countByGroupId(team.getGroupId()))
                 .build();
     }
 
@@ -95,6 +100,7 @@ public class TeamService {
                                         .map(teamCategory -> teamCategory.getCategory().getCategoryName())
                                         .toList()
                         )
+                        .retrospectCount(retrospectRepository.countByGroupId(team.getGroupId()))
                         .build())
                 .toList();
         return teamList;
@@ -175,6 +181,7 @@ public class TeamService {
                                             .map(teamCategory -> teamCategory.getCategory().getCategoryName())
                                             .toList()
                             )
+                            .retrospectCount(retrospectRepository.countByGroupId(team.getGroupId()))
                             .build();
                 })
                 .toList();

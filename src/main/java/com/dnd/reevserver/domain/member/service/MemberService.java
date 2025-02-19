@@ -129,5 +129,4 @@ public class MemberService {
         return ChronoUnit.DAYS.between(recentAct, now) + "일 전";
 
     }
-
 }

@@ -84,7 +84,7 @@ public class TemplateService {
     @Transactional
     public void updateTemplate(String userId, UpdateTemplateRequestDto dto) {
         Template template = findById(dto.templateId());
-        if(!template.getMember().getUserId().equals(dto.userId())){
+        if(!template.getMember().getUserId().equals(userId)){
             throw new UnauthorizedTemplateException();
         }
 

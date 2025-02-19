@@ -2,6 +2,7 @@ package com.dnd.reevserver.domain.team.controller;
 
 import com.dnd.reevserver.domain.team.dto.request.AddFavoriteGroupRequestDto;
 import com.dnd.reevserver.domain.team.dto.request.AddTeamRequestDto;
+import com.dnd.reevserver.domain.team.dto.request.GetRecommendGroupRequestDto;
 import com.dnd.reevserver.domain.team.dto.request.JoinGroupRequestDto;
 import com.dnd.reevserver.domain.team.dto.request.LeaveGroupRequestDto;
 import com.dnd.reevserver.domain.team.dto.response.AddFavoriteGroupResponseDto;
@@ -14,6 +15,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -40,4 +42,11 @@ public interface TeamControllerDocs {
 
     @Operation(summary = "모임 탈퇴 API", description = "해당 모임에서 탈퇴합니다.")
     public ResponseEntity<LeaveGroupResponseDto> LeaveGroup(@AuthenticationPrincipal String userId, @RequestBody LeaveGroupRequestDto requestDto);
+
+    @Operation(summary = "인기 모임 조회 API", description = "인기 모임을 조회합니다.")
+    public ResponseEntity<List<TeamResponseDto>> getPopularGroups();
+
+    @Operation(summary = "추천 모임 조회 API", description = "추천 모임을 조회합니다.")
+    public ResponseEntity<List<TeamResponseDto>> getRecommendGroups(@AuthenticationPrincipal String userId);
+
 }

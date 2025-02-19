@@ -5,6 +5,9 @@ import com.dnd.reevserver.domain.category.entity.TeamCategory;
 import com.dnd.reevserver.domain.category.repository.TeamCategoryRepository;
 import com.dnd.reevserver.domain.category.service.CategoryService;
 import com.dnd.reevserver.domain.member.dto.request.GetAllUserGroupRequestDto;
+import com.dnd.reevserver.domain.member.entity.FeatureKeyword;
+import com.dnd.reevserver.domain.member.repository.FeatureKeywordRepository;
+import com.dnd.reevserver.domain.member.service.FeatureKeywordService;
 import com.dnd.reevserver.domain.retrospect.repository.RetrospectRepository;
 import com.dnd.reevserver.domain.retrospect.service.RetrospectService;
 import com.dnd.reevserver.domain.team.dto.request.*;
@@ -39,6 +42,7 @@ public class TeamService {
     private final TeamCategoryRepository teamCategoryRepository;
     private final TimeStringUtil timeStringUtil;
     private final RetrospectRepository retrospectRepository;
+    private final FeatureKeywordService featureKeywordService;
 
     //모든 그룹조회
     @Transactional(readOnly = true)
@@ -218,5 +222,53 @@ public class TeamService {
 
         userTeamRepository.delete(userTeam);
         return new LeaveGroupResponseDto("그룹탈퇴가 완료되었습니다.");
+    }
+
+    //인기모임 조회
+    @Transactional(readOnly = true)
+    public List<TeamResponseDto> getPopularGroups(){
+        List<Team> groups = teamRepository.findAllPopluarGroups();
+        List<TeamResponseDto> groupList = groups.stream()
+            .map(team -> TeamResponseDto.builder()
+                .groupId(team.getGroupId())
+                .groupName(team.getGroupName())
+                .description(team.getDescription())
+                .introduction(team.getIntroduction())
+                .userCount(team.getUserTeams().size())
+                .recentActString(timeStringUtil.getTimeString(team.getRecentAct()))
+                .categoryNames(
+                    team.getTeamCategories().stream()
+                        .map(teamCategory -> teamCategory.getCategory().getCategoryName())
+                        .toList()
+                )
+                .retrospectCount(retrospectRepository.countByGroupId(team.getGroupId()))
+                .build())
+            .toList();
+        return groupList;
+    }
+
+    //추천 모임 조회
+    @Transactional(readOnly = true)
+    public List<TeamResponseDto> getRecommendGroups(String userId){
+        Member member = memberService.findById(userId);
+        List<String> featureKeywords = featureKeywordService.findAllNames(userId);
+        List<Team> groups = teamRepository.findGroupsByCategoryNames(featureKeywords);
+        List<TeamResponseDto> groupList = groups.stream()
+            .map(team -> TeamResponseDto.builder()
+                .groupId(team.getGroupId())
+                .groupName(team.getGroupName())
+                .description(team.getDescription())
+                .introduction(team.getIntroduction())
+                .userCount(team.getUserTeams().size())
+                .recentActString(timeStringUtil.getTimeString(team.getRecentAct()))
+                .categoryNames(
+                    team.getTeamCategories().stream()
+                        .map(teamCategory -> teamCategory.getCategory().getCategoryName())
+                        .toList()
+                )
+                .retrospectCount(retrospectRepository.countByGroupId(team.getGroupId()))
+                .build())
+            .toList();
+        return groupList;
     }
 }

@@ -1,4 +1,6 @@
 package com.dnd.reevserver.domain.template.dto.request;
 
-public record UpdateTemplateRequestDto(Long templateId, String templateName, String content, String description) {
+import java.util.List;
+
+public record UpdateTemplateRequestDto(String userId, Long templateId, String templateName, String content, String description, List<String> categoryNames) {
 }

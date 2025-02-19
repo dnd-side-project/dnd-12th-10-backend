@@ -7,6 +7,7 @@ import com.dnd.reevserver.domain.team.dto.request.JoinGroupRequestDto;
 import com.dnd.reevserver.domain.team.dto.request.LeaveGroupRequestDto;
 import com.dnd.reevserver.domain.team.dto.response.AddFavoriteGroupResponseDto;
 import com.dnd.reevserver.domain.team.dto.response.AddTeamResponseDto;
+import com.dnd.reevserver.domain.team.dto.response.GetPopularGroupResponseDto;
 import com.dnd.reevserver.domain.team.dto.response.JoinGroupResponseDto;
 import com.dnd.reevserver.domain.team.dto.response.LeaveGroupResponseDto;
 import com.dnd.reevserver.domain.team.dto.response.TeamResponseDto;
@@ -44,7 +45,7 @@ public interface TeamControllerDocs {
     public ResponseEntity<LeaveGroupResponseDto> LeaveGroup(@AuthenticationPrincipal String userId, @RequestBody LeaveGroupRequestDto requestDto);
 
     @Operation(summary = "인기 모임 조회 API", description = "인기 모임을 조회합니다.")
-    public ResponseEntity<List<TeamResponseDto>> getPopularGroups();
+    public ResponseEntity<List<GetPopularGroupResponseDto>> getPopularGroups();
 
     @Operation(summary = "추천 모임 조회 API", description = "추천 모임을 조회합니다.")
     public ResponseEntity<List<TeamResponseDto>> getRecommendGroups(@AuthenticationPrincipal String userId);

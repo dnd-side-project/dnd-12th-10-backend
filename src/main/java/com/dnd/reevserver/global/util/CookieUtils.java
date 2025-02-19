@@ -14,7 +14,7 @@ public class CookieUtils {
         return ResponseCookie.from(name, value)
                 .secure(true)
                 .sameSite("None")
-                .domain(".reevserver.site")
+                .domain("reevserver.site")
                 .httpOnly(true)
                 .path("/")
                 .maxAge(maxAge)
@@ -26,7 +26,7 @@ public class CookieUtils {
                 .sameSite("None")
                 .secure(true)
                 .httpOnly(true)
-                .domain(".reevserver.site")
+                .domain("reevserver.site")
                 .path("/")
                 .maxAge(maxAge)
                 .build();
@@ -39,7 +39,7 @@ public class CookieUtils {
                 .sameSite("None")
                 .secure(true)
                 .httpOnly(true)
-                .domain(".reevserver.site")
+                .domain("reevserver.site")
                 .path("/")
                 .maxAge(0) // 쿠키 즉시 만료
                 .build();

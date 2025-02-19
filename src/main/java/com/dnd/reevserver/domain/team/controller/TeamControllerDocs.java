@@ -46,7 +46,7 @@ public interface TeamControllerDocs {
     @Operation(summary = "인기 모임 조회 API", description = "인기 모임을 조회합니다.")
     public ResponseEntity<List<TeamResponseDto>> getPopularGroups();
 
-    @Operation(summary = "추천 모임 조회 API", description = "추천 모임을 조회합니다".)
+    @Operation(summary = "추천 모임 조회 API", description = "추천 모임을 조회합니다.")
     public ResponseEntity<List<TeamResponseDto>> getRecommendGroups(@AuthenticationPrincipal String userId);
 
 }

@@ -65,6 +65,11 @@ public class TeamController implements TeamControllerDocs{
         return ResponseEntity.ok().body(popularGroup);
     }
 
+    @GetMapping("/recommend")
+    public ResponseEntity<List<TeamResponseDto>> getRecommendGroups(@RequestBody GetRecommendGroupRequestDto requestDto){
+        List<TeamResponseDto> recommendGroup = groupService.getRecommendGroups(requestDto);
+        return ResponseEntity.ok().body(recommendGroup);
+    }
 
     //todo:임시메서드입니다. 연동완료시 삭제
     @PostMapping("/mapping/{userId}")

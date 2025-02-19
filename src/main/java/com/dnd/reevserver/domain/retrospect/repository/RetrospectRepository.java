@@ -12,5 +12,6 @@ public interface RetrospectRepository extends JpaRepository<Retrospect, Long> {
     @Query("select r from Retrospect r where r.team.groupId = :groupId ")
     List<Retrospect> findAllByTeamId(@Param("groupId") Long groupId);
 
-    long countByTeamId(Long groupId);
+    @Query("select count(r) from Retrospect r WHERE r.team.groupId = :groupId")
+    long countByGroupId(Long groupId);
 }

@@ -120,6 +120,6 @@ public class RetrospectService {
 
     @Transactional(readOnly = true)
     public long countByGroupId(Long groupId) {
-        return retrospectRepository.countByTeamId(groupId);
+        return retrospectRepository.countByGroupId(groupId);
     }
 }

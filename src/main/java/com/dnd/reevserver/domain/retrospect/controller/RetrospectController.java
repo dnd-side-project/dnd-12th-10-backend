@@ -21,8 +21,8 @@ public class RetrospectController implements RetrospectControllerDocs{
 
     //todo:페이징
     @GetMapping("/all")
-    public ResponseEntity<List<RetrospectResponseDto>> retrospect(@RequestBody GetAllGroupRetrospectRequestDto requestDto) {
-        List<RetrospectResponseDto> retroList = retrospectService.getAllRetrospectByGruopId(requestDto);
+    public ResponseEntity<List<RetrospectResponseDto>> retrospect(@AuthenticationPrincipal String userId, @RequestBody GetAllGroupRetrospectRequestDto requestDto) {
+        List<RetrospectResponseDto> retroList = retrospectService.getAllRetrospectByGruopId(userId, requestDto);
         return ResponseEntity.ok().body(retroList);
     }
 
@@ -49,5 +49,7 @@ public class RetrospectController implements RetrospectControllerDocs{
         DeleteRetrospectResponseDto responseDto = retrospectService.deleteRetrospect(userId, requestDto);
         return ResponseEntity.ok().body(responseDto);
     }
+
+
 
 }

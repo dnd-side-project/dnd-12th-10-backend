@@ -8,6 +8,8 @@ import com.dnd.reevserver.domain.member.dto.request.GetAllUserGroupRequestDto;
 import com.dnd.reevserver.domain.member.entity.FeatureKeyword;
 import com.dnd.reevserver.domain.member.repository.FeatureKeywordRepository;
 import com.dnd.reevserver.domain.member.service.FeatureKeywordService;
+import com.dnd.reevserver.domain.retrospect.dto.response.RetrospectResponseDto;
+import com.dnd.reevserver.domain.retrospect.entity.Retrospect;
 import com.dnd.reevserver.domain.retrospect.repository.RetrospectRepository;
 import com.dnd.reevserver.domain.retrospect.service.RetrospectService;
 import com.dnd.reevserver.domain.team.dto.request.*;
@@ -111,6 +113,7 @@ public class TeamService {
     }
 
     //모임 생성
+    @Transactional
     public AddTeamResponseDto addGroup(String userId, AddTeamRequestDto addTeamRequest) {
         Team team = Team.builder().groupName(addTeamRequest.groupName())
                 .description(addTeamRequest.description())
@@ -226,24 +229,41 @@ public class TeamService {
 
     //인기모임 조회
     @Transactional(readOnly = true)
-    public List<TeamResponseDto> getPopularGroups(){
+    public List<GetPopularGroupResponseDto> getPopularGroups(){
         List<Team> groups = teamRepository.findAllPopluarGroups();
-        List<TeamResponseDto> groupList = groups.stream()
-            .map(team -> TeamResponseDto.builder()
-                .groupId(team.getGroupId())
-                .groupName(team.getGroupName())
-                .description(team.getDescription())
-                .introduction(team.getIntroduction())
-                .userCount(team.getUserTeams().size())
-                .recentActString(timeStringUtil.getTimeString(team.getRecentAct()))
-                .categoryNames(
-                    team.getTeamCategories().stream()
-                        .map(teamCategory -> teamCategory.getCategory().getCategoryName())
-                        .toList()
-                )
-                .retrospectCount(retrospectRepository.countByGroupId(team.getGroupId()))
-                .build())
+        List<GetPopularGroupResponseDto> groupList = groups.stream()
+            .map(team -> {
+                TeamResponseDto teamResponseDto = TeamResponseDto.builder()
+                        .groupId(team.getGroupId())
+                        .groupName(team.getGroupName())
+                        .description(team.getDescription())
+                        .introduction(team.getIntroduction())
+                        .userCount(team.getUserTeams().size())
+                        .recentActString(timeStringUtil.getTimeString(team.getRecentAct()))
+                        .categoryNames(
+                            team.getTeamCategories().stream()
+                                .map(teamCategory -> teamCategory.getCategory().getCategoryName())
+                                .toList()
+                        )
+                        .retrospectCount(retrospectRepository.countByGroupId(team.getGroupId()))
+                        .build();
+                Optional<Retrospect> retrospect = retrospectRepository.findFirstByTeam_GroupIdOrderByUpdatedAtDesc(team.getGroupId());
+                RetrospectResponseDto retrospectResponseDto = null;
+                if(retrospect.isPresent()){
+                    Retrospect retro = retrospect.get();
+                   retrospectResponseDto = RetrospectResponseDto.builder()
+                        .retrospectId(retro.getRetrospectId())
+                        .title(retro.getTitle())
+                        .content(retro.getContent())
+                        .userName(retro.getMember().getNickname())
+                        .timeString(timeStringUtil.getTimeString(retro.getUpdatedAt()))
+                        .likeCount(retro.getLikeCount())
+                        .build();
+                }
+               return new GetPopularGroupResponseDto(teamResponseDto, retrospectResponseDto);
+            })
             .toList();
+
         return groupList;
     }
 

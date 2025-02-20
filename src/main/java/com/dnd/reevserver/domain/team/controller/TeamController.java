@@ -60,8 +60,8 @@ public class TeamController implements TeamControllerDocs{
     }
 
     @GetMapping("/popular")
-    public ResponseEntity<List<TeamResponseDto>> getPopularGroups(){
-        List<TeamResponseDto> popularGroup = groupService.getPopularGroups();
+    public ResponseEntity<List<GetPopularGroupResponseDto>> getPopularGroups(){
+        List<GetPopularGroupResponseDto> popularGroup = groupService.getPopularGroups();
         return ResponseEntity.ok().body(popularGroup);
     }
 

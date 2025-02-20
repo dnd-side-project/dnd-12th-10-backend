@@ -113,6 +113,7 @@ public class TeamService {
     }
 
     //모임 생성
+    @Transactional
     public AddTeamResponseDto addGroup(String userId, AddTeamRequestDto addTeamRequest) {
         Team team = Team.builder().groupName(addTeamRequest.groupName())
                 .description(addTeamRequest.description())

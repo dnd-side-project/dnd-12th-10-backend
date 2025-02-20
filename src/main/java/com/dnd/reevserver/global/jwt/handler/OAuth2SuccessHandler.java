@@ -45,18 +45,26 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         String encodedName = URLEncoder.encode(kakaoName, StandardCharsets.UTF_8);
 
         if ("NA".equals(oauth2User.getJob())) {
-            response.sendRedirect(redirectUrl + "?access_token=" + accessToken + "&isRegistered=true&name=" + encodedName);
+            if(redirectUrl.contains("?redirect="))
+                response.sendRedirect(redirectUrl + "&access_token=" + accessToken + "&isRegistered=true&name=" + encodedName);
+            else
+                response.sendRedirect(redirectUrl + "?access_token=" + accessToken + "&isRegistered=true&name=" + encodedName);
         } else {
-            response.sendRedirect(redirectUrl + "?access_token=" + accessToken + "&isRegistered=false&name=" + encodedName);
+            if(redirectUrl.contains("?redirect="))
+                response.sendRedirect(redirectUrl + "&access_token=" + accessToken + "&isRegistered=false&name=" + encodedName);
+            else
+                response.sendRedirect(redirectUrl + "?access_token=" + accessToken + "&isRegistered=false&name=" + encodedName);
         }
 
     }
 
     public String getRedirectUrl(HttpServletRequest request) {
-        String baseUrl = reevProperties.getFrontUrl().get(0) + "/login/success";
+        String baseUrl = reevProperties.getFrontUrl().get(5) + "/login/success";
 
         HttpSession session = request.getSession();
         String redirectParam = (String) session.getAttribute(tokenProperties.getQueryParam());
+        if("localhost".equals(redirectParam))
+            baseUrl = reevProperties.getFrontUrl().get(0) + "/login/success";
         session.removeAttribute(tokenProperties.getQueryParam());
 
         return (redirectParam != null)

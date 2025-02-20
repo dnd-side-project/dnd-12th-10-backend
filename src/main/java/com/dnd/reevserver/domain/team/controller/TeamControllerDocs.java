@@ -8,6 +8,7 @@ import com.dnd.reevserver.domain.team.dto.request.LeaveGroupRequestDto;
 import com.dnd.reevserver.domain.team.dto.response.AddFavoriteGroupResponseDto;
 import com.dnd.reevserver.domain.team.dto.response.AddTeamResponseDto;
 import com.dnd.reevserver.domain.team.dto.response.GetPopularGroupResponseDto;
+import com.dnd.reevserver.domain.team.dto.response.GroupDetailResponseDto;
 import com.dnd.reevserver.domain.team.dto.response.JoinGroupResponseDto;
 import com.dnd.reevserver.domain.team.dto.response.LeaveGroupResponseDto;
 import com.dnd.reevserver.domain.team.dto.response.TeamResponseDto;
@@ -27,7 +28,7 @@ public interface TeamControllerDocs {
     public ResponseEntity<List<TeamResponseDto>> getAllGroups();
 
     @Operation(summary = "모임 단일 조회 API", description = "해당 그룹정보를 가져옵니다.")
-    public ResponseEntity<TeamResponseDto> getGroupById(@PathVariable("groupId") Long groupId);
+    public ResponseEntity<GroupDetailResponseDto> getGroupById(@AuthenticationPrincipal String userId, @PathVariable Long groupId);
 
     @Operation(summary = "모임 생성 API", description = "그룹을 생성합니다.")
     public ResponseEntity<AddTeamResponseDto> addGroup(@AuthenticationPrincipal String userId, @RequestBody AddTeamRequestDto requestDto);

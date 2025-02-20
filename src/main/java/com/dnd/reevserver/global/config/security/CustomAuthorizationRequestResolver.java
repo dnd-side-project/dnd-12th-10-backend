@@ -31,7 +31,6 @@ public class CustomAuthorizationRequestResolver implements OAuth2AuthorizationRe
     }
 
     private OAuth2AuthorizationRequest customizeAuthorizationRequest(HttpServletRequest request, OAuth2AuthorizationRequest authorizationRequest) {
-
         if (authorizationRequest == null) {
             return null;
         }
@@ -41,6 +40,13 @@ public class CustomAuthorizationRequestResolver implements OAuth2AuthorizationRe
             request.getSession().setAttribute(QUERY_PARAM, redirect);
         }
 
-        return authorizationRequest;
+        return OAuth2AuthorizationRequest.from(authorizationRequest)
+                .additionalParameters(params -> {
+                    if (redirect != null) {
+                        params.put(QUERY_PARAM, redirect);
+                    }
+                })
+                .build();
     }
+
 }

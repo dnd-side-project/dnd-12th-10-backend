@@ -6,6 +6,7 @@ import com.dnd.reevserver.domain.category.repository.TeamCategoryRepository;
 import com.dnd.reevserver.domain.category.service.CategoryService;
 import com.dnd.reevserver.domain.member.dto.request.GetAllUserGroupRequestDto;
 import com.dnd.reevserver.domain.member.entity.FeatureKeyword;
+import com.dnd.reevserver.domain.member.entity.role.Role;
 import com.dnd.reevserver.domain.member.repository.FeatureKeywordRepository;
 import com.dnd.reevserver.domain.member.service.FeatureKeywordService;
 import com.dnd.reevserver.domain.retrospect.dto.response.RetrospectResponseDto;
@@ -71,9 +72,9 @@ public class TeamService {
 
     //그룹 단건 조회
     @Transactional(readOnly = true)
-    public TeamResponseDto getGroupById(Long groupId) {
+    public GroupDetailResponseDto getGroup(String userId, Long groupId) {
         Team team = teamRepository.findById(groupId).orElseThrow(TeamNotFoundException::new);
-        return TeamResponseDto.builder()
+        return GroupDetailResponseDto.builder()
                 .groupId(team.getGroupId())
                 .groupName(team.getGroupName())
                 .description(team.getDescription())
@@ -86,6 +87,8 @@ public class TeamService {
                                 .toList()
                 )
                 .retrospectCount(retrospectRepository.countByGroupId(team.getGroupId()))
+                .createDate(timeStringUtil.getString(team.getCreatedAt()))
+                .role(getRole(userId,team))
                 .build();
     }
 
@@ -113,6 +116,7 @@ public class TeamService {
     }
 
     //모임 생성
+    @Transactional
     public AddTeamResponseDto addGroup(String userId, AddTeamRequestDto addTeamRequest) {
         Team team = Team.builder().groupName(addTeamRequest.groupName())
                 .description(addTeamRequest.description())
@@ -289,5 +293,18 @@ public class TeamService {
                 .build())
             .toList();
         return groupList;
+    }
+
+    //유저역할반환
+    public Role getRole(String userId, Team group){
+        Optional<UserTeam> userTeam = userTeamRepository.findByUserIdAndGroupId(userId,group.getGroupId());
+        if(userTeam.isEmpty()){
+            return Role.NON_MEMBER;
+        }
+        if(userId.equals(group.getOwnerId())){
+            return Role.LEADER;
+        }
+        return Role.MEMBER;
+
     }
 }

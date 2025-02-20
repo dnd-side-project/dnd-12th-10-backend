@@ -73,7 +73,7 @@ public class TeamService {
     @Transactional(readOnly = true)
     public GroupDetailResponseDto getGroup(String userId, Long groupId) {
         Team team = teamRepository.findById(groupId).orElseThrow(TeamNotFoundException::new);
-        return TeamResponseDto.builder()
+        return GroupDetailResponseDto.builder()
                 .groupId(team.getGroupId())
                 .groupName(team.getGroupName())
                 .description(team.getDescription())
@@ -86,6 +86,7 @@ public class TeamService {
                                 .toList()
                 )
                 .retrospectCount(retrospectRepository.countByGroupId(team.getGroupId()))
+            .createDate(team.getCreatedAt().toTimeString())
                 .build();
     }
 

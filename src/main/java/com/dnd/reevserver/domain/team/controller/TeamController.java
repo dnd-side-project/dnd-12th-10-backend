@@ -24,8 +24,8 @@ public class TeamController implements TeamControllerDocs{
     }
 
     @GetMapping("/{groupId}")
-    public ResponseEntity<TeamResponseDto> getGroupById(@AuthenticationPrincipal String userId, @PathVariable("groupId") Long groupId){
-        TeamResponseDto response = groupService.getGroup(userId,groupId);
+    public ResponseEntity<GroupDetailResponseDto> getGroupById(@AuthenticationPrincipal String userId, @PathVariable("groupId") Long groupId){
+        GroupDetailResponseDto response = groupService.getGroup(userId,groupId);
         return ResponseEntity.ok().body(response);
     }
 

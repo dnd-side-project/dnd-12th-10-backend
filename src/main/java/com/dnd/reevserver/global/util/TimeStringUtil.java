@@ -1,6 +1,7 @@
 package com.dnd.reevserver.global.util;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import org.springframework.stereotype.Component;
 
@@ -17,5 +18,10 @@ public class TimeStringUtil {
             return ChronoUnit.HOURS.between(time, now) + "시간 전";
         }
         return ChronoUnit.DAYS.between(time, now) + "일 전";
+    }
+
+    public String getString(LocalDateTime time){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy년 M월 d일");
+        return time.format(formatter);
     }
 }

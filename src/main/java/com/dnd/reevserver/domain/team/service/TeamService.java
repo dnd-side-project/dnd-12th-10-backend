@@ -71,7 +71,7 @@ public class TeamService {
 
     //그룹 단건 조회
     @Transactional(readOnly = true)
-    public TeamResponseDto getGroupById(Long groupId) {
+    public GroupDetailResponseDto getGroup(String userId, Long groupId) {
         Team team = teamRepository.findById(groupId).orElseThrow(TeamNotFoundException::new);
         return TeamResponseDto.builder()
                 .groupId(team.getGroupId())

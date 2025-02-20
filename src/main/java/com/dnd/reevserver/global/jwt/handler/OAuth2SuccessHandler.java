@@ -45,9 +45,15 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         String encodedName = URLEncoder.encode(kakaoName, StandardCharsets.UTF_8);
 
         if ("NA".equals(oauth2User.getJob())) {
-            response.sendRedirect(redirectUrl + "?access_token=" + accessToken + "&isRegistered=true&name=" + encodedName);
+            if(redirectUrl.contains("?redirect="))
+                response.sendRedirect(redirectUrl + "&access_token=" + accessToken + "&isRegistered=true&name=" + encodedName);
+            else
+                response.sendRedirect(redirectUrl + "?access_token=" + accessToken + "&isRegistered=true&name=" + encodedName);
         } else {
-            response.sendRedirect(redirectUrl + "?access_token=" + accessToken + "&isRegistered=false&name=" + encodedName);
+            if(redirectUrl.contains("?redirect="))
+                response.sendRedirect(redirectUrl + "&access_token=" + accessToken + "&isRegistered=false&name=" + encodedName);
+            else
+                response.sendRedirect(redirectUrl + "?access_token=" + accessToken + "&isRegistered=false&name=" + encodedName);
         }
 
     }

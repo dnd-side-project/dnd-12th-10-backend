@@ -82,6 +82,7 @@ public class RetrospectService {
 
 
     //회고 작성
+    @Transactional
     public AddRetrospectResponseDto addRetrospect(String userId, AddRetrospectRequestDto requestDto) {
         Member member = memberService.findById(userId);
         if(requestDto.groupId()!=null) {

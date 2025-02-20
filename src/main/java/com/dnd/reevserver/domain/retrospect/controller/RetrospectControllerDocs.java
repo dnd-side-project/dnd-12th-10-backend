@@ -13,16 +13,18 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Tag(name = "회고 API", description = "회고와 관련한 API입니다.")
 public interface RetrospectControllerDocs {
 
     @Operation(summary = "회고 목록 조회 API", description = "모든 회고들을 불러옵니다.")
-    public ResponseEntity<List<RetrospectResponseDto>> retrospect(@AuthenticationPrincipal String userId, @RequestBody GetAllGroupRetrospectRequestDto requestDto);
+    public ResponseEntity<List<RetrospectResponseDto>> retrospect(@AuthenticationPrincipal String userId, @RequestParam Long groupId);
 
     @Operation(summary = "단일 회고 조회 API", description = "선택한 회고를 불러옵니다.")
-    public ResponseEntity<RetrospectResponseDto> getRetrospect(@AuthenticationPrincipal String userId, @RequestBody GetRetrospectRequestDto requestDto);
+    public ResponseEntity<RetrospectResponseDto> getRetrospect(@AuthenticationPrincipal String userId, @PathVariable Long retrospectId);
 
     @Operation(summary = "회고 작성 API", description = "회고를 작성합니다.")
     public ResponseEntity<AddRetrospectResponseDto> addRetrospect(@AuthenticationPrincipal String userId, @RequestBody AddRetrospectRequestDto requestDto);

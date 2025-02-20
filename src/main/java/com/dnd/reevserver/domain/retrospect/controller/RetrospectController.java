@@ -21,14 +21,14 @@ public class RetrospectController implements RetrospectControllerDocs{
 
     //todo:페이징
     @GetMapping("/all")
-    public ResponseEntity<List<RetrospectResponseDto>> retrospect(@AuthenticationPrincipal String userId, @RequestBody GetAllGroupRetrospectRequestDto requestDto) {
-        List<RetrospectResponseDto> retroList = retrospectService.getAllRetrospectByGruopId(userId, requestDto);
+    public ResponseEntity<List<RetrospectResponseDto>> retrospect(@AuthenticationPrincipal String userId, @RequestParam(required = false) Long groupId) {
+        List<RetrospectResponseDto> retroList = retrospectService.getAllRetrospectByGruopId(userId, groupId);
         return ResponseEntity.ok().body(retroList);
     }
 
-    @GetMapping
-    public ResponseEntity<RetrospectResponseDto> getRetrospect(@AuthenticationPrincipal String userId, @RequestBody GetRetrospectRequestDto requestDto) {
-        RetrospectResponseDto responseDto = retrospectService.getRetrospectById(userId, requestDto);
+    @GetMapping("/{retrospectId}")
+    public ResponseEntity<RetrospectResponseDto> getRetrospect(@AuthenticationPrincipal String userId, @PathVariable Long retrospectId) {
+        RetrospectResponseDto responseDto = retrospectService.getRetrospectById(userId, retrospectId);
         return ResponseEntity.ok().body(responseDto);
     }
 

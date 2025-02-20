@@ -59,7 +59,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     }
 
     public String getRedirectUrl(HttpServletRequest request) {
-        String baseUrl = reevProperties.getFrontUrl().get(4) + "/login/success";
+        String baseUrl = reevProperties.getFrontUrl().get(5) + "/login/success";
 
         HttpSession session = request.getSession();
         String redirectParam = (String) session.getAttribute(tokenProperties.getQueryParam());

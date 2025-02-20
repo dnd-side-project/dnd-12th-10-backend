@@ -6,6 +6,7 @@ import com.dnd.reevserver.domain.category.repository.TeamCategoryRepository;
 import com.dnd.reevserver.domain.category.service.CategoryService;
 import com.dnd.reevserver.domain.member.dto.request.GetAllUserGroupRequestDto;
 import com.dnd.reevserver.domain.member.entity.FeatureKeyword;
+import com.dnd.reevserver.domain.member.entity.role.Role;
 import com.dnd.reevserver.domain.member.repository.FeatureKeywordRepository;
 import com.dnd.reevserver.domain.member.service.FeatureKeywordService;
 import com.dnd.reevserver.domain.retrospect.dto.response.RetrospectResponseDto;
@@ -295,15 +296,15 @@ public class TeamService {
     }
 
     //유저역할반환
-    public String getRole(String userId, Team group){
+    public Role getRole(String userId, Team group){
         Optional<UserTeam> userTeam = userTeamRepository.findByUserIdAndGroupId(userId,group.getGroupId());
         if(userTeam.isEmpty()){
-            return "non_member";
+            return Role.NON_MEMBER;
         }
         if(userId.equals(group.getOwnerId())){
-            return "leader";
+            return Role.LEADER;
         }
-        return "member";
+        return Role.MEMBER;
 
     }
 }

@@ -86,7 +86,8 @@ public class TeamService {
                                 .toList()
                 )
                 .retrospectCount(retrospectRepository.countByGroupId(team.getGroupId()))
-            .createDate(team.getCreatedAt().toTimeString())
+                .createDate(timeStringUtil.getString(team.getCreatedAt()))
+                .role(getRole(userId,team))
                 .build();
     }
 
@@ -291,5 +292,18 @@ public class TeamService {
                 .build())
             .toList();
         return groupList;
+    }
+
+    //유저역할반환
+    public String getRole(String userId, Team group){
+        Optional<UserTeam> userTeam = userTeamRepository.findByUserIdAndGroupId(userId,group.getGroupId());
+        if(userTeam.isEmpty()){
+            return "non_member";
+        }
+        if(userId.equals(group.getOwnerId())){
+            return "leader";
+        }
+        return "member";
+
     }
 }

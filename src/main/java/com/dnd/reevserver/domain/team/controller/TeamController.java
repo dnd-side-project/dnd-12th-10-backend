@@ -24,8 +24,8 @@ public class TeamController implements TeamControllerDocs{
     }
 
     @GetMapping("/{groupId}")
-    public ResponseEntity<TeamResponseDto> getGroupById(@PathVariable("groupId") Long groupId){
-        TeamResponseDto response = groupService.getGroupById(groupId);
+    public ResponseEntity<GroupDetailResponseDto> getGroupById(@AuthenticationPrincipal String userId, @PathVariable Long groupId){
+        GroupDetailResponseDto response = groupService.getGroup(userId,groupId);
         return ResponseEntity.ok().body(response);
     }
 
@@ -69,13 +69,6 @@ public class TeamController implements TeamControllerDocs{
     public ResponseEntity<List<TeamResponseDto>> getRecommendGroups(@AuthenticationPrincipal String userId){
         List<TeamResponseDto> recommendGroup = groupService.getRecommendGroups(userId);
         return ResponseEntity.ok().body(recommendGroup);
-    }
-
-    //todo:임시메서드입니다. 연동완료시 삭제
-    @PostMapping("/mapping/{userId}")
-    public ResponseEntity<AddTeamResponseDto> addtestGroup(@PathVariable String userId, @RequestBody AddTeamRequestDto requestDto){
-        AddTeamResponseDto response = groupService.addGroup(userId, requestDto);
-        return ResponseEntity.ok().body(response);
     }
 
 

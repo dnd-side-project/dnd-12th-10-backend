@@ -38,7 +38,8 @@ public class RetrospectService {
     public RetrospectResponseDto getRetrospectById(String userId, Long retrospectId) {
 
         Retrospect retrospect = findById(retrospectId);
-        return RetrospectResponseDto.builder()
+        if(retrospect.getTeam()!=null){
+            return RetrospectResponseDto.builder()
                 .retrospectId(retrospect.getRetrospectId())
                 .title(retrospect.getTitle())
                 .content(retrospect.getContent())
@@ -48,6 +49,16 @@ public class RetrospectService {
                 .commentCount(commentRepository.countByRetrospect(retrospect))
                 .groupName(retrospect.getTeam().getGroupName())
                 .groupId(retrospect.getTeam().getGroupId())
+                .build();
+        }
+        return RetrospectResponseDto.builder()
+                .retrospectId(retrospect.getRetrospectId())
+                .title(retrospect.getTitle())
+                .content(retrospect.getContent())
+                .userName(retrospect.getMember().getNickname())
+                .timeString(timeStringUtil.getTimeString(retrospect.getUpdatedAt()))
+                .likeCount(retrospect.getLikeCount())
+                .commentCount(commentRepository.countByRetrospect(retrospect))
                 .build();
     }
 

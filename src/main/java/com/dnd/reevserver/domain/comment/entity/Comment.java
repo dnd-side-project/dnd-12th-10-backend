@@ -46,6 +46,7 @@ public class Comment extends BaseEntity {
         this.member = member;
         this.retrospect = retrospect;
         this.content = content;
+        this.likeCount = 0;
     }
 
     public void updateComment(Comment comment) {

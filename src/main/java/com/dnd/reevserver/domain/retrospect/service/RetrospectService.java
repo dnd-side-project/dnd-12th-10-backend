@@ -92,6 +92,8 @@ public class RetrospectService {
                         .userName(retro.getMember().getNickname())
                         .timeString(timeStringUtil.getTimeString(retro.getUpdatedAt()))
                         .likeCount(retro.getLikeCount())
+                        .groupName(retro.getTeam() != null ? retro.getTeam().getGroupName() : null)
+                        .groupId(retro.getTeam() != null ? retro.getTeam().getGroupId() : null)
                         .commentCount(commentRepository.countByRetrospect(retro))
                         .build())
                 .toList();

@@ -86,6 +86,8 @@ public class CommentService {
                         .content(reply.getContent())
                         .nickName(reply.getMember().getNickname())
                         .timeMessage(timeStringUtil.getTimeString(reply.getUpdatedAt()))
+                        .likeCount(reply.getLikeCount())
+                        .isAuthor(isCommentAuthor(reply))
                         .build())
                 .toList();
         return ResponseDtoList;

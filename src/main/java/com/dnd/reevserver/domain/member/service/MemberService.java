@@ -72,7 +72,7 @@ public class MemberService {
         member.updateNickname(dto.nickname());
         member.updateJob(dto.job());
 
-        List<String> keywordStr = dto.featureKeyword();
+        List<String> keywordStr = dto.featureKeywordList();
         if(keywordStr != null){
             List<FeatureKeyword> keywords = new ArrayList<>();
             for(String name : keywordStr){

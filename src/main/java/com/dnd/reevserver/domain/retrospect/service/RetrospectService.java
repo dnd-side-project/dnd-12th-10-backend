@@ -1,5 +1,6 @@
 package com.dnd.reevserver.domain.retrospect.service;
 
+import com.dnd.reevserver.domain.comment.repository.CommentRepository;
 import com.dnd.reevserver.domain.member.entity.Member;
 import com.dnd.reevserver.domain.member.service.MemberService;
 import com.dnd.reevserver.domain.retrospect.dto.request.*;
@@ -30,6 +31,7 @@ public class RetrospectService {
     private final MemberService memberService;
     private final TeamService teamService;
     private final TimeStringUtil timeStringUtil;
+    private final CommentRepository commentRepository;
 
     //단일회고 조회
     @Transactional(readOnly = true)
@@ -43,6 +45,7 @@ public class RetrospectService {
                 .userName(retrospect.getMember().getNickname())
                 .timeString(timeStringUtil.getTimeString(retrospect.getUpdatedAt()))
                 .likeCount(retrospect.getLikeCount())
+                .commentCount(commentRepository.countByRetrospect(retrospect))
                 .build();
     }
 
@@ -59,6 +62,7 @@ public class RetrospectService {
                     .userName(retro.getMember().getNickname())
                     .timeString(timeStringUtil.getTimeString(retro.getUpdatedAt()))
                     .likeCount(retro.getLikeCount())
+                    .commentCount(commentRepository.countByRetrospect(retro))
                     .build())
                 .toList();
             return responseDtoList;
@@ -73,6 +77,7 @@ public class RetrospectService {
                         .userName(retro.getMember().getNickname())
                         .timeString(timeStringUtil.getTimeString(retro.getUpdatedAt()))
                         .likeCount(retro.getLikeCount())
+                        .commentCount(commentRepository.countByRetrospect(retro))
                         .build())
                 .toList();
         return responseDtoList;
@@ -125,6 +130,7 @@ public class RetrospectService {
                 .userName(retrospect.getMember().getNickname())
                 .timeString(timeStringUtil.getTimeString(retrospect.getUpdatedAt()))
                 .likeCount(retrospect.getLikeCount())
+                .commentCount(commentRepository.countByRetrospect(retrospect))
                 .build();
     }
 

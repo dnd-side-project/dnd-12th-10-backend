@@ -89,6 +89,7 @@ public class TeamService {
                 .retrospectCount(retrospectRepository.countByGroupId(team.getGroupId()))
                 .createDate(timeStringUtil.getString(team.getCreatedAt()))
                 .role(getRole(userId,team))
+                .isPublic(team.getIsPublic())
                 .build();
     }
 

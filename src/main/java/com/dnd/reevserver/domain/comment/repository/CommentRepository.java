@@ -1,6 +1,7 @@
 package com.dnd.reevserver.domain.comment.repository;
 
 import com.dnd.reevserver.domain.comment.entity.Comment;
+import com.dnd.reevserver.domain.retrospect.entity.Retrospect;
 import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -13,4 +14,6 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
 
     @Query("select c from Comment c where c.parentComment.commentId = :parentCommentId")
     List<Comment> findAllByParentCommentId(@Param("parentCommentId") Long parentCommentId);
+
+    int countByRetrospect(Retrospect retrospect);
 }

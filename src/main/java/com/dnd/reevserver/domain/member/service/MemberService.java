@@ -36,7 +36,7 @@ public class MemberService {
 
     // 회원 내용 읽기 (컨트롤러에서)
     public MemberResponseDto findByUserId(String userId){
-        return new MemberResponseDto(findById(userId));
+        return new MemberResponseDto(findById(userId), featureKeywordRepository.findAllByUserId(userId));
     }
 
     // 회원 정보 수정 (nickname, profileUrl)

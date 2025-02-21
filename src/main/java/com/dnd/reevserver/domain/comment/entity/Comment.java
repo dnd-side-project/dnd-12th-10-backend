@@ -38,11 +38,15 @@ public class Comment extends BaseEntity {
     @Column(columnDefinition = "TINYINT(1)")
     private boolean isDeleted;
 
+    @Column(name = "like_count")
+    private int likeCount;
+
     @Builder
     public Comment(Member member, Retrospect retrospect, String content) {
         this.member = member;
         this.retrospect = retrospect;
         this.content = content;
+        this.likeCount = 0;
     }
 
     public void updateComment(Comment comment) {

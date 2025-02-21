@@ -46,6 +46,7 @@ public class RetrospectService {
                 .timeString(timeStringUtil.getTimeString(retrospect.getUpdatedAt()))
                 .likeCount(retrospect.getLikeCount())
                 .commentCount(commentRepository.countByRetrospect(retrospect))
+                .groupName(retrospect.getTeam().getGroupName())
                 .build();
     }
 
@@ -63,6 +64,7 @@ public class RetrospectService {
                     .timeString(timeStringUtil.getTimeString(retro.getUpdatedAt()))
                     .likeCount(retro.getLikeCount())
                     .commentCount(commentRepository.countByRetrospect(retro))
+                    .groupName(retro.getTeam().getGroupName())
                     .build())
                 .toList();
             return responseDtoList;
@@ -78,6 +80,7 @@ public class RetrospectService {
                         .timeString(timeStringUtil.getTimeString(retro.getUpdatedAt()))
                         .likeCount(retro.getLikeCount())
                         .commentCount(commentRepository.countByRetrospect(retro))
+                        .groupName(retro.getTeam().getGroupName())
                         .build())
                 .toList();
         return responseDtoList;
@@ -131,6 +134,7 @@ public class RetrospectService {
                 .timeString(timeStringUtil.getTimeString(retrospect.getUpdatedAt()))
                 .likeCount(retrospect.getLikeCount())
                 .commentCount(commentRepository.countByRetrospect(retrospect))
+                .groupName(retrospect.getTeam().getGroupName())
                 .build();
     }
 

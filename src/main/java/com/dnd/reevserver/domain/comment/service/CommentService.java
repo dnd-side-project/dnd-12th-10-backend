@@ -43,6 +43,8 @@ public class CommentService {
                         .content(comment.getContent())
                         .nickName(comment.getMember().getNickname())
                         .timeMessage(timeStringUtil.getTimeString(comment.getUpdatedAt()))
+                        .likeCount(comment.getLikeCount())
+                        .isAuthor(isCommentAuthor(comment))
                         .build())
                 .toList();
         return commentResponseDtoList;
@@ -117,5 +119,12 @@ public class CommentService {
 
     public Comment findById(Long commentId) {
         return commentRepository.findById(commentId).orElseThrow(NotFoundCommentException::new);
+    }
+
+    public boolean isCommentAuthor(Comment comment) {
+        if(comment.getRetrospect().getMember().getUserId().equals(comment.getMember().getUserId())) {
+            return true;
+        }
+        return false;
     }
 }

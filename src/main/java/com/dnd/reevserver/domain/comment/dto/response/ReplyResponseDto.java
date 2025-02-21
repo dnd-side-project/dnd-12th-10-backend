@@ -4,5 +4,6 @@ import lombok.Builder;
 
 @Builder
 public record ReplyResponseDto(Long commentId, String userId, Long retrospectId,
-                               String content, String nickName,String timeMessage) {
+                               String content, String nickName,String timeMessage,
+                               Integer likeCount, boolean isAuthor) {
 }

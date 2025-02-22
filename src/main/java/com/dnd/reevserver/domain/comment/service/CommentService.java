@@ -34,7 +34,8 @@ public class CommentService {
     @Transactional(readOnly = true)
     public List<CommentResponseDto> getAllComment(Long retrospectId) {
         Retrospect retrospect = retrospectService.findById(retrospectId);
-        List<Comment> list = commentRepository.findAllByRetrospectId(retrospectId);
+        List<Comment> list = commentRepository.findByRetrospectId(retrospectId);
+
         List<CommentResponseDto> commentResponseDtoList = list.stream()
                 .map(comment -> CommentResponseDto.builder()
                         .commentId(comment.getCommentId())

@@ -42,6 +42,11 @@ public class MemoService {
                 .map(MemoResponseDto::new).collect(Collectors.toList());
     }
 
+    // 유저의 메모 수 조회
+    public Integer countMemosByUserId(String userId){
+        return memoRepository.findMemosByMember(memberService.findById(userId)).size();
+    }
+
     // 메모 생성
     @Transactional
     public void createMemo(String userId, CreateMemoRequestDto dto){

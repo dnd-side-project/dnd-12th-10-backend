@@ -35,6 +35,11 @@ public class TemplateService {
         return templateRepository.findById(id).orElseThrow(TemplateNotFoundException::new);
     }
 
+    // 이름으로 템플릿 조회, unique 적용함
+    public Template findByName(String name) {
+        return templateRepository.findByTemplateName(name);
+    }
+
     // 유저의 커스텀 템플릿 조회
     public List<TemplateResponseDto> findCustomTemplatesByUser(String userId) {
         Member member = memberService.findById(userId);

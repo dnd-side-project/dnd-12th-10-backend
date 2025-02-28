@@ -1,4 +1,6 @@
 package com.dnd.reevserver.domain.memo.dto.request;
 
-public record CreateMemoRequestDto(String content) {
+import java.util.List;
+
+public record CreateMemoRequestDto(String title, String content, String templateName, List<String> categoriesName) {
 }

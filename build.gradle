@@ -54,6 +54,9 @@ dependencies {
     implementation group: 'org.springframework.cloud', name: 'spring-cloud-aws-autoconfigure', version: '2.2.6.RELEASE'
     implementation platform("io.awspring.cloud:spring-cloud-aws-dependencies:3.0.1")
     implementation 'io.awspring.cloud:spring-cloud-aws-starter-sqs'
+
+    // lambda
+    implementation 'software.amazon.awssdk:lambda:2.20.130'
 }
 
 tasks.named('test') {

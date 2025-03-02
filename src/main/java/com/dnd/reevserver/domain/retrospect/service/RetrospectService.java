@@ -1,5 +1,6 @@
 package com.dnd.reevserver.domain.retrospect.service;
 
+import com.dnd.reevserver.domain.comment.repository.CommentRepository;
 import com.dnd.reevserver.domain.member.entity.Member;
 import com.dnd.reevserver.domain.member.service.MemberService;
 import com.dnd.reevserver.domain.retrospect.dto.request.*;
@@ -10,7 +11,6 @@ import com.dnd.reevserver.domain.retrospect.entity.Retrospect;
 import com.dnd.reevserver.domain.retrospect.exception.RetrospectAuthorException;
 import com.dnd.reevserver.domain.retrospect.exception.RetrospectNotFoundException;
 import com.dnd.reevserver.domain.retrospect.repository.RetrospectRepository;
-import com.dnd.reevserver.domain.statistics.service.LambdaService;
 import com.dnd.reevserver.domain.team.entity.Team;
 import com.dnd.reevserver.domain.team.service.TeamService;
 import com.dnd.reevserver.domain.userTeam.entity.UserTeam;
@@ -31,13 +31,26 @@ public class RetrospectService {
     private final MemberService memberService;
     private final TeamService teamService;
     private final TimeStringUtil timeStringUtil;
-    private final LambdaService lambdaService;
+    private final CommentRepository commentRepository;
 
     //단일회고 조회
     @Transactional(readOnly = true)
     public RetrospectResponseDto getRetrospectById(String userId, Long retrospectId) {
 
         Retrospect retrospect = findById(retrospectId);
+        if(retrospect.getTeam()!=null){
+            return RetrospectResponseDto.builder()
+                .retrospectId(retrospect.getRetrospectId())
+                .title(retrospect.getTitle())
+                .content(retrospect.getContent())
+                .userName(retrospect.getMember().getNickname())
+                .timeString(timeStringUtil.getTimeString(retrospect.getUpdatedAt()))
+                .likeCount(retrospect.getLikeCount())
+                .commentCount(commentRepository.countByRetrospect(retrospect))
+                .groupName(retrospect.getTeam().getGroupName())
+                .groupId(retrospect.getTeam().getGroupId())
+                .build();
+        }
         return RetrospectResponseDto.builder()
                 .retrospectId(retrospect.getRetrospectId())
                 .title(retrospect.getTitle())
@@ -45,6 +58,7 @@ public class RetrospectService {
                 .userName(retrospect.getMember().getNickname())
                 .timeString(timeStringUtil.getTimeString(retrospect.getUpdatedAt()))
                 .likeCount(retrospect.getLikeCount())
+                .commentCount(commentRepository.countByRetrospect(retrospect))
                 .build();
     }
 
@@ -61,6 +75,9 @@ public class RetrospectService {
                     .userName(retro.getMember().getNickname())
                     .timeString(timeStringUtil.getTimeString(retro.getUpdatedAt()))
                     .likeCount(retro.getLikeCount())
+                    .commentCount(commentRepository.countByRetrospect(retro))
+                    .groupName(retro.getTeam().getGroupName())
+                    .groupId(retro.getTeam().getGroupId())
                     .build())
                 .toList();
             return responseDtoList;
@@ -75,6 +92,9 @@ public class RetrospectService {
                         .userName(retro.getMember().getNickname())
                         .timeString(timeStringUtil.getTimeString(retro.getUpdatedAt()))
                         .likeCount(retro.getLikeCount())
+                        .groupName(retro.getTeam() != null ? retro.getTeam().getGroupName() : null)
+                        .groupId(retro.getTeam() != null ? retro.getTeam().getGroupId() : null)
+                        .commentCount(commentRepository.countByRetrospect(retro))
                         .build())
                 .toList();
         return responseDtoList;
@@ -105,9 +125,6 @@ public class RetrospectService {
             .build();
         retrospectRepository.save(retrospect);
 
-        // 회고 작성을 통계에 등록
-        lambdaService.writeStatistics(userId);
-
         return new AddRetrospectResponseDto(retrospect.getRetrospectId());
 
     }
@@ -130,6 +147,8 @@ public class RetrospectService {
                 .userName(retrospect.getMember().getNickname())
                 .timeString(timeStringUtil.getTimeString(retrospect.getUpdatedAt()))
                 .likeCount(retrospect.getLikeCount())
+                .commentCount(commentRepository.countByRetrospect(retrospect))
+                .groupName(retrospect.getTeam().getGroupName())
                 .build();
     }
 
@@ -157,4 +176,6 @@ public class RetrospectService {
     public long countByGroupId(Long groupId) {
         return retrospectRepository.countByGroupId(groupId);
     }
+
+
 }

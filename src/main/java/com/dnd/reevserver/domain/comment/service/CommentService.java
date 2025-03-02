@@ -34,7 +34,8 @@ public class CommentService {
     @Transactional(readOnly = true)
     public List<CommentResponseDto> getAllComment(Long retrospectId) {
         Retrospect retrospect = retrospectService.findById(retrospectId);
-        List<Comment> list = commentRepository.findAllByRetrospectId(retrospectId);
+        List<Comment> list = commentRepository.findByRetrospectId(retrospectId);
+
         List<CommentResponseDto> commentResponseDtoList = list.stream()
                 .map(comment -> CommentResponseDto.builder()
                         .commentId(comment.getCommentId())
@@ -43,6 +44,8 @@ public class CommentService {
                         .content(comment.getContent())
                         .nickName(comment.getMember().getNickname())
                         .timeMessage(timeStringUtil.getTimeString(comment.getUpdatedAt()))
+                        .likeCount(comment.getLikeCount())
+                        .isAuthor(isCommentAuthor(comment))
                         .build())
                 .toList();
         return commentResponseDtoList;
@@ -84,6 +87,8 @@ public class CommentService {
                         .content(reply.getContent())
                         .nickName(reply.getMember().getNickname())
                         .timeMessage(timeStringUtil.getTimeString(reply.getUpdatedAt()))
+                        .likeCount(reply.getLikeCount())
+                        .isAuthor(isCommentAuthor(reply))
                         .build())
                 .toList();
         return ResponseDtoList;
@@ -117,5 +122,12 @@ public class CommentService {
 
     public Comment findById(Long commentId) {
         return commentRepository.findById(commentId).orElseThrow(NotFoundCommentException::new);
+    }
+
+    public boolean isCommentAuthor(Comment comment) {
+        if(comment.getRetrospect().getMember().getUserId().equals(comment.getMember().getUserId())) {
+            return true;
+        }
+        return false;
     }
 }

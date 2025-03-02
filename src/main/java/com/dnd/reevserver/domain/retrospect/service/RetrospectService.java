@@ -10,6 +10,7 @@ import com.dnd.reevserver.domain.retrospect.entity.Retrospect;
 import com.dnd.reevserver.domain.retrospect.exception.RetrospectAuthorException;
 import com.dnd.reevserver.domain.retrospect.exception.RetrospectNotFoundException;
 import com.dnd.reevserver.domain.retrospect.repository.RetrospectRepository;
+import com.dnd.reevserver.domain.statistics.service.LambdaService;
 import com.dnd.reevserver.domain.team.entity.Team;
 import com.dnd.reevserver.domain.team.service.TeamService;
 import com.dnd.reevserver.domain.userTeam.entity.UserTeam;
@@ -30,6 +31,7 @@ public class RetrospectService {
     private final MemberService memberService;
     private final TeamService teamService;
     private final TimeStringUtil timeStringUtil;
+    private final LambdaService lambdaService;
 
     //단일회고 조회
     @Transactional(readOnly = true)
@@ -103,6 +105,9 @@ public class RetrospectService {
             .build();
         retrospectRepository.save(retrospect);
 
+        // 회고 작성을 통계에 등록
+        lambdaService.writeStatistics(userId);
+
         return new AddRetrospectResponseDto(retrospect.getRetrospectId());
 
     }
@@ -152,6 +157,4 @@ public class RetrospectService {
     public long countByGroupId(Long groupId) {
         return retrospectRepository.countByGroupId(groupId);
     }
-
-
 }

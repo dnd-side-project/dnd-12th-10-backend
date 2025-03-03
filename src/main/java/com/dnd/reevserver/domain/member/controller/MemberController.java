@@ -66,4 +66,6 @@ public class MemberController {
         List<TeamResponseDto> responseList = memberService.getAllGroups(userId);
         return ResponseEntity.ok().body(responseList);
     }
+
+    // 유저의 임시글 수
 }

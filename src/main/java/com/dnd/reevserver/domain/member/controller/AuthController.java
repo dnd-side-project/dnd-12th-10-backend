@@ -49,11 +49,11 @@ public class AuthController {
 
         ResponseCookie refreshCookie = CookieUtils.createReissueCookie(
                 "refresh_token",
-                reissuedToken.getRefreshToken(),
+                reissuedToken.refreshToken(),
                 60 * 60 * 24 * 7);
 
         return ResponseEntity.ok()
-                .header(HttpHeaders.AUTHORIZATION, reissuedToken.getAccessToken())
+                .header(HttpHeaders.AUTHORIZATION, reissuedToken.accessToken())
                 .header(HttpHeaders.SET_COOKIE, refreshCookie.toString())
                 .build();
     }

@@ -29,6 +29,12 @@ public class MemoController {
         return ResponseEntity.ok(memos);
     }
 
+    @Operation(summary = "유저의 메모 수 조회")
+    @GetMapping("/count")
+    public ResponseEntity<Integer> countMemosByUserId(@AuthenticationPrincipal String userId) {
+        return ResponseEntity.ok(memoService.countMemosByUserId(userId));
+    }
+
     @Operation(summary = "메모 생성")
     @PostMapping
     public ResponseEntity<String> createMemo(@AuthenticationPrincipal String userId, @RequestBody CreateMemoRequestDto dto) {

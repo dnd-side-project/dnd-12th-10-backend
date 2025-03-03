@@ -36,7 +36,14 @@ public class MemberService {
 
     // 회원 내용 읽기 (컨트롤러에서)
     public MemberResponseDto findByUserId(String userId){
-        return new MemberResponseDto(findById(userId), featureKeywordRepository.findAllByUserId(userId));
+        Member member = findById(userId);
+        List<String> featureKeywords = featureKeywordRepository.findAllByUserId(userId).stream().map(FeatureKeyword::getKeywordName).toList();
+        return MemberResponseDto.builder()
+                .userId(member.getUserId())
+                .nickname(member.getNickname())
+                .profileUrl(member.getProfileUrl())
+                .featureKeywordList(featureKeywords)
+                .build();
     }
 
     // 회원 정보 수정 (nickname, profileUrl)

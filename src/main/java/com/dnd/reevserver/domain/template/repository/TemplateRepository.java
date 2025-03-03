@@ -14,4 +14,6 @@ public interface TemplateRepository extends JpaRepository<Template, Long> {
 
     @Query("SELECT t FROM Template t WHERE t.isPublic = true")
     List<Template> findByIsPublicTrue();
+
+    Template findByTemplateName(String templateName);
 }

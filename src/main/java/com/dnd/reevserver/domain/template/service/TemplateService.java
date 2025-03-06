@@ -45,7 +45,6 @@ public class TemplateService {
 
     // 유저의 커스텀 템플릿 조회
     public List<TemplateResponseDto> findCustomTemplatesByUser(String userId) {
-        userId = "3894991774";
         return templateRepository.findByMemberUserIdAndIsPublicFalse(userId).stream()
                 .map(t -> TemplateResponseDto.builder()
                         .templateId(t.getTemplateId())
@@ -110,7 +109,6 @@ public class TemplateService {
     // 커스텀 템플릿 추가
     @Transactional
     public void createCustomTemplate(String userId, CreateTemplateRequestDto dto) {
-        userId = "3894991774";
         Member member = memberService.findById(userId);
         Template template = Template.builder()
                 .templateName(dto.templateName())
@@ -135,7 +133,6 @@ public class TemplateService {
     // 템플릿 제목, 내용, 설명, 카테고리 수정, isPublic이 false여만 가능, true면 PublicTemplateCannotModifyException 예외 처리
     @Transactional
     public void updateTemplate(String userId, UpdateTemplateRequestDto dto) {
-        userId = "3894991774";
         Template template = findById(dto.templateId());
         if(!template.getMember().getUserId().equals(userId)){
             throw new UnauthorizedTemplateException();

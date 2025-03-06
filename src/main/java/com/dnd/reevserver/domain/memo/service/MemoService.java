@@ -1,7 +1,11 @@
 package com.dnd.reevserver.domain.memo.service;
 
+import com.dnd.reevserver.domain.category.entity.Category;
 import com.dnd.reevserver.domain.category.entity.MemoCategory;
+import com.dnd.reevserver.domain.category.entity.TemplateCategory;
+import com.dnd.reevserver.domain.category.repository.CategoryRepository;
 import com.dnd.reevserver.domain.category.repository.MemoCategoryRepository;
+import com.dnd.reevserver.domain.category.repository.batch.MemoCategoryBatchRepository;
 import com.dnd.reevserver.domain.category.service.CategoryService;
 import com.dnd.reevserver.domain.member.service.MemberService;
 import com.dnd.reevserver.domain.memo.dto.request.CreateMemoRequestDto;
@@ -25,8 +29,9 @@ public class MemoService {
     private final MemoRepository memoRepository;
     private final MemberService memberService;
     private final TemplateService templateService;
-    private final CategoryService categoryService;
     private final MemoCategoryRepository memoCategoryRepository;
+    private final CategoryRepository categoryRepository;
+    private final MemoCategoryBatchRepository memoCategoryBatchRepository;
 
     public Memo findById(Long id) {
         return memoRepository.findById(id).orElseThrow(MemoNotFoundException::new);
@@ -45,7 +50,7 @@ public class MemoService {
 
     // 유저의 전체 메모 조회
     public List<MemoResponseDto> findMemosByUserId(String userId){
-        return memoRepository.findMemosByMember(memberService.findById(userId)).stream()
+        return memoRepository.findMemosByMemberUserId(userId).stream()
                 .map(m -> MemoResponseDto.builder()
                         .memoId(m.getMemoId())
                         .title(m.getTitle())
@@ -58,7 +63,7 @@ public class MemoService {
 
     // 유저의 메모 수 조회
     public Integer countMemosByUserId(String userId){
-        return memoRepository.findMemosByMember(memberService.findById(userId)).size();
+        return memoRepository.findMemosByMemberUserId(userId).size();
     }
 
     // 메모 생성
@@ -69,24 +74,22 @@ public class MemoService {
                 .member(memberService.findById(userId))
                 .title(dto.title())
                 .content(dto.content())
-                .template(template)
+                .template(template) // null 가능
                 .build();
         // 메모-태그 생성
         memoRepository.save(memo);
-        List<MemoCategory> memoCategories = new ArrayList<>();
-        for(String categoryName : dto.categoriesName()){
-            MemoCategory mc = new MemoCategory(memo, categoryService.findByCategoryName(categoryName));
-            memoCategories.add(mc);
-        }
-        memoCategoryRepository.saveAll(memoCategories);
+        List<Category> categories = categoryRepository.findByCategoryNameIn(dto.categoriesName());
+        List<MemoCategory> mcList = categories.stream()
+                .map(category -> new MemoCategory(memo, category))
+                .collect(Collectors.toList());
+        memoCategoryBatchRepository.saveAll(mcList);
     }
 
     // 메모 삭제
     @Transactional
     public void deleteMemo(Long memoId){
         Memo memo = findById(memoId);
-        List<MemoCategory> memoCategories = memoCategoryRepository.findByMemo(memo);
-        memoCategoryRepository.deleteAll(memoCategories);
+        memoCategoryRepository.deleteAllByMemo(memo);
         memoRepository.deleteById(memoId);
     }
 }

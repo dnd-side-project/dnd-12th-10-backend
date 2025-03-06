@@ -2,7 +2,9 @@ package com.dnd.reevserver.domain.template.service;
 
 import com.dnd.reevserver.domain.category.entity.Category;
 import com.dnd.reevserver.domain.category.entity.TemplateCategory;
+import com.dnd.reevserver.domain.category.repository.CategoryRepository;
 import com.dnd.reevserver.domain.category.repository.TemplateCategoryRepository;
+import com.dnd.reevserver.domain.category.repository.batch.TemplateCategoryBatchRepository;
 import com.dnd.reevserver.domain.category.service.CategoryService;
 import com.dnd.reevserver.domain.member.entity.Member;
 import com.dnd.reevserver.domain.member.service.MemberService;
@@ -28,8 +30,9 @@ import java.util.stream.Collectors;
 public class TemplateService {
     private final TemplateRepository templateRepository;
     private final TemplateCategoryRepository templateCategoryRepository;
-    private final CategoryService categoryService;
+    private final TemplateCategoryBatchRepository templateCategoryBatchRepository;
     private final MemberService memberService;
+    private final CategoryRepository categoryRepository;
 
     public Template findById(Long id) {
         return templateRepository.findById(id).orElseThrow(TemplateNotFoundException::new);
@@ -107,6 +110,7 @@ public class TemplateService {
     // 커스텀 템플릿 추가
     @Transactional
     public void createCustomTemplate(String userId, CreateTemplateRequestDto dto) {
+        userId = "3894991774";
         Member member = memberService.findById(userId);
         Template template = Template.builder()
                 .templateName(dto.templateName())
@@ -118,20 +122,20 @@ public class TemplateService {
                 .build();
         templateRepository.save(template);
 
-        List<TemplateCategory> tcList = new ArrayList<>();
-        for(String categoryName : dto.categoryNames()){
-            Category category = categoryService.findByCategoryName(categoryName);
-            TemplateCategory tc = new TemplateCategory(template, category);
-            template.addTemplateCategory(tc);
-            tcList.add(tc);
-        }
-        templateCategoryRepository.saveAll(tcList);
+        // (IN 절 사용)
+        List<Category> categories = categoryRepository.findByCategoryNameIn(dto.categoryNames());
 
+        // 조회한 카테고리로 TemplateCategory 리스트 생성
+        List<TemplateCategory> tcList = categories.stream()
+                .map(category -> new TemplateCategory(template, category))
+                .collect(Collectors.toList());
+        templateCategoryBatchRepository.saveAll(tcList);
     }
 
     // 템플릿 제목, 내용, 설명, 카테고리 수정, isPublic이 false여만 가능, true면 PublicTemplateCannotModifyException 예외 처리
     @Transactional
     public void updateTemplate(String userId, UpdateTemplateRequestDto dto) {
+        userId = "3894991774";
         Template template = findById(dto.templateId());
         if(!template.getMember().getUserId().equals(userId)){
             throw new UnauthorizedTemplateException();
@@ -148,20 +152,22 @@ public class TemplateService {
         templateCategoryRepository.deleteAllByTemplate(template);
         template.clearTemplateCategory();
 
-        List<TemplateCategory> tcList = new ArrayList<>();
-        for(String categoryName : dto.categoryNames()){
-            Category category = categoryService.findByCategoryName(categoryName);
-            TemplateCategory tc = new TemplateCategory(template, category);
-            template.addTemplateCategory(tc);
-            tcList.add(tc);
-        }
-        templateCategoryRepository.saveAll(tcList);
+        // (IN 절 사용)
+        List<Category> categories = categoryRepository.findByCategoryNameIn(dto.categoryNames());
+
+        // 조회한 카테고리로 TemplateCategory 리스트 생성
+        List<TemplateCategory> tcList = categories.stream()
+                .map(category -> new TemplateCategory(template, category))
+                .collect(Collectors.toList());
+
+        templateCategoryBatchRepository.saveAll(tcList);
     }
 
     // 템플릿 삭제. isPublic이 false여만 가능, true면 PublicTemplateCannotDeleteException 예외 처리
     @Transactional
     public void deleteTemplate(Long templateId) {
         Template template = findById(templateId);
+        templateCategoryRepository.deleteAllByTemplate(template);
 
         if (template.isPublic()) {
             throw new PublicTemplateCannotDeleteException();

@@ -5,7 +5,6 @@ import com.dnd.reevserver.domain.category.entity.TemplateCategory;
 import com.dnd.reevserver.domain.category.repository.CategoryRepository;
 import com.dnd.reevserver.domain.category.repository.TemplateCategoryRepository;
 import com.dnd.reevserver.domain.category.repository.batch.TemplateCategoryBatchRepository;
-import com.dnd.reevserver.domain.category.service.CategoryService;
 import com.dnd.reevserver.domain.member.entity.Member;
 import com.dnd.reevserver.domain.member.service.MemberService;
 import com.dnd.reevserver.domain.template.dto.request.CreateTemplateRequestDto;

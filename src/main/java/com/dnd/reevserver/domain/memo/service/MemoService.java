@@ -2,11 +2,9 @@ package com.dnd.reevserver.domain.memo.service;
 
 import com.dnd.reevserver.domain.category.entity.Category;
 import com.dnd.reevserver.domain.category.entity.MemoCategory;
-import com.dnd.reevserver.domain.category.entity.TemplateCategory;
 import com.dnd.reevserver.domain.category.repository.CategoryRepository;
 import com.dnd.reevserver.domain.category.repository.MemoCategoryRepository;
 import com.dnd.reevserver.domain.category.repository.batch.MemoCategoryBatchRepository;
-import com.dnd.reevserver.domain.category.service.CategoryService;
 import com.dnd.reevserver.domain.member.service.MemberService;
 import com.dnd.reevserver.domain.memo.dto.request.CreateMemoRequestDto;
 import com.dnd.reevserver.domain.memo.dto.response.MemoResponseDto;
@@ -19,7 +17,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 

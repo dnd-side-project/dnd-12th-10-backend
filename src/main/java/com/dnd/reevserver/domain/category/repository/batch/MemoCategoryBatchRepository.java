@@ -1,7 +1,6 @@
 package com.dnd.reevserver.domain.category.repository.batch;
 
 import com.dnd.reevserver.domain.category.entity.MemoCategory;
-import com.dnd.reevserver.domain.category.entity.TemplateCategory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;

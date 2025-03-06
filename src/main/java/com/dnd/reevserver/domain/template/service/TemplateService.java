@@ -35,7 +35,7 @@ public class TemplateService {
     private final CategoryRepository categoryRepository;
 
     public Template findById(Long id) {
-        return templateRepository.findById(id).orElseThrow(TemplateNotFoundException::new);
+        return templateRepository.findByIdWithCategories(id).orElseThrow(TemplateNotFoundException::new);
     }
 
     // 이름으로 템플릿 조회, unique 적용함
@@ -45,8 +45,8 @@ public class TemplateService {
 
     // 유저의 커스텀 템플릿 조회
     public List<TemplateResponseDto> findCustomTemplatesByUser(String userId) {
-        Member member = memberService.findById(userId);
-        return templateRepository.findByMemberAndIsPublicFalse(member).stream()
+        userId = "3894991774";
+        return templateRepository.findByMemberUserIdAndIsPublicFalse(userId).stream()
                 .map(t -> TemplateResponseDto.builder()
                         .templateId(t.getTemplateId())
                         .templateName(t.getTemplateName())
@@ -67,7 +67,7 @@ public class TemplateService {
 
     // 공용 템플릿 조회
     public List<TemplateResponseDto> findPublicTemplates() {
-        return templateRepository.findByIsPublicTrue().stream()
+        return templateRepository.findByIsPublicTrueWithCategories().stream()
                 .map(
                         t -> TemplateResponseDto.builder()
                                 .templateId(t.getTemplateId())
@@ -110,6 +110,7 @@ public class TemplateService {
     // 커스텀 템플릿 추가
     @Transactional
     public void createCustomTemplate(String userId, CreateTemplateRequestDto dto) {
+        userId = "3894991774";
         Member member = memberService.findById(userId);
         Template template = Template.builder()
                 .templateName(dto.templateName())
@@ -134,6 +135,7 @@ public class TemplateService {
     // 템플릿 제목, 내용, 설명, 카테고리 수정, isPublic이 false여만 가능, true면 PublicTemplateCannotModifyException 예외 처리
     @Transactional
     public void updateTemplate(String userId, UpdateTemplateRequestDto dto) {
+        userId = "3894991774";
         Template template = findById(dto.templateId());
         if(!template.getMember().getUserId().equals(userId)){
             throw new UnauthorizedTemplateException();

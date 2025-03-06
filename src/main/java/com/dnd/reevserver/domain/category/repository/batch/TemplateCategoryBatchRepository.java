@@ -25,9 +25,8 @@ public class TemplateCategoryBatchRepository {
                 (ps, tc) -> {
                     ps.setLong(1, tc.getCategory().getCategoryId());
                     ps.setLong(2, tc.getTemplate().getTemplateId());
-                    // 직접 createdAt, updatedAt 설정
-                    ps.setTimestamp(3, Timestamp.valueOf(tc.getCreatedAt() != null ? tc.getCreatedAt() : now));
-                    ps.setTimestamp(4, Timestamp.valueOf(tc.getUpdatedAt() != null ? tc.getUpdatedAt() : now));
+                    ps.setTimestamp(3, Timestamp.valueOf(now));
+                    ps.setTimestamp(4, Timestamp.valueOf(now));
                 }
 
         );

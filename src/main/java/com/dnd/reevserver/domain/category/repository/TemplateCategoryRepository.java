@@ -9,7 +9,8 @@ import org.springframework.data.repository.query.Param;
 
 public interface TemplateCategoryRepository extends JpaRepository<TemplateCategory, Long> {
     @Modifying
-    @Query("DELETE FROM TemplateCategory tc WHERE tc.template = :template")
+    @Query("DELETE FROM TemplateCategory tc " +
+            "WHERE tc.template = :template")
     void deleteAllByTemplate(@Param("template") Template template);
 
 }

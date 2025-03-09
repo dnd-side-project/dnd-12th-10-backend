@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 
 public interface MemoCategoryRepository extends JpaRepository<MemoCategory, Long> {
     @Modifying
-    @Query("DELETE FROM MemoCategory mc WHERE mc.memo = :memo")
+    @Query("DELETE FROM MemoCategory mc " +
+            "WHERE mc.memo = :memo")
     void deleteAllByMemo(@Param("memo") Memo memo);
 }

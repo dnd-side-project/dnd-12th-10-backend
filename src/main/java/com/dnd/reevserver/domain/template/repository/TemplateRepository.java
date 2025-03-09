@@ -25,7 +25,10 @@ public interface TemplateRepository extends JpaRepository<Template, Long> {
 
     Template findByTemplateName(String templateName);
 
-    @Query("SELECT t FROM Template t LEFT JOIN FETCH t.templateCategories tc LEFT JOIN FETCH tc.category WHERE t.templateId = :id")
+    @Query("SELECT t FROM Template t " +
+            "LEFT JOIN FETCH t.templateCategories tc " +
+            "LEFT JOIN FETCH tc.category " +
+            "WHERE t.templateId = :id")
     Optional<Template> findByIdWithCategories(@Param("id") Long id);
 
 }

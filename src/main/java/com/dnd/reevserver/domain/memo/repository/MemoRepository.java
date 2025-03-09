@@ -8,6 +8,9 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface MemoRepository extends JpaRepository<Memo, Long> {
-    @Query("SELECT m FROM Memo m JOIN FETCH m.member JOIN FETCH m.template WHERE m.member.userId = :userId")
+    @Query("SELECT m FROM Memo m " +
+            "JOIN FETCH m.member " +
+            "JOIN FETCH m.template " +
+            "WHERE m.member.userId = :userId")
     List<Memo> findMemosByMemberUserId(@Param("userId") String userId);
 }

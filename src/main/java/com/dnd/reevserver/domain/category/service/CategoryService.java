@@ -26,10 +26,9 @@ public class CategoryService {
 
     @Transactional(readOnly = true)
     public List<GetCategoryResponseDto> findAllCategory() {
-        List<GetCategoryResponseDto> categoryList = categoryRepository.findAll().stream()
+        return categoryRepository.findAll().stream()
                 .map(category -> new GetCategoryResponseDto(category.getCategoryName()))
                 .toList();
-        return categoryList;
     }
 
     public AddCategoryResponseDto addCategory(AddCategoryRequestDto addCategoryRequestDto) {
@@ -42,5 +41,4 @@ public class CategoryService {
         categoryRepository.save(category);
         return new AddCategoryResponseDto(category.getCategoryName()+" 카테고리 생성이 완료되었습니다.");
     }
-
 }

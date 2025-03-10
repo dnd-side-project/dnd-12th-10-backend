@@ -32,10 +32,4 @@ public class AlertService {
     public Flux<String> getMessageStream() {
         return messageSink.asFlux();
     }
-
-    // SQS 메시지 리스너 (SQS에서 메시지가 도착하면 실행)
-    @SqsListener("${cloud.aws.sqs.queue-name}")
-    public void receiveMessage(String message) {
-        messageSink.tryEmitNext(message); // SSE를 통해 메시지 푸시
-    }
 }

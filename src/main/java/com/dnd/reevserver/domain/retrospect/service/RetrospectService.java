@@ -2,6 +2,7 @@ package com.dnd.reevserver.domain.retrospect.service;
 
 import com.dnd.reevserver.domain.comment.repository.CommentRepository;
 import com.dnd.reevserver.domain.member.entity.Member;
+import com.dnd.reevserver.domain.member.exception.MemberNotFoundException;
 import com.dnd.reevserver.domain.member.service.MemberService;
 import com.dnd.reevserver.domain.retrospect.dto.request.*;
 import com.dnd.reevserver.domain.retrospect.dto.response.AddRetrospectResponseDto;
@@ -20,8 +21,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Service
@@ -38,68 +37,30 @@ public class RetrospectService {
     //단일회고 조회
     @Transactional(readOnly = true)
     public RetrospectResponseDto getRetrospectById(String userId, Long retrospectId) {
-
-        Retrospect retrospect = findById(retrospectId);
-        if(retrospect.getTeam()!=null){
-            return RetrospectResponseDto.builder()
-                .retrospectId(retrospect.getRetrospectId())
-                .title(retrospect.getTitle())
-                .content(retrospect.getContent())
-                .userName(retrospect.getMember().getNickname())
-                .timeString(timeStringUtil.getTimeString(retrospect.getUpdatedAt()))
-                .likeCount(retrospect.getLikeCount())
-                .commentCount(commentRepository.countByRetrospect(retrospect))
-                .groupName(retrospect.getTeam().getGroupName())
-                .groupId(retrospect.getTeam().getGroupId())
-                .build();
+        if(userId.isEmpty()) {
+            throw new MemberNotFoundException();
         }
-        return RetrospectResponseDto.builder()
-                .retrospectId(retrospect.getRetrospectId())
-                .title(retrospect.getTitle())
-                .content(retrospect.getContent())
-                .userName(retrospect.getMember().getNickname())
-                .timeString(timeStringUtil.getTimeString(retrospect.getUpdatedAt()))
-                .likeCount(retrospect.getLikeCount())
-                .commentCount(commentRepository.countByRetrospect(retrospect))
-                .build();
+        Retrospect retrospect = findById(retrospectId);
+        return convertToDto(retrospect);
     }
 
     //회고 목록 조회
     @Transactional(readOnly = true)
     public List<RetrospectResponseDto> getAllRetrospectByGruopId(String userId, Long groupId) {
+        if(userId.isEmpty()) {
+            throw new MemberNotFoundException();
+        }
         if(groupId!=null) {
             List<Retrospect> list = retrospectRepository.findAllByTeamId(groupId);
-            List<RetrospectResponseDto> responseDtoList = list.stream()
-                .map(retro -> RetrospectResponseDto.builder()
-                    .retrospectId(retro.getRetrospectId())
-                    .title(retro.getTitle())
-                    .content(retro.getContent())
-                    .userName(retro.getMember().getNickname())
-                    .timeString(timeStringUtil.getTimeString(retro.getUpdatedAt()))
-                    .likeCount(retro.getLikeCount())
-                    .commentCount(commentRepository.countByRetrospect(retro))
-                    .groupName(retro.getTeam().getGroupName())
-                    .groupId(retro.getTeam().getGroupId())
-                    .build())
+            return list.stream()
+                .map(this::convertToDto)
                 .toList();
-            return responseDtoList;
         }
 
         List<Retrospect> list = retrospectRepository.findAllByUserId(userId);
-        List<RetrospectResponseDto> responseDtoList = list.stream()
-                .map(retro -> RetrospectResponseDto.builder()
-                        .retrospectId(retro.getRetrospectId())
-                        .title(retro.getTitle())
-                        .content(retro.getContent())
-                        .userName(retro.getMember().getNickname())
-                        .timeString(timeStringUtil.getTimeString(retro.getUpdatedAt()))
-                        .likeCount(retro.getLikeCount())
-                        .groupName(retro.getTeam() != null ? retro.getTeam().getGroupName() : null)
-                        .groupId(retro.getTeam() != null ? retro.getTeam().getGroupId() : null)
-                        .commentCount(commentRepository.countByRetrospect(retro))
-                        .build())
+        return list.stream()
+                .map(this::convertToDto)
                 .toList();
-        return responseDtoList;
     }
 
 
@@ -109,7 +70,7 @@ public class RetrospectService {
         Member member = memberService.findById(userId);
         if(requestDto.groupId()!=null) {
             Team team = teamService.findById(requestDto.groupId());
-            UserTeam userTeam = teamService.findByUserIdAndGroupId(userId, requestDto.groupId());
+//            UserTeam userTeam = teamService.findByUserIdAndGroupId(userId, requestDto.groupId());
             Retrospect retrospect = Retrospect.builder()
                 .member(member)
                 .team(team)
@@ -144,16 +105,7 @@ public class RetrospectService {
             throw new RetrospectAuthorException();
         }
         retrospect.updateRetrospect(requestDto.title(), requestDto.content());
-        return RetrospectResponseDto.builder()
-                .retrospectId(retrospect.getRetrospectId())
-                .title(retrospect.getTitle())
-                .content(retrospect.getContent())
-                .userName(retrospect.getMember().getNickname())
-                .timeString(timeStringUtil.getTimeString(retrospect.getUpdatedAt()))
-                .likeCount(retrospect.getLikeCount())
-                .commentCount(commentRepository.countByRetrospect(retrospect))
-                .groupName(retrospect.getTeam().getGroupName())
-                .build();
+        return convertToDto(retrospect);
     }
 
     @Transactional
@@ -181,5 +133,17 @@ public class RetrospectService {
         return retrospectRepository.countByGroupId(groupId);
     }
 
-
+    private RetrospectResponseDto convertToDto(Retrospect retrospect) {
+        return RetrospectResponseDto.builder()
+                .retrospectId(retrospect.getRetrospectId())
+                .title(retrospect.getTitle())
+                .content(retrospect.getContent())
+                .userName(retrospect.getMember().getNickname())
+                .timeString(timeStringUtil.getTimeString(retrospect.getUpdatedAt()))
+                .likeCount(retrospect.getLikeCount())
+                .groupName(retrospect.getTeam() != null ? retrospect.getTeam().getGroupName() : null)
+                .groupId(retrospect.getTeam() != null ? retrospect.getTeam().getGroupId() : null)
+                .commentCount(commentRepository.countByRetrospect(retrospect))
+                .build();
+    }
 }

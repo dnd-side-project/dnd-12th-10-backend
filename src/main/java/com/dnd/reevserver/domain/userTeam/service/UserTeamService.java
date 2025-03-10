@@ -18,8 +18,6 @@ public class UserTeamService {
     private final UserTeamRepository userTeamRepository;
     private final MemberService memberService;
     private final TeamService teamService;
-    private final MemberRepository memberRepository;
-    private final TeamRepository teamRepository;
 
     @Transactional
     public String mapping(String userId, Long groupId){

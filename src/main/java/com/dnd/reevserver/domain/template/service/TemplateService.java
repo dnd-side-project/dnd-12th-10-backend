@@ -45,64 +45,21 @@ public class TemplateService {
     // 유저의 커스텀 템플릿 조회
     public List<TemplateResponseDto> findCustomTemplatesByUser(String userId) {
         return templateRepository.findByMemberUserIdAndIsPublicFalse(userId).stream()
-                .map(t -> TemplateResponseDto.builder()
-                        .templateId(t.getTemplateId())
-                        .templateName(t.getTemplateName())
-                        .content(t.getContent())
-                        .preset(t.getPreset())
-                        .isPublic(t.isPublic())
-                        .userId(t.isPublic() ? "public" : t.getMember().getUserId())
-                        .categories(
-                                List.copyOf(
-                                    t.getTemplateCategories().stream()
-                                        .map(tc -> tc.getCategory().getCategoryName())
-                                        .toList()
-                                )
-                        )
-                        .build())
+                .map(this::convertToDto)
                 .collect(Collectors.toList());
     }
 
     // 공용 템플릿 조회
     public List<TemplateResponseDto> findPublicTemplates() {
         return templateRepository.findByIsPublicTrueWithCategories().stream()
-                .map(
-                        t -> TemplateResponseDto.builder()
-                                .templateId(t.getTemplateId())
-                                .templateName(t.getTemplateName())
-                                .content(t.getContent())
-                                .preset(t.getPreset())
-                                .isPublic(t.isPublic())
-                                .userId(t.isPublic() ? "public" : t.getMember().getUserId())
-                                .categories(
-                                        List.copyOf(
-                                                t.getTemplateCategories().stream()
-                                                        .map(tc -> tc.getCategory().getCategoryName())
-                                                        .toList()
-                                        )
-                                )
-                                .build()
-                )
+                .map(this::convertToDto)
                 .collect(Collectors.toList());
     }
 
     // 템플릿 개별 조회
     public TemplateResponseDto findTemplateById(Long id) {
         Template template = findById(id);
-        return TemplateResponseDto.builder()
-                .templateId(template.getTemplateId())
-                .templateName(template.getTemplateName())
-                .content(template.getContent())
-                .preset(template.getPreset())
-                .isPublic(template.isPublic())
-                .userId(template.isPublic() ? "public" : template.getMember().getUserId())
-                .categories(
-                        List.copyOf(
-                                template.getTemplateCategories().stream()
-                                        .map(tc -> tc.getCategory().getCategoryName())
-                                        .toList()
-                        )
-                ).build();
+        return convertToDto(template);
     }
 
     // 커스텀 템플릿 추가
@@ -170,5 +127,23 @@ public class TemplateService {
         }
 
         templateRepository.delete(template);
+    }
+
+    private TemplateResponseDto convertToDto(Template template) {
+        return TemplateResponseDto.builder()
+                .templateId(template.getTemplateId())
+                .templateName(template.getTemplateName())
+                .content(template.getContent())
+                .preset(template.getPreset())
+                .isPublic(template.isPublic())
+                .userId(template.isPublic() ? "public" : template.getMember().getUserId())
+                .categories(
+                        List.copyOf(
+                                template.getTemplateCategories().stream()
+                                        .map(tc -> tc.getCategory().getCategoryName())
+                                        .toList()
+                        )
+                )
+                .build();
     }
 }

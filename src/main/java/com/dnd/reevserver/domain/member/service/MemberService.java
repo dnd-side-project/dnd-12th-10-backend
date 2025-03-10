@@ -38,12 +38,7 @@ public class MemberService {
     public MemberResponseDto findByUserId(String userId){
         Member member = findById(userId);
         List<String> featureKeywords = featureKeywordRepository.findAllByUserId(userId).stream().map(FeatureKeyword::getKeywordName).toList();
-        return MemberResponseDto.builder()
-                .userId(member.getUserId())
-                .nickname(member.getNickname())
-                .profileUrl(member.getProfileUrl())
-                .featureKeywordList(featureKeywords)
-                .build();
+        return convertToMemberDto(member, featureKeywords);
     }
 
     // 회원 정보 수정 (nickname, profileUrl)
@@ -69,7 +64,6 @@ public class MemberService {
     }
 
     // 로그인 이후 정보 기입
-    // todo : 이건 추후 자료 구조에 대해서 더 생각해봐야 할 듯, 키워드는 한정적인데 데이터가 많이 늘어남
     @Transactional
     public void insertInfoAfterLogin(String userId, InsertInfoRequestDto dto){
         Member member = findById(userId);
@@ -112,21 +106,9 @@ public class MemberService {
     @Transactional(readOnly = true)
     public List<TeamResponseDto> getAllGroups(String userId){
         List<Team> groups = teamRepository.findAllByUserId(userId);
-        List<TeamResponseDto> groupList = groups.stream()
-                .map(team -> TeamResponseDto.builder()
-                        .groupId(team.getGroupId())
-                        .groupName(team.getGroupName())
-                        .description(team.getDescription())
-                        .userCount(team.getUserTeams().size())
-                        .recentActString(getRecentActString(team.getRecentAct()))
-                        .categoryNames(
-                                team.getTeamCategories().stream()
-                                        .map(teamCategory -> teamCategory.getCategory().getCategoryName())
-                                        .toList()
-                        )
-                        .build())
+        return groups.stream()
+                .map(this::convertToTeamDto)
                 .toList();
-        return groupList;
     }
 
     //최근 활동 시간 문자열
@@ -141,6 +123,29 @@ public class MemberService {
             return ChronoUnit.HOURS.between(recentAct, now) + "시간 전";
         }
         return ChronoUnit.DAYS.between(recentAct, now) + "일 전";
+    }
 
+    private MemberResponseDto convertToMemberDto(Member member, List<String> featureKeywords){
+        return MemberResponseDto.builder()
+                .userId(member.getUserId())
+                .nickname(member.getNickname())
+                .profileUrl(member.getProfileUrl())
+                .featureKeywordList(featureKeywords)
+                .build();
+    }
+
+    private TeamResponseDto convertToTeamDto(Team team){
+        return TeamResponseDto.builder()
+                .groupId(team.getGroupId())
+                .groupName(team.getGroupName())
+                .description(team.getDescription())
+                .userCount(team.getUserTeams().size())
+                .recentActString(getRecentActString(team.getRecentAct()))
+                .categoryNames(
+                        team.getTeamCategories().stream()
+                                .map(teamCategory -> teamCategory.getCategory().getCategoryName())
+                                .toList()
+                )
+                .build();
     }
 }

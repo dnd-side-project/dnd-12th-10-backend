@@ -36,26 +36,14 @@ public class MemoService {
 
     public MemoResponseDto findMemoById(Long id) {
         Memo memo = findById(id);
-        return MemoResponseDto.builder()
-                .memoId(memo.getMemoId())
-                .title(memo.getTitle())
-                .userId(memo.getMember().getUserId())
-                .content(memo.getContent())
-                .templateName(memo.getTemplate().getTemplateName())
-                .build();
+        return convertToDto(memo);
     }
 
     // 유저의 전체 메모 조회
     public List<MemoResponseDto> findMemosByUserId(String userId){
         return memoRepository.findMemosByMemberUserId(userId).stream()
-                .map(m -> MemoResponseDto.builder()
-                        .memoId(m.getMemoId())
-                        .title(m.getTitle())
-                        .userId(m.getMember().getUserId())
-                        .content(m.getContent())
-                        .templateName(m.getTemplate().getTemplateName())
-                        .build()
-                ).collect(Collectors.toList());
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
     }
 
     // 유저의 메모 수 조회
@@ -88,5 +76,15 @@ public class MemoService {
         Memo memo = findById(memoId);
         memoCategoryRepository.deleteAllByMemo(memo);
         memoRepository.deleteById(memoId);
+    }
+
+    private MemoResponseDto convertToDto(Memo memo){
+        return MemoResponseDto.builder()
+                .memoId(memo.getMemoId())
+                .title(memo.getTitle())
+                .userId(memo.getMember().getUserId())
+                .content(memo.getContent())
+                .templateName(memo.getTemplate().getTemplateName())
+                .build();
     }
 }

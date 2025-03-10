@@ -4,15 +4,11 @@ import com.dnd.reevserver.domain.category.entity.Category;
 import com.dnd.reevserver.domain.category.entity.TeamCategory;
 import com.dnd.reevserver.domain.category.repository.TeamCategoryRepository;
 import com.dnd.reevserver.domain.category.service.CategoryService;
-import com.dnd.reevserver.domain.member.dto.request.GetAllUserGroupRequestDto;
-import com.dnd.reevserver.domain.member.entity.FeatureKeyword;
 import com.dnd.reevserver.domain.member.entity.role.Role;
-import com.dnd.reevserver.domain.member.repository.FeatureKeywordRepository;
 import com.dnd.reevserver.domain.member.service.FeatureKeywordService;
 import com.dnd.reevserver.domain.retrospect.dto.response.RetrospectResponseDto;
 import com.dnd.reevserver.domain.retrospect.entity.Retrospect;
 import com.dnd.reevserver.domain.retrospect.repository.RetrospectRepository;
-import com.dnd.reevserver.domain.retrospect.service.RetrospectService;
 import com.dnd.reevserver.domain.team.dto.request.*;
 import com.dnd.reevserver.domain.team.dto.response.*;
 import com.dnd.reevserver.domain.team.entity.Team;
@@ -29,8 +25,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 
@@ -51,69 +45,25 @@ public class TeamService {
     @Transactional(readOnly = true)
     public List<TeamResponseDto> getAllGroups() {
         List<Team> groups = teamRepository.findAll();
-        List<TeamResponseDto> teamList = groups.stream()
-                .map(team -> TeamResponseDto.builder()
-                    .groupId(team.getGroupId())
-                    .groupName(team.getGroupName())
-                    .description(team.getDescription())
-                    .introduction(team.getIntroduction())
-                    .userCount(team.getUserTeams().size())
-                    .recentActString(timeStringUtil.getTimeString(team.getRecentAct()))
-                    .categoryNames(
-                        team.getTeamCategories().stream()
-                            .map(teamCategory -> teamCategory.getCategory().getCategoryName())
-                            .toList()
-                    )
-                    .retrospectCount(retrospectRepository.countByGroupId(team.getGroupId()))
-                    .build())
+        return groups.stream()
+                .map(this::convertToDto)
                 .toList();
-        return teamList;
     }
 
     //그룹 단건 조회
     @Transactional(readOnly = true)
     public GroupDetailResponseDto getGroup(String userId, Long groupId) {
         Team team = teamRepository.findById(groupId).orElseThrow(TeamNotFoundException::new);
-        return GroupDetailResponseDto.builder()
-                .groupId(team.getGroupId())
-                .groupName(team.getGroupName())
-                .description(team.getDescription())
-                .introduction(team.getIntroduction())
-                .userCount(team.getUserTeams().size())
-                .recentActString(timeStringUtil.getTimeString(team.getRecentAct()))
-                .categoryNames(
-                        team.getTeamCategories().stream()
-                                .map(teamCategory -> teamCategory.getCategory().getCategoryName())
-                                .toList()
-                )
-                .retrospectCount(retrospectRepository.countByGroupId(team.getGroupId()))
-                .createDate(timeStringUtil.getString(team.getCreatedAt()))
-                .role(getRole(userId,team))
-                .isPublic(team.getIsPublic())
-                .build();
+        return convertToDetailDto(team, userId);
     }
 
     //내가 속한 모임 조회
     @Transactional(readOnly = true)
     public List<TeamResponseDto> getAllUserGroups(String userId){
         List<Team> groups = teamRepository.findAllByUserId(userId);
-        List<TeamResponseDto> teamList = groups.stream()
-                .map(team -> TeamResponseDto.builder()
-                        .groupId(team.getGroupId())
-                        .groupName(team.getGroupName())
-                        .description(team.getDescription())
-                        .introduction(team.getIntroduction())
-                        .userCount(team.getUserTeams().size())
-                        .recentActString(timeStringUtil.getTimeString(team.getRecentAct()))
-                        .categoryNames(
-                                team.getTeamCategories().stream()
-                                        .map(teamCategory -> teamCategory.getCategory().getCategoryName())
-                                        .toList()
-                        )
-                        .retrospectCount(retrospectRepository.countByGroupId(team.getGroupId()))
-                        .build())
+        return groups.stream()
+                .map(this::convertToDto)
                 .toList();
-        return teamList;
     }
 
     //모임 생성
@@ -177,27 +127,12 @@ public class TeamService {
     public List<TeamResponseDto> getAllFavoriteGroups(String userId) {
         List<UserTeam> list = userTeamRepository.findAllFavoriteGroupsByUserId(userId);
 
-        List<TeamResponseDto> favoriteTeamList = list.stream()
+        return list.stream()
                 .map(userTeam -> {
                     Team team = userTeam.getTeam();
-                    return TeamResponseDto.builder()
-                            .groupId(team.getGroupId())
-                            .groupName(team.getGroupName())
-                            .description(team.getDescription())
-                            .introduction(team.getIntroduction())
-                            .userCount(team.getUserTeams().size())
-                            .recentActString(timeStringUtil.getTimeString(team.getRecentAct()))
-                            .categoryNames(
-                                    team.getTeamCategories().stream()
-                                            .map(teamCategory -> teamCategory.getCategory().getCategoryName())
-                                            .toList()
-                            )
-                            .retrospectCount(retrospectRepository.countByGroupId(team.getGroupId()))
-                            .build();
+                    return convertToDto(team);
                 })
                 .toList();
-
-        return favoriteTeamList;
 
     }
 
@@ -235,65 +170,30 @@ public class TeamService {
     @Transactional(readOnly = true)
     public List<GetPopularGroupResponseDto> getPopularGroups(){
         List<Team> groups = teamRepository.findAllPopluarGroups();
-        List<GetPopularGroupResponseDto> groupList = groups.stream()
+
+        return groups.stream()
             .map(team -> {
-                TeamResponseDto teamResponseDto = TeamResponseDto.builder()
-                        .groupId(team.getGroupId())
-                        .groupName(team.getGroupName())
-                        .description(team.getDescription())
-                        .introduction(team.getIntroduction())
-                        .userCount(team.getUserTeams().size())
-                        .recentActString(timeStringUtil.getTimeString(team.getRecentAct()))
-                        .categoryNames(
-                            team.getTeamCategories().stream()
-                                .map(teamCategory -> teamCategory.getCategory().getCategoryName())
-                                .toList()
-                        )
-                        .retrospectCount(retrospectRepository.countByGroupId(team.getGroupId()))
-                        .build();
+                TeamResponseDto teamResponseDto = convertToDto(team);
                 Optional<Retrospect> retrospect = retrospectRepository.findFirstByTeam_GroupIdOrderByUpdatedAtDesc(team.getGroupId());
                 RetrospectResponseDto retrospectResponseDto = null;
                 if(retrospect.isPresent()){
-                    Retrospect retro = retrospect.get();
-                   retrospectResponseDto = RetrospectResponseDto.builder()
-                        .retrospectId(retro.getRetrospectId())
-                        .title(retro.getTitle())
-                        .content(retro.getContent())
-                        .userName(retro.getMember().getNickname())
-                        .timeString(timeStringUtil.getTimeString(retro.getUpdatedAt()))
-                        .likeCount(retro.getLikeCount())
-                        .build();
+                   Retrospect retro = retrospect.get();
+                   retrospectResponseDto = convertToRetrospectDto(retro);
                 }
                return new GetPopularGroupResponseDto(teamResponseDto, retrospectResponseDto);
             })
             .toList();
-
-        return groupList;
     }
 
     //추천 모임 조회
     @Transactional(readOnly = true)
     public List<TeamResponseDto> getRecommendGroups(String userId){
-        Member member = memberService.findById(userId);
+//        Member member = memberService.findById(userId);
         List<String> featureKeywords = featureKeywordService.findAllNames(userId);
         List<Team> groups = teamRepository.findGroupsByCategoryNames(featureKeywords);
-        List<TeamResponseDto> groupList = groups.stream()
-            .map(team -> TeamResponseDto.builder()
-                .groupId(team.getGroupId())
-                .groupName(team.getGroupName())
-                .description(team.getDescription())
-                .introduction(team.getIntroduction())
-                .userCount(team.getUserTeams().size())
-                .recentActString(timeStringUtil.getTimeString(team.getRecentAct()))
-                .categoryNames(
-                    team.getTeamCategories().stream()
-                        .map(teamCategory -> teamCategory.getCategory().getCategoryName())
-                        .toList()
-                )
-                .retrospectCount(retrospectRepository.countByGroupId(team.getGroupId()))
-                .build())
+        return groups.stream()
+            .map(this::convertToDto)
             .toList();
-        return groupList;
     }
 
     //유저역할반환
@@ -307,5 +207,53 @@ public class TeamService {
         }
         return Role.MEMBER;
 
+    }
+
+    private TeamResponseDto convertToDto(Team team){
+        return TeamResponseDto.builder()
+                .groupId(team.getGroupId())
+                .groupName(team.getGroupName())
+                .description(team.getDescription())
+                .introduction(team.getIntroduction())
+                .userCount(team.getUserTeams().size())
+                .recentActString(timeStringUtil.getTimeString(team.getRecentAct()))
+                .categoryNames(
+                        team.getTeamCategories().stream()
+                                .map(teamCategory -> teamCategory.getCategory().getCategoryName())
+                                .toList()
+                )
+                .retrospectCount(retrospectRepository.countByGroupId(team.getGroupId()))
+                .build();
+    }
+
+    private GroupDetailResponseDto convertToDetailDto(Team team, String userId){
+        return GroupDetailResponseDto.builder()
+                .groupId(team.getGroupId())
+                .groupName(team.getGroupName())
+                .description(team.getDescription())
+                .introduction(team.getIntroduction())
+                .userCount(team.getUserTeams().size())
+                .recentActString(timeStringUtil.getTimeString(team.getRecentAct()))
+                .categoryNames(
+                        team.getTeamCategories().stream()
+                                .map(teamCategory -> teamCategory.getCategory().getCategoryName())
+                                .toList()
+                )
+                .retrospectCount(retrospectRepository.countByGroupId(team.getGroupId()))
+                .createDate(timeStringUtil.getString(team.getCreatedAt()))
+                .role(getRole(userId,team))
+                .isPublic(team.getIsPublic())
+                .build();
+    }
+
+    private RetrospectResponseDto convertToRetrospectDto(Retrospect retrospect){
+        return RetrospectResponseDto.builder()
+                .retrospectId(retrospect.getRetrospectId())
+                .title(retrospect.getTitle())
+                .content(retrospect.getContent())
+                .userName(retrospect.getMember().getNickname())
+                .timeString(timeStringUtil.getTimeString(retrospect.getUpdatedAt()))
+                .likeCount(retrospect.getLikeCount())
+                .build();
     }
 }

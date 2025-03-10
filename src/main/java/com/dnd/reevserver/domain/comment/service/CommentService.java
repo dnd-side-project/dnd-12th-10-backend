@@ -16,10 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -33,22 +30,11 @@ public class CommentService {
     //댓글 목록 조회
     @Transactional(readOnly = true)
     public List<CommentResponseDto> getAllComment(Long retrospectId) {
-        Retrospect retrospect = retrospectService.findById(retrospectId);
         List<Comment> list = commentRepository.findByRetrospectId(retrospectId);
 
-        List<CommentResponseDto> commentResponseDtoList = list.stream()
-                .map(comment -> CommentResponseDto.builder()
-                        .commentId(comment.getCommentId())
-                        .userId(comment.getMember().getUserId())
-                        .retrospectId(comment.getRetrospect().getRetrospectId())
-                        .content(comment.getContent())
-                        .nickName(comment.getMember().getNickname())
-                        .timeMessage(timeStringUtil.getTimeString(comment.getUpdatedAt()))
-                        .likeCount(comment.getLikeCount())
-                        .isAuthor(isCommentAuthor(comment))
-                        .build())
+        return list.stream()
+                .map(comment -> convertToCommentDto(comment, true))
                 .toList();
-        return commentResponseDtoList;
     }
 
 
@@ -63,35 +49,16 @@ public class CommentService {
                 .content(requestDto.content())
                 .build();
         commentRepository.save(comment);
-        CommentResponseDto responseDto = CommentResponseDto.builder()
-                .commentId(comment.getCommentId())
-                .userId(member.getUserId())
-                .retrospectId(retrospect.getRetrospectId())
-                .content(comment.getContent())
-                .nickName(member.getNickname())
-                .timeMessage(timeStringUtil.getTimeString(comment.getUpdatedAt()))
-                .build();
-        return responseDto;
+        return convertToCommentDto(comment, false);
     }
 
     //대댓글 조회
     @Transactional(readOnly = true)
     public List<ReplyResponseDto> getAllReply(Long retrospectId, Long commentId) {
-        Retrospect retrospect = retrospectService.findById(retrospectId);
         List<Comment> replyList = commentRepository.findAllByParentCommentId(commentId);
-        List<ReplyResponseDto> ResponseDtoList = replyList.stream()
-                .map(reply -> ReplyResponseDto.builder()
-                        .commentId(reply.getCommentId())
-                        .userId(reply.getMember().getUserId())
-                        .retrospectId(reply.getRetrospect().getRetrospectId())
-                        .content(reply.getContent())
-                        .nickName(reply.getMember().getNickname())
-                        .timeMessage(timeStringUtil.getTimeString(reply.getUpdatedAt()))
-                        .likeCount(reply.getLikeCount())
-                        .isAuthor(isCommentAuthor(reply))
-                        .build())
+        return replyList.stream()
+                .map(reply -> convertToReplyDto(reply, true))
                 .toList();
-        return ResponseDtoList;
     }
 
     //대댓글 생성
@@ -108,15 +75,7 @@ public class CommentService {
         comment.setParentComment(parentComment);
         commentRepository.save(comment);
 
-        ReplyResponseDto responseDto = ReplyResponseDto.builder()
-                .commentId(comment.getCommentId())
-                .userId(member.getUserId())
-                .retrospectId(retrospect.getRetrospectId())
-                .content(comment.getContent())
-                .nickName(member.getNickname())
-                .timeMessage(timeStringUtil.getTimeString(comment.getUpdatedAt()))
-                .build();
-        return responseDto;
+        return convertToReplyDto(comment, false);
 
     }
 
@@ -125,9 +84,52 @@ public class CommentService {
     }
 
     public boolean isCommentAuthor(Comment comment) {
-        if(comment.getRetrospect().getMember().getUserId().equals(comment.getMember().getUserId())) {
-            return true;
+        return comment.getRetrospect().getMember().getUserId().equals(comment.getMember().getUserId());
+    }
+
+    private CommentResponseDto convertToCommentDto(Comment comment, boolean isAuthorExistedAndIsLikeCntExisted){
+        if(isAuthorExistedAndIsLikeCntExisted){
+            return CommentResponseDto.builder()
+                    .commentId(comment.getCommentId())
+                    .userId(comment.getMember().getUserId())
+                    .retrospectId(comment.getRetrospect().getRetrospectId())
+                    .content(comment.getContent())
+                    .nickName(comment.getMember().getNickname())
+                    .timeMessage(timeStringUtil.getTimeString(comment.getUpdatedAt()))
+                    .likeCount(comment.getLikeCount())
+                    .isAuthor(isCommentAuthor(comment))
+                    .build();
         }
-        return false;
+        return CommentResponseDto.builder()
+                .commentId(comment.getCommentId())
+                .userId(comment.getMember().getUserId())
+                .retrospectId(comment.getRetrospect().getRetrospectId())
+                .content(comment.getContent())
+                .nickName(comment.getMember().getNickname())
+                .timeMessage(timeStringUtil.getTimeString(comment.getUpdatedAt()))
+                .build();
+    }
+
+    private ReplyResponseDto convertToReplyDto(Comment reply, boolean isAuthorExistedAndIsLikeCntExisted){
+        if(isAuthorExistedAndIsLikeCntExisted){
+            return ReplyResponseDto.builder()
+                    .commentId(reply.getCommentId())
+                    .userId(reply.getMember().getUserId())
+                    .retrospectId(reply.getRetrospect().getRetrospectId())
+                    .content(reply.getContent())
+                    .nickName(reply.getMember().getNickname())
+                    .timeMessage(timeStringUtil.getTimeString(reply.getUpdatedAt()))
+                    .likeCount(reply.getLikeCount())
+                    .isAuthor(isCommentAuthor(reply))
+                    .build();
+        }
+        return ReplyResponseDto.builder()
+                .commentId(reply.getCommentId())
+                .userId(reply.getMember().getUserId())
+                .retrospectId(reply.getRetrospect().getRetrospectId())
+                .content(reply.getContent())
+                .nickName(reply.getMember().getNickname())
+                .timeMessage(timeStringUtil.getTimeString(reply.getUpdatedAt()))
+                .build();
     }
 }

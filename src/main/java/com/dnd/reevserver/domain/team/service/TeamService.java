@@ -5,6 +5,7 @@ import com.dnd.reevserver.domain.category.entity.TeamCategory;
 import com.dnd.reevserver.domain.category.repository.TeamCategoryRepository;
 import com.dnd.reevserver.domain.category.service.CategoryService;
 import com.dnd.reevserver.domain.member.entity.role.Role;
+import com.dnd.reevserver.domain.member.exception.MemberNotFoundException;
 import com.dnd.reevserver.domain.member.service.FeatureKeywordService;
 import com.dnd.reevserver.domain.retrospect.dto.response.RetrospectResponseDto;
 import com.dnd.reevserver.domain.retrospect.entity.Retrospect;
@@ -188,7 +189,9 @@ public class TeamService {
     //추천 모임 조회
     @Transactional(readOnly = true)
     public List<TeamResponseDto> getRecommendGroups(String userId){
-//        Member member = memberService.findById(userId);
+        if(userId.isEmpty()){
+            throw new MemberNotFoundException();
+        }
         List<String> featureKeywords = featureKeywordService.findAllNames(userId);
         List<Team> groups = teamRepository.findGroupsByCategoryNames(featureKeywords);
         return groups.stream()

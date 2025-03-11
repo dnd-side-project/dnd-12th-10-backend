@@ -55,6 +55,7 @@ public class CommentService {
     //대댓글 조회
     @Transactional(readOnly = true)
     public List<ReplyResponseDto> getAllReply(Long retrospectId, Long commentId) {
+        // retrospectId는 쓰지 않으시는데 파라미터에 넣은 이유가 궁금합니다.
         List<Comment> replyList = commentRepository.findAllByParentCommentId(commentId);
         return replyList.stream()
                 .map(reply -> convertToReplyDto(reply, true))

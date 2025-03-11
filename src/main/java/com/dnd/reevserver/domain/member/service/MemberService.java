@@ -48,7 +48,6 @@ public class MemberService {
     }
 
     // 회원 정보 수정 (nickname, profileUrl)
-    // todo : Member 객체를 찾지 않고 JPQL로 직접 update를 할려 했으나 쿼리만 실행되고 변경사항이 저장되지 않는 문제 발생
     @Transactional
     public void updateNickname(String userId, UpdateMemberNicknameRequestDto dto){
         if (memberRepository.existsByNickname(dto.nickname())) {

@@ -6,7 +6,7 @@ import com.dnd.reevserver.domain.member.entity.FeatureKeyword;
 import com.dnd.reevserver.domain.member.entity.Member;
 import com.dnd.reevserver.domain.member.exception.MemberNicknameAlreadyExistedException;
 import com.dnd.reevserver.domain.member.exception.MemberNotFoundException;
-import com.dnd.reevserver.domain.member.repository.FeatureKeywordRepository;
+import com.dnd.reevserver.domain.member.repository.FeatureKeywordBatchRepository;
 import com.dnd.reevserver.domain.member.repository.MemberRepository;
 import com.dnd.reevserver.domain.team.dto.response.TeamResponseDto;
 import com.dnd.reevserver.domain.team.entity.Team;
@@ -25,7 +25,7 @@ import java.util.List;
 public class MemberService {
     private final MemberRepository memberRepository;
     private final TeamRepository teamRepository;
-    private final FeatureKeywordRepository featureKeywordRepository;
+    private final FeatureKeywordBatchRepository featureKeywordBatchRepository;
 
     // 모임 관련 API 작성 예정
 
@@ -35,19 +35,26 @@ public class MemberService {
     }
 
     // 회원 내용 읽기 (컨트롤러에서)
-    public MemberResponseDto findByUserId(String userId){
-        Member member = findById(userId);
-        List<String> featureKeywords = featureKeywordRepository.findAllByUserId(userId).stream().map(FeatureKeyword::getKeywordName).toList();
+    public MemberResponseDto findByUserId(String userId) {
+        Member member = memberRepository.findByIdWithFeatureKeywords(userId)
+                .orElseThrow(MemberNotFoundException::new);
+
+        List<String> featureKeywords = member.getFeatureKeywords()
+                .stream()
+                .map(FeatureKeyword::getKeywordName)
+                .toList();
+
         return convertToMemberDto(member, featureKeywords);
     }
 
     // 회원 정보 수정 (nickname, profileUrl)
+    // todo : Member 객체를 찾지 않고 JPQL로 직접 update를 할려 했으나 쿼리만 실행되고 변경사항이 저장되지 않는 문제 발생
     @Transactional
     public void updateNickname(String userId, UpdateMemberNicknameRequestDto dto){
-        Member member = findById(userId);
-        if(memberRepository.existsByNickname(dto.nickname())){
+        if (memberRepository.existsByNickname(dto.nickname())) {
             throw new MemberNicknameAlreadyExistedException();
         }
+        Member member = findById(userId);
         member.updateNickname(dto.nickname());
     }
 
@@ -66,10 +73,10 @@ public class MemberService {
     // 로그인 이후 정보 기입
     @Transactional
     public void insertInfoAfterLogin(String userId, InsertInfoRequestDto dto){
-        Member member = findById(userId);
         if(memberRepository.existsByNickname(dto.nickname())){
             throw new MemberNicknameAlreadyExistedException();
         }
+        Member member = findById(userId);
         member.updateNickname(dto.nickname());
         member.updateJob(dto.job());
 
@@ -83,7 +90,7 @@ public class MemberService {
                         .build();
                 keywords.add(keyword);
             }
-            featureKeywordRepository.saveAll(keywords);
+            featureKeywordBatchRepository.saveAll(keywords);
         }
     }
 
@@ -102,7 +109,8 @@ public class MemberService {
         memberRepository.save(member);
     }
 
-    //내가 속한 모임 조회
+    // 내가 속한 모임 조회
+    // todo : 유성님 이거 작업하실 건가요?
     @Transactional(readOnly = true)
     public List<TeamResponseDto> getAllGroups(String userId){
         List<Team> groups = teamRepository.findAllByUserId(userId);

@@ -1,10 +1,8 @@
 package com.dnd.reevserver.domain.userTeam.service;
 
 import com.dnd.reevserver.domain.member.entity.Member;
-import com.dnd.reevserver.domain.member.repository.MemberRepository;
 import com.dnd.reevserver.domain.member.service.MemberService;
 import com.dnd.reevserver.domain.team.entity.Team;
-import com.dnd.reevserver.domain.team.repository.TeamRepository;
 import com.dnd.reevserver.domain.team.service.TeamService;
 import com.dnd.reevserver.domain.userTeam.entity.UserTeam;
 import com.dnd.reevserver.domain.userTeam.repository.UserTeamRepository;

@@ -9,15 +9,19 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface CommentRepository extends JpaRepository<Comment, Long> {
-    @Query("select c from Comment c where c.retrospect.retrospectId = :retrospectId")
-    List<Comment> findAllByRetrospectId(@Param("retrospectId") Long retrospectId);
-
-    @Query("select c from Comment c where c.retrospect.retrospectId =:retrospectId and c.parentComment is null")
+    @Query("SELECT c FROM Comment c " +
+            "JOIN FETCH c.member " +
+            "JOIN FETCH c.retrospect " +
+            "WHERE c.retrospect.retrospectId = :retrospectId " +
+            "and c.parentComment is null")
     List<Comment> findByRetrospectId(@Param("retrospectId") Long retrospectId);
 
-    @Query("select c from Comment c where c.parentComment.commentId = :parentCommentId")
-    List<Comment> findAllByParentCommentId(@Param("parentCommentId") Long parentCommentId);
 
+    @Query("SELECT c FROM Comment c " +
+            "JOIN FETCH c.member " +
+            "JOIN FETCH c.retrospect " +
+            "WHERE c.parentComment.commentId = :parentCommentId")
+    List<Comment> findAllByParentCommentId(@Param("parentCommentId") Long parentCommentId);
 
 
     int countByRetrospect(Retrospect retrospect);

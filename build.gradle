@@ -21,6 +21,7 @@ configurations {
 
 repositories {
     mavenCentral()
+    maven { url 'https://jitpack.io' }
 }
 
 dependencies {
@@ -57,6 +58,9 @@ dependencies {
 
     // lambda
     implementation 'software.amazon.awssdk:lambda:2.20.130'
+
+    // discord
+    implementation 'com.github.napstr:logback-discord-appender:1.0.0'
 }
 
 tasks.named('test') {

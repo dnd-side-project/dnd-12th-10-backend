@@ -21,4 +21,10 @@ public interface MemberRepository extends JpaRepository<Member, String> {
     List<Team> findGroupsByUserId(@Param("userId") String userId);
 
     boolean existsByNickname(String nickname);
+
+    @Query("SELECT m FROM Member m " +
+            "LEFT JOIN FETCH m.featureKeywords " +
+            "WHERE m.userId = :userId")
+    Optional<Member> findByIdWithFeatureKeywords(@Param("userId") String userId);
+
 }

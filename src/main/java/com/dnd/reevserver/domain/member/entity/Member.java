@@ -42,6 +42,9 @@ public class Member extends BaseEntity implements OAuth2User {
     @Column(name = "job", nullable = false, length = 100)
     private String job;
 
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<FeatureKeyword> featureKeywords = new ArrayList<>();
+
     public Member(String userId, String kakaoName, String nickName, String profileUrl, String role, String job) {
         this.userId = userId;
         this.kakaoName = kakaoName;
@@ -73,8 +76,6 @@ public class Member extends BaseEntity implements OAuth2User {
     public void updateProfileUrl(String newProfileUrl) {
         this.profileUrl = newProfileUrl;
     }
-
-
 
     public Member(String userId, String nickname, String profileUrl, String role) {
         this.userId = userId;

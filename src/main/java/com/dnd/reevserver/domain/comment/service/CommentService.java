@@ -54,7 +54,7 @@ public class CommentService {
 
     //대댓글 조회
     @Transactional(readOnly = true)
-    public List<ReplyResponseDto> getAllReply(Long retrospectId, Long commentId) {
+    public List<ReplyResponseDto> getAllReply(Long commentId) {
         List<Comment> replyList = commentRepository.findAllByParentCommentId(commentId);
         return replyList.stream()
                 .map(reply -> convertToReplyDto(reply, true))

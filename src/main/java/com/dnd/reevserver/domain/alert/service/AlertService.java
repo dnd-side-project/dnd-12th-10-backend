@@ -8,7 +8,6 @@ import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Sinks;
 import reactor.core.publisher.Flux;
-import io.awspring.cloud.sqs.annotation.SqsListener;
 
 @Service
 public class AlertService {

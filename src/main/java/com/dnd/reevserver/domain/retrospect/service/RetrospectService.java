@@ -15,7 +15,6 @@ import com.dnd.reevserver.domain.retrospect.repository.RetrospectRepository;
 import com.dnd.reevserver.domain.statistics.service.LambdaService;
 import com.dnd.reevserver.domain.team.entity.Team;
 import com.dnd.reevserver.domain.team.service.TeamService;
-import com.dnd.reevserver.domain.userTeam.entity.UserTeam;
 import com.dnd.reevserver.global.util.TimeStringUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

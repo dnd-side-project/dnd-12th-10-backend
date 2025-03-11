@@ -24,8 +24,7 @@ public interface CommentControllerDocs {
         @RequestBody AddCommentRequestDto requestDto);
 
     @Operation(summary = "답글 조회 API", description = "해당 댓글의 답글들을 조회합니다.")
-    public ResponseEntity<List<ReplyResponseDto>> getAllReply(@PathVariable Long retrospectId,
-        @PathVariable Long commentId);
+    public ResponseEntity<List<ReplyResponseDto>> getAllReply(@PathVariable Long commentId);
 
     @Operation(summary = "답글 작성 API", description = "해당 댓글에 답글을 작성합니다.")
     public ResponseEntity<ReplyResponseDto> addReply(@AuthenticationPrincipal String userId, @PathVariable Long commentId,

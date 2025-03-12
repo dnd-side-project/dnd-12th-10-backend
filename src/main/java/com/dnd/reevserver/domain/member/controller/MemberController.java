@@ -68,4 +68,11 @@ public class MemberController {
     }
 
     // 유저의 임시글 수
+
+    @Operation(summary = "내가 속한 모임 조회")
+    @GetMapping("/group/list/{userId}")
+    public ResponseEntity<List<TeamResponseDto>> getTeamLists(@PathVariable String userId) {
+        List<TeamResponseDto> responseList = memberService.getAllGroups(userId);
+        return ResponseEntity.ok().body(responseList);
+    }
 }

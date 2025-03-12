@@ -9,9 +9,11 @@ import java.util.List;
 
 public interface TeamRepository extends JpaRepository<Team, Long> {
     @Query("select t from Team t " +
-            "join fetch t.userTeams ut " +
-            "where ut.member.userId = :userId")
+        "join fetch t.userTeams ut " +
+        "where ut.member.userId = :userId")
     List<Team> findAllByUserId(@Param("userId") String userId);
+
+
 
     @Query("select t from Team t "
         + "left join t.userTeams ut "

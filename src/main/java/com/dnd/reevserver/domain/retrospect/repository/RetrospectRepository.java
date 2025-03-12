@@ -11,10 +11,16 @@ import java.util.List;
 
 
 public interface RetrospectRepository extends JpaRepository<Retrospect, Long> {
-    @Query("select r from Retrospect r where r.team.groupId = :groupId ")
+
+    @Query("select r from Retrospect r "
+        + "join fetch r.member "
+        + "join fetch r.team "
+        + "where r.team.groupId = :groupId")
     List<Retrospect> findAllByTeamId(@Param("groupId") Long groupId);
 
-    @Query("select r from Retrospect r where r.member.userId = :userId ")
+    @Query("select r from Retrospect r "
+        + "join fetch r.team "
+        + "where r.member.userId = :userId")
     List<Retrospect> findAllByUserId(@Param("userId") String userId);
 
     @Query("select count(r) from Retrospect r WHERE r.team.groupId = :groupId")

@@ -50,6 +50,4 @@ public class RetrospectController implements RetrospectControllerDocs{
         return ResponseEntity.ok().body(responseDto);
     }
 
-
-
 }

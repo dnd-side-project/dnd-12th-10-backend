@@ -9,16 +9,18 @@ import java.util.List;
 
 public interface TeamRepository extends JpaRepository<Team, Long> {
     @Query("select t from Team t " +
-            "join t.userTeams ut " +
+            "join fetch t.userTeams ut " +
             "where ut.member.userId = :userId")
     List<Team> findAllByUserId(@Param("userId") String userId);
 
-    @Query("select t from Team t left join t.userTeams ut group by t order by count(ut) desc")
+    @Query("select t from Team t "
+        + "left join t.userTeams ut "
+        + " group by t order by count(ut) desc")
     List<Team> findAllPopluarGroups();
 
     @Query("select distinct t from Team t " +
-        "join t.teamCategories tc " +
-        "join tc.category c " +
+        "join fetch t.teamCategories tc " +
+        "join fetch tc.category c " +
         "where c.categoryName in :categoryNames")
     List<Team> findGroupsByCategoryNames(@Param("categoryNames") List<String> categoryNames);
 }

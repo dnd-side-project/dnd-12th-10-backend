@@ -13,8 +13,6 @@ public interface TeamRepository extends JpaRepository<Team, Long> {
         "where ut.member.userId = :userId")
     List<Team> findAllByUserId(@Param("userId") String userId);
 
-
-
     @Query("select t from Team t "
         + "left join t.userTeams ut "
         + "group by t order by count(ut) desc")

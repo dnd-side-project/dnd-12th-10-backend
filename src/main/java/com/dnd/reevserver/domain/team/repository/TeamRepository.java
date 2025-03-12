@@ -15,7 +15,7 @@ public interface TeamRepository extends JpaRepository<Team, Long> {
 
     @Query("select t from Team t "
         + "left join t.userTeams ut "
-        + " group by t order by count(ut) desc")
+        + "group by t order by count(ut) desc")
     List<Team> findAllPopluarGroups();
 
     @Query("select distinct t from Team t " +

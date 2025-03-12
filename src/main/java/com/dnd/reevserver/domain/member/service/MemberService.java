@@ -109,7 +109,6 @@ public class MemberService {
     }
 
     // 내가 속한 모임 조회
-    // todo : 유성님 이거 작업하실 건가요?
     @Transactional(readOnly = true)
     public List<TeamResponseDto> getAllGroups(String userId){
         List<Team> groups = teamRepository.findAllByUserId(userId);

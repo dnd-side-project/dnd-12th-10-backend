@@ -19,8 +19,8 @@ public interface TeamRepository extends JpaRepository<Team, Long> {
     List<Team> findAllPopluarGroups();
 
     @Query("select distinct t from Team t " +
-        "join fetch t.teamCategories tc " +
-        "join fetch tc.category c " +
+        "left join fetch t.teamCategories tc " +
+        "left join fetch tc.category c " +
         "where c.categoryName in :categoryNames")
     List<Team> findGroupsByCategoryNames(@Param("categoryNames") List<String> categoryNames);
 }

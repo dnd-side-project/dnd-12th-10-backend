@@ -51,5 +51,12 @@ public class RetrospectController implements RetrospectControllerDocs{
     }
 
 
+    @GetMapping("/all/{userId}")
+    public ResponseEntity<List<RetrospectResponseDto>> retrospects(@PathVariable String userId, @RequestParam(required = false) Long groupId) {
+        List<RetrospectResponseDto> retroList = retrospectService.getAllRetrospectByGruopId(userId, groupId);
+        return ResponseEntity.ok().body(retroList);
+    }
+
+
 
 }

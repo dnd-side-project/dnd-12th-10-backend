@@ -18,18 +18,18 @@ import java.util.Date;
 public class JwtProvider {
 
     private final Key key;
-    private final int accessTokenExpirationDay;
+    private final int accessTokenExpirationHour;
     private final int refreshTokenExpirationDay;
 
     public JwtProvider(ReevProperties reevProperties, TokenProperties tokenProperties) {
         String jwtSecret = reevProperties.getJwtSecret();
         this.key = Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
-        accessTokenExpirationDay = tokenProperties.getAccessTokenExpirationDay();
+        accessTokenExpirationHour = tokenProperties.getAccessTokenExpirationHour();
         refreshTokenExpirationDay = tokenProperties.getRefreshTokenExpirationDay();
     }
 
     public String createAccessToken(String userId) {
-        Date expiredDate = Date.from(Instant.now().plus(accessTokenExpirationDay, ChronoUnit.DAYS));
+        Date expiredDate = Date.from(Instant.now().plus(accessTokenExpirationHour, ChronoUnit.HOURS));
         return Jwts.builder()
                 .signWith(key, SignatureAlgorithm.HS256)
                 .setSubject(userId)

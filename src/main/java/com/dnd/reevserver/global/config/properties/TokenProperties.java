@@ -10,6 +10,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class TokenProperties {
     private String refreshTokenName;
     private String queryParam;
-    private int accessTokenExpirationDay;
+    private int accessTokenExpirationHour;
     private int refreshTokenExpirationDay;
 }

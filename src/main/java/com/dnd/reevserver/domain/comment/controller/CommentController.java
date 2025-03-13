@@ -31,7 +31,7 @@ public class CommentController implements CommentControllerDocs {
         return ResponseEntity.ok().body(commentResponseDto);
     }
 
-    @GetMapping("/{commentId}")
+    @GetMapping("/reply/{commentId}")
     public ResponseEntity<List<ReplyResponseDto>> getAllReply(@PathVariable Long commentId){
         List<ReplyResponseDto> responseDtoList = commentService.getAllReply(commentId);
         return ResponseEntity.ok().body(responseDtoList);

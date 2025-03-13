@@ -8,11 +8,7 @@ import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-@OpenAPIDefinition(
-        servers = {
-                @Server(url = "https://reevapiserver.site", description = "프로덕션 서버"),
-                @Server(url = "http://localhost:8080", description = "로컬 서버")
-        })
+@OpenAPIDefinition
 @Configuration
 public class SwaggerConfig {
 

@@ -61,6 +61,10 @@ dependencies {
 
     // discord
     implementation 'com.github.napstr:logback-discord-appender:1.0.0'
+
+    //querydsl
+    implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
+    annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jakarta"
 }
 
 tasks.named('test') {

@@ -1,6 +1,7 @@
 package com.dnd.reevserver.domain.retrospect.service;
 
 import com.dnd.reevserver.domain.comment.repository.CommentRepository;
+import com.dnd.reevserver.domain.like.repository.LikeRepository;
 import com.dnd.reevserver.domain.member.entity.Member;
 import com.dnd.reevserver.domain.member.exception.MemberNotFoundException;
 import com.dnd.reevserver.domain.member.service.MemberService;
@@ -32,6 +33,7 @@ public class RetrospectService {
     private final TimeStringUtil timeStringUtil;
     private final CommentRepository commentRepository;
     private final LambdaService lambdaService;
+    private final LikeRepository likeRepository;
 
     //단일회고 조회
     @Transactional(readOnly = true)
@@ -118,18 +120,14 @@ public class RetrospectService {
         return new DeleteRetrospectResponseDto(RetrospectId);
     }
 
-    // 좋아요 호출 시 사용하는 내부 메소드
-    @Transactional
-    public void updateLikeCnt(Long retrospectId, boolean isLike) {
-        Retrospect retrospect = findById(retrospectId);
-        if(isLike) retrospect.updateLikeCount(retrospect.getLikeCount() + 1);
-        else retrospect.updateLikeCount(retrospect.getLikeCount() - 1);
-    }
-
     //회고수 계산
     @Transactional(readOnly = true)
     public long countByGroupId(Long groupId) {
         return retrospectRepository.countByGroupId(groupId);
+    }
+
+    public int getLikeCount(Long retrospectId) {
+        return likeRepository.getLikeCount(retrospectId);
     }
 
     private RetrospectResponseDto convertToDto(Retrospect retrospect) {
@@ -139,7 +137,7 @@ public class RetrospectService {
                 .content(retrospect.getContent())
                 .userName(retrospect.getMember().getNickname())
                 .timeString(timeStringUtil.getTimeString(retrospect.getUpdatedAt()))
-                .likeCount(retrospect.getLikeCount())
+                .likeCount(getLikeCount(retrospect.getRetrospectId()))
                 .groupName(retrospect.getTeam() != null ? retrospect.getTeam().getGroupName() : null)
                 .groupId(retrospect.getTeam() != null ? retrospect.getTeam().getGroupId() : null)
                 .commentCount(commentRepository.countByRetrospect(retrospect))

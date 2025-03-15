@@ -33,16 +33,12 @@ public class Retrospect extends BaseEntity {
     @Column(nullable = false, columnDefinition = "LONGTEXT")
     private String content;
 
-    @Column(name = "like_count")
-    private int likeCount;
-
     @Builder
     public Retrospect(Member member, Team team, String title, String content) {
         this.member = member;
         this.team = team;
         this.title = title;
         this.content = content;
-        this.likeCount = 0;
     }
 
     @Builder
@@ -58,8 +54,6 @@ public class Retrospect extends BaseEntity {
     public void setTeam(Team team) {
         this.team = team;
     }
-
-    public void updateLikeCount(int likeCount) { this.likeCount = likeCount; }
 
     public void updateTitle(String title) {
         this.title = title;

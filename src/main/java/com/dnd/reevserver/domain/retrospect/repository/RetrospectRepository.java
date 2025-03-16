@@ -20,7 +20,7 @@ public interface RetrospectRepository extends JpaRepository<Retrospect, Long> {
     List<Retrospect> findAllByTeamId(@Param("groupId") Long groupId);
 
     @Query("select r from Retrospect r "
-        + "join fetch r.team "
+        + "left join fetch r.team "
         + "where r.member.userId = :userId")
     List<Retrospect> findAllByUserId(@Param("userId") String userId);
 

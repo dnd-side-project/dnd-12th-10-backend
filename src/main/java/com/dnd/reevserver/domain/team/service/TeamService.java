@@ -4,6 +4,7 @@ import com.dnd.reevserver.domain.category.entity.Category;
 import com.dnd.reevserver.domain.category.entity.TeamCategory;
 import com.dnd.reevserver.domain.category.repository.TeamCategoryRepository;
 import com.dnd.reevserver.domain.category.service.CategoryService;
+import com.dnd.reevserver.domain.like.repository.LikeRepository;
 import com.dnd.reevserver.domain.member.entity.role.Role;
 import com.dnd.reevserver.domain.member.exception.MemberNotFoundException;
 import com.dnd.reevserver.domain.member.service.FeatureKeywordService;
@@ -41,6 +42,7 @@ public class TeamService {
     private final TimeStringUtil timeStringUtil;
     private final RetrospectRepository retrospectRepository;
     private final FeatureKeywordService featureKeywordService;
+    private final LikeRepository likeRepository;
 
     //모든 그룹조회
     @Transactional(readOnly = true)
@@ -212,6 +214,10 @@ public class TeamService {
 
     }
 
+    public int getLikeCount(Long retrospectId) {
+        return likeRepository.getLikeCount(retrospectId);
+    }
+
     private TeamResponseDto convertToDto(Team team){
         return TeamResponseDto.builder()
                 .groupId(team.getGroupId())
@@ -256,7 +262,7 @@ public class TeamService {
                 .content(retrospect.getContent())
                 .userName(retrospect.getMember().getNickname())
                 .timeString(timeStringUtil.getTimeString(retrospect.getUpdatedAt()))
-                .likeCount(retrospect.getLikeCount())
+                .likeCount(getLikeCount(retrospect.getRetrospectId()))
                 .build();
     }
 }

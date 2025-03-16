@@ -70,4 +70,13 @@ public class Team extends BaseEntity {
         teamCategories.add(teamCategory);
         teamCategory.updateTeam(this);
     }
+
+    public void updateTeamInfo(String groupName, String description, String introduction,
+        Boolean isPublic, int maxNum) {
+        this.groupName = groupName;
+        this.description = description;
+        this.introduction = introduction;
+        this.isPublic = isPublic;
+        this.maxNum = maxNum;
+    }
 }

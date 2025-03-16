@@ -232,6 +232,19 @@ public class TeamService {
 
     }
 
+    //그룹 삭제
+    @Transactional
+    public Long deleteGroup(String userId, Long groupId) {
+        Team team = findById(groupId);
+        if(!team.getOwnerId().equals(userId)){
+            throw new NotOwnerUserException();
+        }
+        retrospectRepository.clearTeam(team.getGroupId());
+
+        teamRepository.delete(team);
+        return groupId;
+    }
+
     public Team findById(Long groupId) {
         return teamRepository.findById(groupId).orElseThrow(TeamNotFoundException::new);
     }

@@ -37,7 +37,7 @@ public class Team extends BaseEntity {
     @Column(name = "max_num", nullable = false)
     private int maxNum;
 
-    @OneToMany(mappedBy = "team")
+    @OneToMany(mappedBy = "team", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<UserTeam> userTeams = new ArrayList<>();
 
     @Column(name = "recent_act")
@@ -46,7 +46,7 @@ public class Team extends BaseEntity {
     @Column(name = "owner_id", nullable = false)
     private String ownerId;
 
-    @OneToMany(mappedBy = "team")
+    @OneToMany(mappedBy = "team", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<TeamCategory> teamCategories = new ArrayList<>();
 
     @Builder

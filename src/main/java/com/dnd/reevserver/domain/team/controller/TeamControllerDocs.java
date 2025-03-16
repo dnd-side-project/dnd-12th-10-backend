@@ -18,6 +18,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -55,5 +56,8 @@ public interface TeamControllerDocs {
 
     @Operation(summary = "모임 정보 수정 API", description = "모임정보를 수정합니다.")
     public ResponseEntity<GroupDetailResponseDto> updateGroupInfo(@AuthenticationPrincipal String userId, @PathVariable Long groupId, @RequestBody UpdateGroupRequestDto requestDto);
+
+    @Operation(summary = "모임 삭제 API", description = "모임을 삭제합니다.")
+    public ResponseEntity<Long> deleteGroup(@AuthenticationPrincipal String userId, @PathVariable Long groupId);
 
 }

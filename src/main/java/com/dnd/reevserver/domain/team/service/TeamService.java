@@ -1,5 +1,7 @@
 package com.dnd.reevserver.domain.team.service;
 
+import static com.dnd.reevserver.domain.category.entity.QCategory.category;
+
 import com.dnd.reevserver.domain.category.entity.Category;
 import com.dnd.reevserver.domain.category.entity.TeamCategory;
 import com.dnd.reevserver.domain.category.exception.CategoryNotFoundException;
@@ -29,6 +31,7 @@ import com.dnd.reevserver.domain.userTeam.exception.UserGroupNotFoundException;
 import com.dnd.reevserver.domain.userTeam.repository.UserTeamRepository;
 import com.dnd.reevserver.global.util.TimeStringUtil;
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -216,13 +219,11 @@ public class TeamService {
             requestDto.maxNum());
 
         if(requestDto.categoryNames()!=null && !requestDto.categoryNames().isEmpty()){
-            List<TeamCategory> teamCategoryList = new ArrayList<>();
-            for(String categoryName : requestDto.categoryNames()){
-                Category category = categoryRepository.findByCategoryName(categoryName)
-                    .orElseThrow(CategoryNotFoundException::new);
-                TeamCategory teamCategory = new TeamCategory(team, category);
-                teamCategoryList.add(teamCategory);
-            }
+
+            List<Category> categoryList = categoryRepository.findByCategoryNameIn(requestDto.categoryNames());
+            List<TeamCategory> teamCategoryList = categoryList.stream()
+                .map(category -> new TeamCategory(team,category))
+                .toList();
             teamCategoryService.updateTeamCategories(groupId, teamCategoryList);
             team.getTeamCategories().clear();
             for (TeamCategory teamCategory : teamCategoryList) {

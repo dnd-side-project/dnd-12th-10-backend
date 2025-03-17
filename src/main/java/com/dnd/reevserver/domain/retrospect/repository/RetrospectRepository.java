@@ -27,4 +27,8 @@ public interface RetrospectRepository extends JpaRepository<Retrospect, Long> {
     long countByGroupId(Long groupId);
 
     Optional<Retrospect> findFirstByTeam_GroupIdOrderByUpdatedAtDesc(Long groupId);
+
+    @Query("SELECT r FROM Retrospect r WHERE r.retrospectId IN " +
+            "(SELECT b.retrospect.retrospectId FROM Bookmark b WHERE b.member.userId = :userId)")
+    List<Retrospect> findRetrospectsByUserId(@Param("userId") Long userId);
 }

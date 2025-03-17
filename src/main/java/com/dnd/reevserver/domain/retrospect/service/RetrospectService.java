@@ -1,5 +1,10 @@
 package com.dnd.reevserver.domain.retrospect.service;
 
+import com.dnd.reevserver.domain.retrospect.dto.request.BookmarkRequestDto;
+import com.dnd.reevserver.domain.retrospect.entity.Bookmark;
+import com.dnd.reevserver.domain.retrospect.exception.BookmarkMemberWrongException;
+import com.dnd.reevserver.domain.retrospect.exception.BookmarkNotFoundException;
+import com.dnd.reevserver.domain.retrospect.repository.BookmarkRepository;
 import com.dnd.reevserver.domain.comment.repository.CommentRepository;
 import com.dnd.reevserver.domain.like.repository.LikeRepository;
 import com.dnd.reevserver.domain.member.entity.Member;
@@ -34,6 +39,7 @@ public class RetrospectService {
     private final CommentRepository commentRepository;
     private final LambdaService lambdaService;
     private final LikeRepository likeRepository;
+    private final BookmarkRepository bookmarkRepository;
 
     //단일회고 조회
     @Transactional(readOnly = true)
@@ -126,8 +132,39 @@ public class RetrospectService {
         return retrospectRepository.countByGroupId(groupId);
     }
 
+    @Transactional(readOnly = true)
     public int getLikeCount(Long retrospectId) {
         return likeRepository.getLikeCount(retrospectId);
+    }
+
+    // 회원의 북마크된 전체 회고 조회
+//    public List<RetrospectResponseDto> getBookmarkedRetrospects(String userId){
+//        // user의 북마크 리스트
+//        // 그 리스트 중 retrospectId 추출, in절로 retrospect 가져옴
+//
+//    }
+
+    // 회원의 북마크된 그룹 별 회고 조회
+
+    // 해당 회고가 북마크되었는지 확인 : DTO로도 해도 될 듯
+
+    // 북마크 기능 (insert)
+    @Transactional
+    public void insertBookmark(String userId, BookmarkRequestDto dto){
+        bookmarkRepository.save(Bookmark.builder()
+                .member(memberService.findById(userId))
+                .retrospect(findById(dto.retrospectId()))
+                .build());
+    }
+
+    // 북마크 취소 (delete)
+    @Transactional
+    public void deleteBookmark(String userId, BookmarkRequestDto dto){
+        Bookmark bookmark = bookmarkRepository.findById(dto.retrospectId()).orElseThrow(BookmarkNotFoundException::new);
+        if(!bookmark.getMember().getUserId().equals(userId)){
+            throw new BookmarkMemberWrongException();
+        }
+        bookmarkRepository.delete(bookmark);
     }
 
     private RetrospectResponseDto convertToDto(Retrospect retrospect) {

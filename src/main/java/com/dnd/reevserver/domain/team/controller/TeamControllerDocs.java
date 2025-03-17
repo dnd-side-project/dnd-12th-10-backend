@@ -5,6 +5,7 @@ import com.dnd.reevserver.domain.team.dto.request.AddTeamRequestDto;
 import com.dnd.reevserver.domain.team.dto.request.GetRecommendGroupRequestDto;
 import com.dnd.reevserver.domain.team.dto.request.JoinGroupRequestDto;
 import com.dnd.reevserver.domain.team.dto.request.LeaveGroupRequestDto;
+import com.dnd.reevserver.domain.team.dto.request.UpdateGroupRequestDto;
 import com.dnd.reevserver.domain.team.dto.response.AddFavoriteGroupResponseDto;
 import com.dnd.reevserver.domain.team.dto.response.AddTeamResponseDto;
 import com.dnd.reevserver.domain.team.dto.response.GetPopularGroupResponseDto;
@@ -17,7 +18,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -50,5 +53,11 @@ public interface TeamControllerDocs {
 
     @Operation(summary = "추천 모임 조회 API", description = "추천 모임을 조회합니다.")
     public ResponseEntity<List<TeamResponseDto>> getRecommendGroups(@AuthenticationPrincipal String userId);
+
+    @Operation(summary = "모임 정보 수정 API", description = "모임정보를 수정합니다.")
+    public ResponseEntity<GroupDetailResponseDto> updateGroupInfo(@AuthenticationPrincipal String userId, @PathVariable Long groupId, @RequestBody UpdateGroupRequestDto requestDto);
+
+    @Operation(summary = "모임 삭제 API", description = "모임을 삭제합니다.")
+    public ResponseEntity<Long> deleteGroup(@AuthenticationPrincipal String userId, @PathVariable Long groupId);
 
 }

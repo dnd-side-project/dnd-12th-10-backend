@@ -1,9 +1,15 @@
 package com.dnd.reevserver.domain.team.service;
 
+import static com.dnd.reevserver.domain.category.entity.QCategory.category;
+
 import com.dnd.reevserver.domain.category.entity.Category;
 import com.dnd.reevserver.domain.category.entity.TeamCategory;
+import com.dnd.reevserver.domain.category.exception.CategoryNotFoundException;
+import com.dnd.reevserver.domain.category.repository.CategoryRepository;
 import com.dnd.reevserver.domain.category.repository.TeamCategoryRepository;
+import com.dnd.reevserver.domain.category.repository.batch.TeamCategoryBatchRepository;
 import com.dnd.reevserver.domain.category.service.CategoryService;
+import com.dnd.reevserver.domain.category.service.TeamCategoryService;
 import com.dnd.reevserver.domain.like.repository.LikeRepository;
 import com.dnd.reevserver.domain.member.entity.role.Role;
 import com.dnd.reevserver.domain.member.exception.MemberNotFoundException;
@@ -14,6 +20,7 @@ import com.dnd.reevserver.domain.retrospect.repository.RetrospectRepository;
 import com.dnd.reevserver.domain.team.dto.request.*;
 import com.dnd.reevserver.domain.team.dto.response.*;
 import com.dnd.reevserver.domain.team.entity.Team;
+import com.dnd.reevserver.domain.team.exception.NotOwnerUserException;
 import com.dnd.reevserver.domain.team.exception.TeamNotFoundException;
 import com.dnd.reevserver.domain.team.repository.TeamRepository;
 import com.dnd.reevserver.domain.member.entity.Member;
@@ -23,6 +30,8 @@ import com.dnd.reevserver.domain.userTeam.exception.UserGroupExistException;
 import com.dnd.reevserver.domain.userTeam.exception.UserGroupNotFoundException;
 import com.dnd.reevserver.domain.userTeam.repository.UserTeamRepository;
 import com.dnd.reevserver.global.util.TimeStringUtil;
+import java.util.ArrayList;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,6 +52,8 @@ public class TeamService {
     private final RetrospectRepository retrospectRepository;
     private final FeatureKeywordService featureKeywordService;
     private final LikeRepository likeRepository;
+    private final CategoryRepository categoryRepository;
+    private final TeamCategoryService teamCategoryService;
 
     //모든 그룹조회
     @Transactional(readOnly = true)
@@ -103,14 +114,6 @@ public class TeamService {
         memberService.save(member);
 
         return new AddTeamResponseDto(team.getGroupId());
-    }
-
-    public Team findById(Long groupId) {
-        return teamRepository.findById(groupId).orElseThrow(TeamNotFoundException::new);
-    }
-
-    public UserTeam findByUserIdAndGroupId(String userId, Long groupId) {
-        return userTeamRepository.findByUserIdAndGroupId(userId,groupId).orElseThrow(UserGroupNotFoundException::new);
     }
 
     //모임 즐겨찾기
@@ -201,6 +204,56 @@ public class TeamService {
             .toList();
     }
 
+    //그룹 정보 수정
+    @Transactional
+    public void updateGroupInfo(String userId, Long groupId, UpdateGroupRequestDto requestDto) {
+        Team team = findById(groupId);
+        if(!team.getOwnerId().equals(userId)){
+            throw new NotOwnerUserException();
+        }
+
+        team.updateTeamInfo(requestDto.groupName(),
+            requestDto.description(),
+            requestDto.introduction(),
+            requestDto.isPublic(),
+            requestDto.maxNum());
+
+        if(requestDto.categoryNames()!=null && !requestDto.categoryNames().isEmpty()){
+
+            List<Category> categoryList = categoryRepository.findByCategoryNameIn(requestDto.categoryNames());
+            List<TeamCategory> teamCategoryList = categoryList.stream()
+                .map(category -> new TeamCategory(team,category))
+                .toList();
+            teamCategoryService.updateTeamCategories(groupId, teamCategoryList);
+            team.getTeamCategories().clear();
+            for (TeamCategory teamCategory : teamCategoryList) {
+                team.addTeamCategory(teamCategory);
+            }
+        }
+
+    }
+
+    //그룹 삭제
+    @Transactional
+    public Long deleteGroup(String userId, Long groupId) {
+        Team team = findById(groupId);
+        if(!team.getOwnerId().equals(userId)){
+            throw new NotOwnerUserException();
+        }
+        retrospectRepository.clearTeam(team.getGroupId());
+
+        teamRepository.delete(team);
+        return groupId;
+    }
+
+    public Team findById(Long groupId) {
+        return teamRepository.findById(groupId).orElseThrow(TeamNotFoundException::new);
+    }
+
+    public UserTeam findByUserIdAndGroupId(String userId, Long groupId) {
+        return userTeamRepository.findByUserIdAndGroupId(userId,groupId).orElseThrow(UserGroupNotFoundException::new);
+    }
+
     //유저역할반환
     public Role getRole(String userId, Team group){
         Optional<UserTeam> userTeam = userTeamRepository.findByUserIdAndGroupId(userId,group.getGroupId());
@@ -265,4 +318,6 @@ public class TeamService {
                 .likeCount(getLikeCount(retrospect.getRetrospectId()))
                 .build();
     }
+
+
 }

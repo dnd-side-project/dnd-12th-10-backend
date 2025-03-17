@@ -37,7 +37,7 @@ public class Team extends BaseEntity {
     @Column(name = "max_num", nullable = false)
     private int maxNum;
 
-    @OneToMany(mappedBy = "team")
+    @OneToMany(mappedBy = "team", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<UserTeam> userTeams = new ArrayList<>();
 
     @Column(name = "recent_act")
@@ -46,7 +46,7 @@ public class Team extends BaseEntity {
     @Column(name = "owner_id", nullable = false)
     private String ownerId;
 
-    @OneToMany(mappedBy = "team")
+    @OneToMany(mappedBy = "team", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<TeamCategory> teamCategories = new ArrayList<>();
 
     @Builder
@@ -69,5 +69,14 @@ public class Team extends BaseEntity {
     public void addTeamCategory(TeamCategory teamCategory) {
         teamCategories.add(teamCategory);
         teamCategory.updateTeam(this);
+    }
+
+    public void updateTeamInfo(String groupName, String description, String introduction,
+        Boolean isPublic, int maxNum) {
+        this.groupName = groupName;
+        this.description = description;
+        this.introduction = introduction;
+        this.isPublic = isPublic;
+        this.maxNum = maxNum;
     }
 }

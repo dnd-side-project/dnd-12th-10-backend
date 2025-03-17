@@ -71,5 +71,18 @@ public class TeamController implements TeamControllerDocs{
         return ResponseEntity.ok().body(recommendGroup);
     }
 
+    @PatchMapping("/{groupId}")
+    public ResponseEntity<GroupDetailResponseDto> updateGroupInfo(@AuthenticationPrincipal String userId, @PathVariable Long groupId, @RequestBody UpdateGroupRequestDto requestDto){
+        groupService.updateGroupInfo(userId, groupId, requestDto);
+        GroupDetailResponseDto responseDto = groupService.getGroup(userId, groupId);
+        return ResponseEntity.ok().body(responseDto);
+    }
+
+    @DeleteMapping("{groupId}")
+    public ResponseEntity<Long> deleteGroup(@AuthenticationPrincipal String userId, @PathVariable Long groupId){
+        Long deleteGroupId = groupService.deleteGroup(userId, groupId);
+        return ResponseEntity.ok().body(deleteGroupId);
+    }
+
 
 }

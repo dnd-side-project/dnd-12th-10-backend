@@ -132,21 +132,19 @@ public class RetrospectService {
         return retrospectRepository.countByGroupId(groupId);
     }
 
-    @Transactional(readOnly = true)
     public int getLikeCount(Long retrospectId) {
         return likeRepository.getLikeCount(retrospectId);
     }
 
     // 회원의 북마크된 전체 회고 조회
-//    public List<RetrospectResponseDto> getBookmarkedRetrospects(String userId){
-//        // user의 북마크 리스트
-//        // 그 리스트 중 retrospectId 추출, in절로 retrospect 가져옴
-//
-//    }
+    public List<RetrospectResponseDto> getBookmarkedRetrospects(String userId){
+        return retrospectRepository.findRetrospectsByUserIdWithBookmarked(userId).stream().map(this::convertToDto).toList();
+    }
 
     // 회원의 북마크된 그룹 별 회고 조회
-
-    // 해당 회고가 북마크되었는지 확인 : DTO로도 해도 될 듯
+    public List<RetrospectResponseDto> getBookmarkedRetrospectsWithGroupId(String userId, Long groupId){
+        return retrospectRepository.findRetrospectsByUserIdWithBookmarkedAndGroupId(userId, groupId).stream().map(this::convertToDto).toList();
+    }
 
     // 북마크 기능 (insert)
     @Transactional

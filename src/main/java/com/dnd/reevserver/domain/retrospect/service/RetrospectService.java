@@ -45,7 +45,6 @@ public class RetrospectService {
     //단일회고 조회
     @Transactional(readOnly = true)
     public RetrospectResponseDto getRetrospectById(String userId, Long retrospectId) {
-        userId = "3894991774";
         if(userId.isEmpty()) {
             throw new MemberNotFoundException();
         }
@@ -61,7 +60,6 @@ public class RetrospectService {
     //회고 목록 조회
     @Transactional(readOnly = true)
     public List<RetrospectResponseDto> getAllRetrospectByGruopId(String userId, Long groupId) {
-        userId = "3894991774";
         if(userId.isEmpty()) {
             throw new MemberNotFoundException();
         }
@@ -87,7 +85,6 @@ public class RetrospectService {
     //회고 작성
     @Transactional
     public AddRetrospectResponseDto addRetrospect(String userId, AddRetrospectRequestDto requestDto) {
-        userId = "3894991774";
         Member member = memberService.findById(userId);
         if(requestDto.groupId()!=null) {
             Team team = teamService.findById(requestDto.groupId());
@@ -120,7 +117,6 @@ public class RetrospectService {
 
     @Transactional
     public RetrospectSingleResponseDto updateRetrospect(String userId, UpdateRetrospectRequestDto requestDto) {
-        userId = "3894991774";
         Retrospect retrospect = findById(requestDto.retrospectId());
         if(!retrospect.getMember().getUserId().equals(userId)){
             throw new RetrospectAuthorException();
@@ -131,7 +127,6 @@ public class RetrospectService {
 
     @Transactional
     public DeleteRetrospectResponseDto deleteRetrospect(String userId, DeleteRetrospectRequestDto requestDto) {
-        userId = "3894991774";
         Retrospect retrospect = findById(requestDto.retrospectId());
         if(!retrospect.getMember().getUserId().equals(userId)){
             throw new RetrospectAuthorException();
@@ -154,7 +149,6 @@ public class RetrospectService {
 
     // 회원의 북마크된 전체 회고 조회
     public List<RetrospectResponseDto> getBookmarkedRetrospects(String userId){
-        userId = "3894991774";
         return retrospectRepository.findRetrospectsByUserIdWithBookmarked(userId).stream()
                 .map(tuple -> convertToDto(
                         tuple.get(0, Retrospect.class),
@@ -165,7 +159,6 @@ public class RetrospectService {
 
     // 회원의 북마크된 그룹 별 회고 조회
     public List<RetrospectResponseDto> getBookmarkedRetrospectsWithGroupId(String userId, Long groupId){
-        userId = "3894991774";
         return retrospectRepository.findRetrospectsByUserIdWithBookmarkedAndGroupId(userId, groupId).stream()
                 .map(tuple -> convertToDto(
                         tuple.get(0, Retrospect.class),
@@ -177,7 +170,6 @@ public class RetrospectService {
     // 북마크 기능 (insert)
     @Transactional
     public void insertBookmark(String userId, BookmarkRequestDto dto){
-        userId = "3894991774";
         if(bookmarkRepository.existsByRetrospectRetrospectIdAndMemberUserId(dto.retrospectId(), userId))
             throw new BookmarkAlreadyExistedException();
         bookmarkRepository.save(Bookmark.builder()
@@ -189,7 +181,6 @@ public class RetrospectService {
     // 북마크 취소 (delete)
     @Transactional
     public void deleteBookmark(String userId, BookmarkRequestDto dto){
-        userId = "3894991774";
         bookmarkRepository.deleteByRetrospectRetrospectIdAndMemberUserId(dto.retrospectId(), userId);
     }
 

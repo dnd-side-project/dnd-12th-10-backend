@@ -4,6 +4,7 @@ import com.dnd.reevserver.domain.comment.dto.request.AddCommentRequestDto;
 import com.dnd.reevserver.domain.comment.dto.request.AddReplyRequestDto;
 import com.dnd.reevserver.domain.comment.dto.request.UpdateCommentRequestDto;
 import com.dnd.reevserver.domain.comment.dto.response.CommentResponseDto;
+import com.dnd.reevserver.domain.comment.dto.response.DeleteCommentResponseDto;
 import com.dnd.reevserver.domain.comment.dto.response.ReplyResponseDto;
 import com.dnd.reevserver.domain.comment.entity.Comment;
 import com.dnd.reevserver.domain.comment.exception.NotCommentOwnerException;
@@ -92,6 +93,18 @@ public class CommentService {
         comment.updateComment(requestDto.content());
 
         return convertToCommentDto(comment,false);
+    }
+
+    //댓글, 답글 삭제
+    @Transactional
+    public DeleteCommentResponseDto deleteComment(String userId, Long commentId) {
+        Comment comment = findById(commentId);
+        if(!comment.getMember().getUserId().equals(userId)) {
+            throw new NotCommentOwnerException();
+        }
+        commentRepository.delete(comment);
+
+        return new DeleteCommentResponseDto(commentId);
     }
 
     public Comment findById(Long commentId) {

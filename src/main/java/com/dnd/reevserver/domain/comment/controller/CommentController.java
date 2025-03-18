@@ -4,6 +4,7 @@ import com.dnd.reevserver.domain.comment.dto.request.AddCommentRequestDto;
 import com.dnd.reevserver.domain.comment.dto.request.AddReplyRequestDto;
 import com.dnd.reevserver.domain.comment.dto.request.UpdateCommentRequestDto;
 import com.dnd.reevserver.domain.comment.dto.response.CommentResponseDto;
+import com.dnd.reevserver.domain.comment.dto.response.DeleteCommentResponseDto;
 import com.dnd.reevserver.domain.comment.dto.response.ReplyResponseDto;
 import com.dnd.reevserver.domain.comment.service.CommentService;
 import lombok.RequiredArgsConstructor;
@@ -50,7 +51,10 @@ public class CommentController implements CommentControllerDocs {
         return ResponseEntity.ok().body(responseDto);
     }
 
-
-
+    @DeleteMapping("/{commentId}")
+    public ResponseEntity<DeleteCommentResponseDto> deleteComment(@AuthenticationPrincipal String userId, @PathVariable Long commentId) {
+        DeleteCommentResponseDto responseDto = commentService.deleteComment(userId, commentId);
+        return ResponseEntity.ok().body(responseDto);
+    }
 
 }

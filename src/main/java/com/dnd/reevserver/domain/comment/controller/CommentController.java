@@ -2,6 +2,7 @@ package com.dnd.reevserver.domain.comment.controller;
 
 import com.dnd.reevserver.domain.comment.dto.request.AddCommentRequestDto;
 import com.dnd.reevserver.domain.comment.dto.request.AddReplyRequestDto;
+import com.dnd.reevserver.domain.comment.dto.request.UpdateCommentRequestDto;
 import com.dnd.reevserver.domain.comment.dto.response.CommentResponseDto;
 import com.dnd.reevserver.domain.comment.dto.response.ReplyResponseDto;
 import com.dnd.reevserver.domain.comment.service.CommentService;
@@ -42,6 +43,14 @@ public class CommentController implements CommentControllerDocs {
         ReplyResponseDto replyResponseDto = commentService.addReply(userId, requestDto, commentId);
         return ResponseEntity.ok().body(replyResponseDto);
     }
+
+    @PatchMapping("/{commentId}")
+    public ResponseEntity<CommentResponseDto> updateReply(@AuthenticationPrincipal String userId, @PathVariable Long commentId, @RequestBody UpdateCommentRequestDto requestDto) {
+        CommentResponseDto responseDto = commentService.updateComment(userId, commentId, requestDto);
+        return ResponseEntity.ok().body(responseDto);
+    }
+
+
 
 
 }

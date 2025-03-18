@@ -49,8 +49,8 @@ public class Comment extends BaseEntity {
         this.likeCount = 0;
     }
 
-    public void updateComment(Comment comment) {
-        this.content = comment.getContent();
+    public void updateComment(String content) {
+        this.content = content;
     }
 
     public void setParentComment(Comment parentComment) {

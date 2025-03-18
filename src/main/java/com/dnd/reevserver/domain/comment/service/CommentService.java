@@ -2,9 +2,11 @@ package com.dnd.reevserver.domain.comment.service;
 
 import com.dnd.reevserver.domain.comment.dto.request.AddCommentRequestDto;
 import com.dnd.reevserver.domain.comment.dto.request.AddReplyRequestDto;
+import com.dnd.reevserver.domain.comment.dto.request.UpdateCommentRequestDto;
 import com.dnd.reevserver.domain.comment.dto.response.CommentResponseDto;
 import com.dnd.reevserver.domain.comment.dto.response.ReplyResponseDto;
 import com.dnd.reevserver.domain.comment.entity.Comment;
+import com.dnd.reevserver.domain.comment.exception.NotCommentOwnerException;
 import com.dnd.reevserver.domain.comment.exception.NotFoundCommentException;
 import com.dnd.reevserver.domain.comment.repository.CommentRepository;
 import com.dnd.reevserver.domain.member.entity.Member;
@@ -62,6 +64,7 @@ public class CommentService {
     }
 
     //대댓글 생성
+    @Transactional
     public ReplyResponseDto addReply(String userId, AddReplyRequestDto requestDto, Long parentCommentId) {
         Member member = memberService.findById(userId);
         Retrospect retrospect = retrospectService.findById(requestDto.retrospectId());
@@ -77,6 +80,18 @@ public class CommentService {
 
         return convertToReplyDto(comment, false);
 
+    }
+
+    //댓글,답글 수정
+    @Transactional
+    public CommentResponseDto updateComment(String userId, Long commentId, UpdateCommentRequestDto requestDto) {
+        Comment comment = findById(commentId);
+        if(!comment.getMember().getUserId().equals(userId)) {
+            throw new NotCommentOwnerException();
+        }
+        comment.updateComment(requestDto.content());
+
+        return convertToCommentDto(comment,false);
     }
 
     public Comment findById(Long commentId) {

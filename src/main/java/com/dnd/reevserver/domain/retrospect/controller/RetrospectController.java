@@ -4,6 +4,7 @@ import com.dnd.reevserver.domain.retrospect.dto.request.*;
 import com.dnd.reevserver.domain.retrospect.dto.response.AddRetrospectResponseDto;
 import com.dnd.reevserver.domain.retrospect.dto.response.DeleteRetrospectResponseDto;
 import com.dnd.reevserver.domain.retrospect.dto.response.RetrospectResponseDto;
+import com.dnd.reevserver.domain.retrospect.dto.response.RetrospectSingleResponseDto;
 import com.dnd.reevserver.domain.retrospect.service.RetrospectService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -39,8 +40,8 @@ public class RetrospectController implements RetrospectControllerDocs{
     }
 
     @PatchMapping
-    public ResponseEntity<RetrospectResponseDto> updateRetrospect(@AuthenticationPrincipal String userId, @RequestBody UpdateRetrospectRequestDto requestDto){
-        RetrospectResponseDto responseDto = retrospectService.updateRetrospect(userId, requestDto);
+    public ResponseEntity<RetrospectSingleResponseDto> updateRetrospect(@AuthenticationPrincipal String userId, @RequestBody UpdateRetrospectRequestDto requestDto){
+        RetrospectSingleResponseDto responseDto = retrospectService.updateRetrospect(userId, requestDto);
         return ResponseEntity.ok().body(responseDto);
     }
 
@@ -50,5 +51,26 @@ public class RetrospectController implements RetrospectControllerDocs{
         return ResponseEntity.ok().body(responseDto);
     }
 
+    @GetMapping("/bookmark")
+    public ResponseEntity<List<RetrospectResponseDto>> getBookmarkedRetrospects(@AuthenticationPrincipal String userId) {
+        List<RetrospectResponseDto> bookmarkedRetrospects = retrospectService.getBookmarkedRetrospects(userId);
+        return ResponseEntity.ok().body(bookmarkedRetrospects);
+    }
 
-}
+    @GetMapping("/bookmark/group")
+    public ResponseEntity<List<RetrospectResponseDto>> getBookmarkedRetrospectsWithGroupId(@AuthenticationPrincipal String userId, @RequestParam Long groupId) {
+        List<RetrospectResponseDto> bookmarkedRetrospects = retrospectService.getBookmarkedRetrospectsWithGroupId(userId, groupId);
+        return ResponseEntity.ok().body(bookmarkedRetrospects);
+    }
+
+    @PostMapping("/bookmark")
+    public ResponseEntity<Void> insertBookmark(@AuthenticationPrincipal String userId, @RequestBody BookmarkRequestDto dto) {
+        retrospectService.insertBookmark(userId, dto);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/bookmark")
+    public ResponseEntity<Void> deleteBookmark(@AuthenticationPrincipal String userId, @RequestBody BookmarkRequestDto dto) {
+        retrospectService.deleteBookmark(userId, dto);
+        return ResponseEntity.ok().build();
+    }

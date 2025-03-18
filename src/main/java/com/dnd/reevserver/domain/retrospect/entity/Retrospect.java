@@ -9,6 +9,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -32,6 +35,10 @@ public class Retrospect extends BaseEntity {
 
     @Column(nullable = false, columnDefinition = "LONGTEXT")
     private String content;
+
+    // 북마크 연계 삭제를 위해 사용
+    @OneToMany(mappedBy = "retrospect", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Bookmark> bookmarks = new ArrayList<>();
 
     @Builder
     public Retrospect(Member member, Team team, String title, String content) {

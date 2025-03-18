@@ -4,12 +4,14 @@ import com.dnd.reevserver.domain.comment.dto.request.AddCommentRequestDto;
 import com.dnd.reevserver.domain.comment.dto.request.AddReplyRequestDto;
 import com.dnd.reevserver.domain.comment.dto.request.UpdateCommentRequestDto;
 import com.dnd.reevserver.domain.comment.dto.response.CommentResponseDto;
+import com.dnd.reevserver.domain.comment.dto.response.DeleteCommentResponseDto;
 import com.dnd.reevserver.domain.comment.dto.response.ReplyResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -35,5 +37,6 @@ public interface CommentControllerDocs {
     public ResponseEntity<CommentResponseDto> updateComment(@AuthenticationPrincipal String userId, @PathVariable Long commentId,
         @RequestBody UpdateCommentRequestDto requestDto);
 
-
+    @Operation(summary = "댓글, 답글 삭제 API", description = "댓글, 답글을 삭제합니다.")
+    public ResponseEntity<DeleteCommentResponseDto> deleteComment(@AuthenticationPrincipal String userId, @PathVariable Long commentId);
 }

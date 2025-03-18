@@ -45,7 +45,7 @@ public class CommentController implements CommentControllerDocs {
     }
 
     @PatchMapping("/{commentId}")
-    public ResponseEntity<CommentResponseDto> updateReply(@AuthenticationPrincipal String userId, @PathVariable Long commentId, @RequestBody UpdateCommentRequestDto requestDto) {
+    public ResponseEntity<CommentResponseDto> updateComment(@AuthenticationPrincipal String userId, @PathVariable Long commentId, @RequestBody UpdateCommentRequestDto requestDto) {
         CommentResponseDto responseDto = commentService.updateComment(userId, commentId, requestDto);
         return ResponseEntity.ok().body(responseDto);
     }

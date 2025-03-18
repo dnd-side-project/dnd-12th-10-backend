@@ -2,6 +2,7 @@ package com.dnd.reevserver.domain.comment.controller;
 
 import com.dnd.reevserver.domain.comment.dto.request.AddCommentRequestDto;
 import com.dnd.reevserver.domain.comment.dto.request.AddReplyRequestDto;
+import com.dnd.reevserver.domain.comment.dto.request.UpdateCommentRequestDto;
 import com.dnd.reevserver.domain.comment.dto.response.CommentResponseDto;
 import com.dnd.reevserver.domain.comment.dto.response.ReplyResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -29,5 +30,10 @@ public interface CommentControllerDocs {
     @Operation(summary = "답글 작성 API", description = "해당 댓글에 답글을 작성합니다.")
     public ResponseEntity<ReplyResponseDto> addReply(@AuthenticationPrincipal String userId, @PathVariable Long commentId,
         @RequestBody AddReplyRequestDto requestDto);
+
+    @Operation(summary = "댓글,답글 수정 API", description = "댓글, 답글을 수정합니다.")
+    public ResponseEntity<CommentResponseDto> updateComment(@AuthenticationPrincipal String userId, @PathVariable Long commentId,
+        @RequestBody UpdateCommentRequestDto requestDto);
+
 
 }

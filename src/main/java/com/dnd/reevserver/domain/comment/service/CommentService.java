@@ -118,46 +118,50 @@ public class CommentService {
     private CommentResponseDto convertToCommentDto(Comment comment, boolean isAuthorExistedAndIsLikeCntExisted){
         if(isAuthorExistedAndIsLikeCntExisted){
             return CommentResponseDto.builder()
-                    .commentId(comment.getCommentId())
-                    .userId(comment.getMember().getUserId())
-                    .retrospectId(comment.getRetrospect().getRetrospectId())
-                    .content(comment.getContent())
-                    .nickName(comment.getMember().getNickname())
-                    .timeMessage(timeStringUtil.getTimeString(comment.getUpdatedAt()))
-                    .likeCount(comment.getLikeCount())
-                    .isAuthor(isCommentAuthor(comment))
-                    .build();
-        }
-        return CommentResponseDto.builder()
                 .commentId(comment.getCommentId())
                 .userId(comment.getMember().getUserId())
                 .retrospectId(comment.getRetrospect().getRetrospectId())
                 .content(comment.getContent())
                 .nickName(comment.getMember().getNickname())
                 .timeMessage(timeStringUtil.getTimeString(comment.getUpdatedAt()))
+                .isDeleted(comment.isDeleted())
+                .likeCount(comment.getLikeCount())
+                .isAuthor(isCommentAuthor(comment))
                 .build();
+        }
+        return CommentResponseDto.builder()
+            .commentId(comment.getCommentId())
+            .userId(comment.getMember().getUserId())
+            .retrospectId(comment.getRetrospect().getRetrospectId())
+            .content(comment.getContent())
+            .nickName(comment.getMember().getNickname())
+            .timeMessage(timeStringUtil.getTimeString(comment.getUpdatedAt()))
+            .isDeleted(comment.isDeleted())
+            .build();
     }
 
     private ReplyResponseDto convertToReplyDto(Comment reply, boolean isAuthorExistedAndIsLikeCntExisted){
         if(isAuthorExistedAndIsLikeCntExisted){
             return ReplyResponseDto.builder()
-                    .commentId(reply.getCommentId())
-                    .userId(reply.getMember().getUserId())
-                    .retrospectId(reply.getRetrospect().getRetrospectId())
-                    .content(reply.getContent())
-                    .nickName(reply.getMember().getNickname())
-                    .timeMessage(timeStringUtil.getTimeString(reply.getUpdatedAt()))
-                    .likeCount(reply.getLikeCount())
-                    .isAuthor(isCommentAuthor(reply))
-                    .build();
-        }
-        return ReplyResponseDto.builder()
                 .commentId(reply.getCommentId())
                 .userId(reply.getMember().getUserId())
                 .retrospectId(reply.getRetrospect().getRetrospectId())
                 .content(reply.getContent())
                 .nickName(reply.getMember().getNickname())
                 .timeMessage(timeStringUtil.getTimeString(reply.getUpdatedAt()))
+                .isDeleted(reply.isDeleted())
+                .likeCount(reply.getLikeCount())
+                .isAuthor(isCommentAuthor(reply))
                 .build();
+        }
+        return ReplyResponseDto.builder()
+            .commentId(reply.getCommentId())
+            .userId(reply.getMember().getUserId())
+            .retrospectId(reply.getRetrospect().getRetrospectId())
+            .content(reply.getContent())
+            .nickName(reply.getMember().getNickname())
+            .timeMessage(timeStringUtil.getTimeString(reply.getUpdatedAt()))
+            .isDeleted(reply.isDeleted())
+            .build();
     }
 }

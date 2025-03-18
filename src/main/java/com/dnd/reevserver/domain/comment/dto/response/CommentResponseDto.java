@@ -5,5 +5,5 @@ import lombok.Builder;
 @Builder
 public record CommentResponseDto(Long commentId, String userId, Long retrospectId,
                                  String content, String nickName,String timeMessage,
-                                 Integer likeCount, boolean isAuthor) {
+                                 boolean isDeleted, Integer likeCount, boolean isAuthor) {
 }

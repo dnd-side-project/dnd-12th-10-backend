@@ -25,4 +25,6 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
 
 
     int countByRetrospect(Retrospect retrospect);
+
+    void deleteAllByRetrospectRetrospectId(Long retrospectId);
 }

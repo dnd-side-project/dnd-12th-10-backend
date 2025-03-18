@@ -74,4 +74,3 @@ public class RetrospectController implements RetrospectControllerDocs{
         retrospectService.deleteBookmark(userId, dto);
         return ResponseEntity.ok().build();
     }
-}

@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import jakarta.persistence.Tuple;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
@@ -105,4 +106,9 @@ public interface RetrospectRepository extends JpaRepository<Retrospect, Long> {
     GROUP BY r.retrospectId
     """)
     List<Tuple> findRetrospectsByUserIdWithBookmarkedAndGroupId(@Param("userId") String userId, @Param("groupId") Long groupId);
+}
+    @Modifying
+    @Query("update Retrospect r set r.team = null "
+        + "where r.team.groupId = :groupId")
+    void clearTeam(@Param("groupId") Long groupId);
 }

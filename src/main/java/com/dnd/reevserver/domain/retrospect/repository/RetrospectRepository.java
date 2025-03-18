@@ -106,7 +106,7 @@ public interface RetrospectRepository extends JpaRepository<Retrospect, Long> {
     GROUP BY r.retrospectId
     """)
     List<Tuple> findRetrospectsByUserIdWithBookmarkedAndGroupId(@Param("userId") String userId, @Param("groupId") Long groupId);
-}
+
     @Modifying
     @Query("update Retrospect r set r.team = null "
         + "where r.team.groupId = :groupId")

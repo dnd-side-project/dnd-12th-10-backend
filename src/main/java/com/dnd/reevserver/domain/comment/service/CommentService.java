@@ -2,9 +2,12 @@ package com.dnd.reevserver.domain.comment.service;
 
 import com.dnd.reevserver.domain.comment.dto.request.AddCommentRequestDto;
 import com.dnd.reevserver.domain.comment.dto.request.AddReplyRequestDto;
+import com.dnd.reevserver.domain.comment.dto.request.UpdateCommentRequestDto;
 import com.dnd.reevserver.domain.comment.dto.response.CommentResponseDto;
+import com.dnd.reevserver.domain.comment.dto.response.DeleteCommentResponseDto;
 import com.dnd.reevserver.domain.comment.dto.response.ReplyResponseDto;
 import com.dnd.reevserver.domain.comment.entity.Comment;
+import com.dnd.reevserver.domain.comment.exception.NotCommentOwnerException;
 import com.dnd.reevserver.domain.comment.exception.NotFoundCommentException;
 import com.dnd.reevserver.domain.comment.repository.CommentRepository;
 import com.dnd.reevserver.domain.member.entity.Member;
@@ -62,6 +65,7 @@ public class CommentService {
     }
 
     //대댓글 생성
+    @Transactional
     public ReplyResponseDto addReply(String userId, AddReplyRequestDto requestDto, Long parentCommentId) {
         Member member = memberService.findById(userId);
         Retrospect retrospect = retrospectService.findById(requestDto.retrospectId());
@@ -79,6 +83,30 @@ public class CommentService {
 
     }
 
+    //댓글,답글 수정
+    @Transactional
+    public CommentResponseDto updateComment(String userId, Long commentId, UpdateCommentRequestDto requestDto) {
+        Comment comment = findById(commentId);
+        if(!comment.getMember().getUserId().equals(userId)) {
+            throw new NotCommentOwnerException();
+        }
+        comment.updateComment(requestDto.content());
+
+        return convertToCommentDto(comment,false);
+    }
+
+    //댓글, 답글 삭제
+    @Transactional
+    public DeleteCommentResponseDto deleteComment(String userId, Long commentId) {
+        Comment comment = findById(commentId);
+        if(!comment.getMember().getUserId().equals(userId)) {
+            throw new NotCommentOwnerException();
+        }
+        commentRepository.delete(comment);
+
+        return new DeleteCommentResponseDto(commentId);
+    }
+
     public Comment findById(Long commentId) {
         return commentRepository.findById(commentId).orElseThrow(NotFoundCommentException::new);
     }
@@ -90,46 +118,50 @@ public class CommentService {
     private CommentResponseDto convertToCommentDto(Comment comment, boolean isAuthorExistedAndIsLikeCntExisted){
         if(isAuthorExistedAndIsLikeCntExisted){
             return CommentResponseDto.builder()
-                    .commentId(comment.getCommentId())
-                    .userId(comment.getMember().getUserId())
-                    .retrospectId(comment.getRetrospect().getRetrospectId())
-                    .content(comment.getContent())
-                    .nickName(comment.getMember().getNickname())
-                    .timeMessage(timeStringUtil.getTimeString(comment.getUpdatedAt()))
-                    .likeCount(comment.getLikeCount())
-                    .isAuthor(isCommentAuthor(comment))
-                    .build();
-        }
-        return CommentResponseDto.builder()
                 .commentId(comment.getCommentId())
                 .userId(comment.getMember().getUserId())
                 .retrospectId(comment.getRetrospect().getRetrospectId())
                 .content(comment.getContent())
                 .nickName(comment.getMember().getNickname())
                 .timeMessage(timeStringUtil.getTimeString(comment.getUpdatedAt()))
+                .isDeleted(comment.isDeleted())
+                .likeCount(comment.getLikeCount())
+                .isAuthor(isCommentAuthor(comment))
                 .build();
+        }
+        return CommentResponseDto.builder()
+            .commentId(comment.getCommentId())
+            .userId(comment.getMember().getUserId())
+            .retrospectId(comment.getRetrospect().getRetrospectId())
+            .content(comment.getContent())
+            .nickName(comment.getMember().getNickname())
+            .timeMessage(timeStringUtil.getTimeString(comment.getUpdatedAt()))
+            .isDeleted(comment.isDeleted())
+            .build();
     }
 
     private ReplyResponseDto convertToReplyDto(Comment reply, boolean isAuthorExistedAndIsLikeCntExisted){
         if(isAuthorExistedAndIsLikeCntExisted){
             return ReplyResponseDto.builder()
-                    .commentId(reply.getCommentId())
-                    .userId(reply.getMember().getUserId())
-                    .retrospectId(reply.getRetrospect().getRetrospectId())
-                    .content(reply.getContent())
-                    .nickName(reply.getMember().getNickname())
-                    .timeMessage(timeStringUtil.getTimeString(reply.getUpdatedAt()))
-                    .likeCount(reply.getLikeCount())
-                    .isAuthor(isCommentAuthor(reply))
-                    .build();
-        }
-        return ReplyResponseDto.builder()
                 .commentId(reply.getCommentId())
                 .userId(reply.getMember().getUserId())
                 .retrospectId(reply.getRetrospect().getRetrospectId())
                 .content(reply.getContent())
                 .nickName(reply.getMember().getNickname())
                 .timeMessage(timeStringUtil.getTimeString(reply.getUpdatedAt()))
+                .isDeleted(reply.isDeleted())
+                .likeCount(reply.getLikeCount())
+                .isAuthor(isCommentAuthor(reply))
                 .build();
+        }
+        return ReplyResponseDto.builder()
+            .commentId(reply.getCommentId())
+            .userId(reply.getMember().getUserId())
+            .retrospectId(reply.getRetrospect().getRetrospectId())
+            .content(reply.getContent())
+            .nickName(reply.getMember().getNickname())
+            .timeMessage(timeStringUtil.getTimeString(reply.getUpdatedAt()))
+            .isDeleted(reply.isDeleted())
+            .build();
     }
 }

@@ -9,10 +9,12 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.SQLDelete;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@SQLDelete(sql = "update comment set is_deleted = true where comment_id = ?")
 public class Comment extends BaseEntity {
 
     @Id
@@ -49,8 +51,8 @@ public class Comment extends BaseEntity {
         this.likeCount = 0;
     }
 
-    public void updateComment(Comment comment) {
-        this.content = comment.getContent();
+    public void updateComment(String content) {
+        this.content = content;
     }
 
     public void setParentComment(Comment parentComment) {

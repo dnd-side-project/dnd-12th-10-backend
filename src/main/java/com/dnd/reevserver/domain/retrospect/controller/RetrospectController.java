@@ -19,7 +19,6 @@ import java.util.List;
 @RequestMapping("/api/v1/retrospect")
 public class RetrospectController implements RetrospectControllerDocs{
 
-    private final ReevProperties reevProperties;
     private final RetrospectService retrospectService;
 
     //todo:페이징
@@ -35,8 +34,14 @@ public class RetrospectController implements RetrospectControllerDocs{
         return ResponseEntity.ok().body(responseDto);
     }
 
-    @PostMapping("/add")
+    @PostMapping
     public ResponseEntity<AddRetrospectResponseDto> addRetrospect(@AuthenticationPrincipal String userId, @RequestBody AddRetrospectRequestDto requestDto) {
+        AddRetrospectResponseDto responseDto = retrospectService.addRetrospect(userId, requestDto);
+        return ResponseEntity.ok().body(responseDto);
+    }
+
+    @PostMapping("/add")
+    public ResponseEntity<AddRetrospectResponseDto> addRetrospect2(@AuthenticationPrincipal String userId, @RequestBody AddRetrospectRequestDto requestDto) {
        AddRetrospectResponseDto responseDto = retrospectService.addRetrospect(userId, requestDto);
        return ResponseEntity.ok().body(responseDto);
     }

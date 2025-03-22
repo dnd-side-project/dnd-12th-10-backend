@@ -285,6 +285,7 @@ public class TeamService {
                                 .toList()
                 )
                 .retrospectCount(retrospectRepository.countByGroupId(team.getGroupId()))
+                .maxNum(team.getMaxNum())
                 .build();
     }
 
@@ -305,6 +306,7 @@ public class TeamService {
                 .createDate(timeStringUtil.getString(team.getCreatedAt()))
                 .role(getRole(userId,team))
                 .isPublic(team.getIsPublic())
+                .maxNum(team.getMaxNum())
                 .build();
     }
 

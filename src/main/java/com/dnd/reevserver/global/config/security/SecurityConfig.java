@@ -82,9 +82,7 @@ public class SecurityConfig {
     protected CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOrigins(reevProperties.getFrontUrl());
-        log.info("reevProperties: {}", reevProperties.getFrontUrl());
-        log.info("getAllowedOrigins: {}", config.getAllowedOrigins());
-        config.addAllowedMethod("*");
+        config.addAllowedMethod(CorsConfiguration.ALL);
         config.addAllowedHeader("*");
         config.setExposedHeaders(List.of("Set-Cookie", "Authorization"));
         config.setAllowCredentials(true);

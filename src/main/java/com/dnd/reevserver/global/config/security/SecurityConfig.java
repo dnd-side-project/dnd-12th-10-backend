@@ -81,7 +81,7 @@ public class SecurityConfig {
     @Bean
     protected CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOriginPatterns(List.of("*"));
+        config.setAllowedOrigins(reevProperties.getFrontUrl());
         config.addAllowedMethod(CorsConfiguration.ALL);
         config.addAllowedHeader("*");
         config.setExposedHeaders(List.of("Set-Cookie", "Authorization"));

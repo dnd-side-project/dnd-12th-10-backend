@@ -6,6 +6,7 @@ import com.dnd.reevserver.domain.retrospect.dto.response.DeleteRetrospectRespons
 import com.dnd.reevserver.domain.retrospect.dto.response.RetrospectResponseDto;
 import com.dnd.reevserver.domain.retrospect.dto.response.RetrospectSingleResponseDto;
 import com.dnd.reevserver.domain.retrospect.service.RetrospectService;
+import com.dnd.reevserver.global.config.properties.ReevProperties;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -18,6 +19,7 @@ import java.util.List;
 @RequestMapping("/api/v1/retrospect")
 public class RetrospectController implements RetrospectControllerDocs{
 
+    private final ReevProperties reevProperties;
     private final RetrospectService retrospectService;
 
     //todo:페이징
@@ -33,6 +35,15 @@ public class RetrospectController implements RetrospectControllerDocs{
         return ResponseEntity.ok().body(responseDto);
     }
 
+    @CrossOrigin(origins = {
+            "http://localhost:3000",
+            "https://api.reev.kr",
+            "http://localhost:8080",
+            "https://reev.kr",
+            "https://www.reev.kr",
+            "https://leev.vercel.app",
+            "https://leev.vercel.app",
+            "https://leev-dev.vercel.app"}, allowCredentials = "true")
     @PostMapping("/add")
     public ResponseEntity<AddRetrospectResponseDto> addRetrospect(@AuthenticationPrincipal String userId, @RequestBody AddRetrospectRequestDto requestDto) {
        AddRetrospectResponseDto responseDto = retrospectService.addRetrospect(userId, requestDto);

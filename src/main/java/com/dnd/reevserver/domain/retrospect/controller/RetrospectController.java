@@ -35,15 +35,6 @@ public class RetrospectController implements RetrospectControllerDocs{
         return ResponseEntity.ok().body(responseDto);
     }
 
-    @CrossOrigin(origins = {
-            "http://localhost:3000",
-            "https://api.reev.kr",
-            "http://localhost:8080",
-            "https://reev.kr",
-            "https://www.reev.kr",
-            "https://leev.vercel.app",
-            "https://leev.vercel.app",
-            "https://leev-dev.vercel.app"}, allowCredentials = "true")
     @PostMapping("/add")
     public ResponseEntity<AddRetrospectResponseDto> addRetrospect(@AuthenticationPrincipal String userId, @RequestBody AddRetrospectRequestDto requestDto) {
        AddRetrospectResponseDto responseDto = retrospectService.addRetrospect(userId, requestDto);

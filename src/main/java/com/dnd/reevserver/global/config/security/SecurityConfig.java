@@ -7,6 +7,7 @@ import com.dnd.reevserver.global.jwt.handler.OAuth2LogoutHandler;
 import com.dnd.reevserver.global.jwt.handler.OAuth2SuccessHandler;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -26,6 +27,7 @@ import java.util.List;
 @Configuration
 @RequiredArgsConstructor
 @EnableWebSecurity
+@Slf4j
 public class SecurityConfig {
     private final ReevProperties reevProperties;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
@@ -80,6 +82,7 @@ public class SecurityConfig {
     protected CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOrigins(reevProperties.getFrontUrl());
+        log.info("reevProperties: {}", reevProperties);
         config.addAllowedMethod("*");
         config.addAllowedHeader("*");
         config.setExposedHeaders(List.of("Set-Cookie", "Authorization"));

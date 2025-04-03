@@ -33,6 +33,10 @@ public class AuthController {
                 authorization.startsWith("Bearer ") &&
                 authService.checkAuth(authorization);
 
+        if(!isAuthenticated) {
+            throw new UnauthorizedException();
+        }
+
         response.put("isAuthenticated", isAuthenticated);
         return ResponseEntity.ok(response);
     }

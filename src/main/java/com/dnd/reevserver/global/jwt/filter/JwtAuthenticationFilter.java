@@ -4,6 +4,8 @@ import com.dnd.reevserver.domain.member.entity.Member;
 import com.dnd.reevserver.domain.member.exception.MemberNotFoundException;
 import com.dnd.reevserver.domain.member.repository.MemberRepository;
 import com.dnd.reevserver.global.config.security.SecurityEndpointPaths;
+import com.dnd.reevserver.global.jwt.exception.MalformedTokenException;
+import com.dnd.reevserver.global.jwt.exception.TokenExpiredException;
 import com.dnd.reevserver.global.jwt.provider.JwtProvider;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -51,22 +53,27 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
      */
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-
         String token = parseBearerToken(request);
         if (token == null) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        String userId = jwtProvider.validateToken(token);
-        if (Strings.isEmpty(userId)) {
+        try {
+            String userId = jwtProvider.validateToken(token);
+            if (Strings.isEmpty(userId)) {
+                filterChain.doFilter(request, response);
+                return;
+            }
+
+            authenticateUser(userId, request);
             filterChain.doFilter(request, response);
-            return;
+        } catch (MalformedTokenException | TokenExpiredException e) {
+            // JWT 토큰이 유효하지 않으면 401 Unauthorized 응답을 설정
+            log.error("JWT token validation failed: {}", e.getMessage());
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write(e.getMessage()); // 예외 메시지 반환
         }
-
-        authenticateUser(userId, request);
-
-        filterChain.doFilter(request, response);
     }
 
     /**

@@ -56,6 +56,11 @@ dependencies {
     implementation platform("io.awspring.cloud:spring-cloud-aws-dependencies:3.0.1")
     implementation 'io.awspring.cloud:spring-cloud-aws-starter-sqs'
 
+    // dynamoDB
+    implementation platform('software.amazon.awssdk:bom:2.25.19') // 최신 BOM으로 통일
+    implementation 'software.amazon.awssdk:dynamodb'
+    implementation 'software.amazon.awssdk:auth'
+
     // lambda
     implementation 'software.amazon.awssdk:lambda:2.20.130'
 

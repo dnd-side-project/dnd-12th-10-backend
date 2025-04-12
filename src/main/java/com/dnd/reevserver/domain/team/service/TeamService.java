@@ -1,16 +1,13 @@
 package com.dnd.reevserver.domain.team.service;
 
-import static com.dnd.reevserver.domain.category.entity.QCategory.category;
 
 import com.dnd.reevserver.domain.category.entity.Category;
 import com.dnd.reevserver.domain.category.entity.TeamCategory;
-import com.dnd.reevserver.domain.category.exception.CategoryNotFoundException;
 import com.dnd.reevserver.domain.category.repository.CategoryRepository;
 import com.dnd.reevserver.domain.category.repository.TeamCategoryRepository;
-import com.dnd.reevserver.domain.category.repository.batch.TeamCategoryBatchRepository;
 import com.dnd.reevserver.domain.category.service.CategoryService;
 import com.dnd.reevserver.domain.category.service.TeamCategoryService;
-import com.dnd.reevserver.domain.like.repository.LikeRepository;
+import com.dnd.reevserver.domain.like.service.LikeService;
 import com.dnd.reevserver.domain.member.entity.role.Role;
 import com.dnd.reevserver.domain.member.exception.MemberNotFoundException;
 import com.dnd.reevserver.domain.member.service.FeatureKeywordService;
@@ -30,8 +27,6 @@ import com.dnd.reevserver.domain.userTeam.exception.UserGroupExistException;
 import com.dnd.reevserver.domain.userTeam.exception.UserGroupNotFoundException;
 import com.dnd.reevserver.domain.userTeam.repository.UserTeamRepository;
 import com.dnd.reevserver.global.util.TimeStringUtil;
-import java.util.ArrayList;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,9 +46,9 @@ public class TeamService {
     private final TimeStringUtil timeStringUtil;
     private final RetrospectRepository retrospectRepository;
     private final FeatureKeywordService featureKeywordService;
-    private final LikeRepository likeRepository;
     private final CategoryRepository categoryRepository;
     private final TeamCategoryService teamCategoryService;
+    private final LikeService likeService;
 
     //모든 그룹조회
     @Transactional(readOnly = true)
@@ -268,7 +263,7 @@ public class TeamService {
     }
 
     public int getLikeCount(Long retrospectId) {
-        return likeRepository.getLikeCount(retrospectId);
+        return likeService.getLikeCount(retrospectId);
     }
 
     private TeamResponseDto convertToDto(Team team){

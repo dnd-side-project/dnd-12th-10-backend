@@ -3,6 +3,7 @@ package com.dnd.reevserver.domain.like.service;
 import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.model.SendMessageRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -10,6 +11,9 @@ import org.springframework.stereotype.Component;
 public class SqsProducer {
 
     private final AmazonSQS amazonSQS;
+
+    @Value("${cloud.aws.sqs.queue-like-name}")
+    String queueUrl;
 
     public void sendToggleLikeEvent(Long retrospectId, String userId) {
         String body = """
@@ -19,7 +23,6 @@ public class SqsProducer {
             }
             """.formatted(retrospectId, userId);
 
-        String queueUrl = "https://sqs.ap-northeast-2.amazonaws.com/{your-account-id}/{your-queue-name}";
         SendMessageRequest request = new SendMessageRequest()
                 .withQueueUrl(queueUrl)
                 .withMessageBody(body);

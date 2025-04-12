@@ -1,6 +1,6 @@
 package com.dnd.reevserver.domain.retrospect.service;
 
-import com.dnd.reevserver.domain.like.service.LikeService;
+import com.dnd.reevserver.domain.like.repository.LikeRepository;
 import com.dnd.reevserver.domain.retrospect.dto.request.BookmarkRequestDto;
 import com.dnd.reevserver.domain.retrospect.dto.response.RetrospectSingleResponseDto;
 import com.dnd.reevserver.domain.retrospect.entity.Bookmark;
@@ -40,7 +40,7 @@ public class RetrospectService {
     private final CommentRepository commentRepository;
     private final LambdaService lambdaService;
     private final BookmarkRepository bookmarkRepository;
-    private final LikeService likeService;
+    private final LikeRepository likeRepository;
 
     //단일회고 조회
     @Transactional(readOnly = true)
@@ -144,7 +144,7 @@ public class RetrospectService {
     }
 
     public int getLikeCount(Long retrospectId) {
-        return likeService.getLikeCount(retrospectId);
+        return likeRepository.getLikeCount(retrospectId);
     }
 
     // 회원의 북마크된 전체 회고 조회

@@ -17,16 +17,17 @@ public class LikeService {
     private final RetrospectService retrospectService;
     private final MemberService memberService;
     private final AlertService alertService;
+    private final SqsProducer sqsProducer;
 
-
-    // 좋아요 토글 (추가 또는 취소)
     public boolean toggleLike(String userId, LikeRequestDto dto) {
         Long retrospectId = dto.retrospectId();
+        sqsProducer.sendToggleLikeEvent(retrospectId, userId);
+
         Member member = memberService.findById(userId);
         Retrospect retrospect = retrospectService.findById(retrospectId);
-        boolean result = likeRepository.toggleLike(userId, retrospectId);
-        if(result) alertService.sendMessage(member.getName() + "님이 " + retrospect.getTitle() + "에 좋아요를 눌렀습니다. [" + retrospectId + "]");
-        return result;
+        alertService.sendMessage(member.getName() + "님이 " + retrospect.getTitle() + "에 좋아요를 눌렀습니다. [" + retrospectId + "]");
+
+        return true;
     }
 
 

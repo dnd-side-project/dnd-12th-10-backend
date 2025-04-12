@@ -1,30 +1,48 @@
 package com.dnd.reevserver.domain.member.repository;
 
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.data.redis.core.RedisTemplate;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
+import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
+import software.amazon.awssdk.services.dynamodb.model.*;
 
 import java.time.Duration;
+import java.util.Map;
 
 @Repository
+@RequiredArgsConstructor
 public class RefreshTokenRepository {
 
-    @Qualifier("redisStringTemplate") // 특정 RedisTemplate을 지정
-    private final RedisTemplate<String, String> redisTemplate;
+    private final DynamoDbClient dynamoDbClient;
 
-    public RefreshTokenRepository(RedisTemplate<String, String> redisTemplate) {
-        this.redisTemplate = redisTemplate;
+    @Value("${cloud.aws.dynamodb.name.refresh-token}")
+    private String TABLE_NAME;
+    private static final String PK = "userId";
+
+    public void save(String userId, String token, Duration expiration) {
+        dynamoDbClient.putItem(PutItemRequest.builder()
+                .tableName(TABLE_NAME)
+                .item(Map.of(
+                        PK, AttributeValue.fromS(userId),
+                        "refreshToken", AttributeValue.fromS(token),
+                        "ttl", AttributeValue.fromN(String.valueOf((System.currentTimeMillis() / 1000) + expiration.getSeconds()))
+                ))
+                .build());
     }
 
-    public String findByKey(String key) {
-        return redisTemplate.opsForValue().get(key);
+    public String findByKey(String userId) {
+        GetItemResponse response = dynamoDbClient.getItem(GetItemRequest.builder()
+                .tableName(TABLE_NAME)
+                .key(Map.of(PK, AttributeValue.fromS(userId)))
+                .build());
+
+        return response.hasItem() ? response.item().get("refreshToken").s() : null;
     }
 
-    public void save(String key, String value, Duration expiration) {
-        redisTemplate.opsForValue().set(key, value, expiration);
-    }
-
-    public void delete(String key) {
-        redisTemplate.delete(key);
+    public void delete(String userId) {
+        dynamoDbClient.deleteItem(DeleteItemRequest.builder()
+                .tableName(TABLE_NAME)
+                .key(Map.of(PK, AttributeValue.fromS(userId)))
+                .build());
     }
 }

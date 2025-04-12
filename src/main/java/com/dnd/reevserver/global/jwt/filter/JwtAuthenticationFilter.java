@@ -12,11 +12,9 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -32,7 +30,6 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
-@Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtProvider jwtProvider;
     private final MemberRepository memberRepository;
@@ -69,10 +66,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             authenticateUser(userId, request);
             filterChain.doFilter(request, response);
         } catch (MalformedTokenException | TokenExpiredException e) {
-            // JWT 토큰이 유효하지 않으면 401 Unauthorized 응답을 설정
-            log.error("JWT token validation failed: {}", e.getMessage());
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write(e.getMessage()); // 예외 메시지 반환
+            response.setContentType("application/json");
+            response.getWriter().write("{\"message\": \"" + e.getMessage() + "\"}"); // 클라이언트가 이 메시지를 보고 재요청 판단
         }
     }
 

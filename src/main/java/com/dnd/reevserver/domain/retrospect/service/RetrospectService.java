@@ -1,12 +1,12 @@
 package com.dnd.reevserver.domain.retrospect.service;
 
+import com.dnd.reevserver.domain.like.repository.LikeRepository;
 import com.dnd.reevserver.domain.retrospect.dto.request.BookmarkRequestDto;
 import com.dnd.reevserver.domain.retrospect.dto.response.RetrospectSingleResponseDto;
 import com.dnd.reevserver.domain.retrospect.entity.Bookmark;
 import com.dnd.reevserver.domain.retrospect.exception.*;
 import com.dnd.reevserver.domain.retrospect.repository.BookmarkRepository;
 import com.dnd.reevserver.domain.comment.repository.CommentRepository;
-import com.dnd.reevserver.domain.like.repository.LikeRepository;
 import com.dnd.reevserver.domain.member.entity.Member;
 import com.dnd.reevserver.domain.member.exception.MemberNotFoundException;
 import com.dnd.reevserver.domain.member.service.MemberService;
@@ -39,8 +39,8 @@ public class RetrospectService {
     private final TimeStringUtil timeStringUtil;
     private final CommentRepository commentRepository;
     private final LambdaService lambdaService;
-    private final LikeRepository likeRepository;
     private final BookmarkRepository bookmarkRepository;
+    private final LikeRepository likeRepository;
 
     //단일회고 조회
     @Transactional(readOnly = true)

@@ -35,8 +35,4 @@ public class LikeService {
     public boolean isLiked(String userId, Long retrospectId) {
         return likeRepository.isLiked(userId, retrospectId);
     }
-
-    public int getLikeCount(Long retrospectId) {
-        return likeRepository.getLikeCount(retrospectId);
-    }
 }

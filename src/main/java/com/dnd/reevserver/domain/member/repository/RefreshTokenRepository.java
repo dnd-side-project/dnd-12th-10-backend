@@ -1,6 +1,7 @@
 package com.dnd.reevserver.domain.member.repository;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.*;
@@ -13,7 +14,9 @@ import java.util.Map;
 public class RefreshTokenRepository {
 
     private final DynamoDbClient dynamoDbClient;
-    private static final String TABLE_NAME = "refresh_token_table"; // 테이블 이름
+
+    @Value("${cloud.aws.dynamodb.name.refresh-token}")
+    private String TABLE_NAME;
     private static final String PK = "userId";
 
     public void save(String userId, String token, Duration expiration) {

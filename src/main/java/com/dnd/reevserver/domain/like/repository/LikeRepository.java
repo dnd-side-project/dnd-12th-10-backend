@@ -1,6 +1,7 @@
 package com.dnd.reevserver.domain.like.repository;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.*;
@@ -13,8 +14,11 @@ public class LikeRepository {
 
     private final DynamoDbClient dynamoDbClient;
 
-    private static final String USER_LIKE_TABLE = "retrospect_user_isLike_table";
-    private static final String COUNT_TABLE = "retrospect_like_count_table";
+    @Value("${cloud.aws.dynamodb.name.like.islike}")
+    private String USER_LIKE_TABLE;
+
+    @Value("${cloud.aws.dynamodb.name.like.count}")
+    private String COUNT_TABLE;
 
     public boolean isLiked(String userId, Long retrospectId) {
         String likeKey = retrospectId + ":" + userId;

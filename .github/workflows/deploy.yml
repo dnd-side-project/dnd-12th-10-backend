@@ -68,7 +68,7 @@ jobs:
       - name: Trigger CodeDeploy Deployment
         run: |
           aws deploy create-deployment \
-            --application-name ReevAppCodeDeploy \
+            --application-name Reev-CodeDeploy \
             --deployment-group-name AppDeploymentGroup \
             --s3-location bucket=${{ secrets.S3_BUCKET_NAME }},key=app-bundle.zip,bundleType=zip \
             --file-exists-behavior OVERWRITE \

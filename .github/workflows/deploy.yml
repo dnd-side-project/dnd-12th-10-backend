@@ -64,22 +64,12 @@ jobs:
       - name: Docker push
         run: docker push ${{ steps.login-ecr.outputs.registry }}/reev-server:latest
 
-      # 열 번째 단계: SSH를 통해 EC2 인스턴스에 접속합니다. 이는 원격 서버에 접근하여 명령을 실행하기 위한 단계입니다.
-      - name: ssh
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USERNAME }}
-          key: ${{ secrets.EC2_PRIVATE_KEY }}
-          script_stop: true
-          script: |
-            # 현재 실행 중인 Docker 컨테이너를 중지합니다. 서버가 중지되어도 오류를 무시하도록 '|| true'를 추가했습니다.
-            docker stop reev-server || true
-            # 중지된 Docker 컨테이너를 삭제합니다. 이미 컨테이너가 없더라도 오류를 무시하도록 '|| true'를 추가했습니다.
-            docker rm reev-server || true
-            # 사용하지 않는 이미지를 삭제합니다.
-            docker image prune -a -f
-            # ECR로부터 최신 Docker 이미지를 가져옵니다.
-            docker pull ${{ steps.login-ecr.outputs.registry }}/reev-server:latest
-            # 새로운 Docker 컨테이너를 실행합니다. 8080 포트를 매핑하여 외부에서 접근할 수 있도록 설정했습니다.
-            docker run -d --name reev-server -p 80:8080 ${{ steps.login-ecr.outputs.registry }}/reev-server:latest
+      # 열 번째 단계: CodeDeploy를 이용해서 블루/그린 배포를 수행합니다. EC2 내에서 수행할 스크립트는 S3의 app-bundle.zip 안 start.sh에 존재합니다.
+      - name: Trigger CodeDeploy Deployment
+        run: |
+          aws deploy create-deployment \
+            --application-name ReevAppCodeDeploy \
+            --deployment-group-name AppDeploymentGroup \
+            --s3-location bucket=${{ secrets.S3_BUCKET_NAME }},key=app-bundle.zip,bundleType=zip \
+            --file-exists-behavior OVERWRITE \
+            --region ap-northeast-2

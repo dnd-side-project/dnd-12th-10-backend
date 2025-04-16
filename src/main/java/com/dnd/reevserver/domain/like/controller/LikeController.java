@@ -17,8 +17,8 @@ public class LikeController {
     @Operation(summary = "좋아요 추가/취소 (토글 방식)")
     @PostMapping
     public ResponseEntity<String> toggleLike(@AuthenticationPrincipal String userId, @RequestBody LikeRequestDto dto) {
-        likeService.toggleLike(userId, dto);
-        return ResponseEntity.ok("toggle liked.");
+        boolean result = likeService.toggleLike(userId, dto);
+        return ResponseEntity.ok(result ? "toggle unliked." : "toggle liked.");
     }
 
     @Operation(summary = "유저가 특정 게시글에 좋아요를 눌렀는지 확인")

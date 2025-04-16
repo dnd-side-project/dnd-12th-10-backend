@@ -1,34 +1,58 @@
 package com.dnd.reevserver.domain.alert.service;
 
-import com.amazonaws.services.sqs.AmazonSQSAsync;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.aws.messaging.core.QueueMessagingTemplate;
-import org.springframework.messaging.Message;
-import org.springframework.messaging.support.MessageBuilder;
+import com.dnd.reevserver.domain.alert.dto.response.AlertListResponseDto;
+import com.dnd.reevserver.domain.alert.dto.response.AlertMessageResponseDto;
+import com.dnd.reevserver.domain.alert.repository.AlertRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Sinks;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Sinks;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class AlertService {
-    private final QueueMessagingTemplate queueMessagingTemplate;
 
-    // SSE를 위한 Flux Sink 생성 (SSE 클라이언트들에게 메시지 푸시)
-    private final Sinks.Many<String> messageSink = Sinks.many().multicast().onBackpressureBuffer();
+    private final AlertSqsProducer alertSqsProducer;
+    private final AlertRepository alertRepository;
+    private final ObjectMapper objectMapper;
 
-    @Value("${cloud.aws.sqs.queue-name}")
-    private String queueName;
+    private final Sinks.Many<AlertMessageResponseDto> messageSink =
+            Sinks.many().multicast().onBackpressureBuffer();
 
-    public AlertService(AmazonSQSAsync amazonSQS){
-        this.queueMessagingTemplate = new QueueMessagingTemplate(amazonSQS);
+    public void sendMessage(String userId, String content, LocalDateTime timestamp, Long retrospectId) {
+        alertSqsProducer.send(userId, content, timestamp, retrospectId);
     }
 
-    public void sendMessage(String message){
-        Message<String> newMessage = MessageBuilder.withPayload(message).build();
-        queueMessagingTemplate.send(queueName, newMessage);
+    public void pushMessageToSink(AlertMessageResponseDto message) {
+        messageSink.tryEmitNext(message);
     }
 
-    public Flux<String> getMessageStream() {
-        return messageSink.asFlux();
+    public Flux<AlertMessageResponseDto> getMessageStream(String userId) {
+        return messageSink.asFlux()
+                .filter(msg -> msg.userId().equals(userId));
+    }
+
+    public AlertListResponseDto getUserAlertList(String userId) {
+        List<String> rawMessages = alertRepository.getAlerts(userId);
+        List<AlertMessageResponseDto> alerts = rawMessages.stream()
+                .map(json -> {
+                    try {
+                        return objectMapper.readValue(json, AlertMessageResponseDto.class);
+                    } catch (Exception e) {
+                        return null;
+                    }
+                })
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+
+        long unreadCount = alertRepository.getUnreadCount(userId);
+
+        return new AlertListResponseDto(userId, alerts, unreadCount);
     }
 }

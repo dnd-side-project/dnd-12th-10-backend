@@ -16,7 +16,7 @@ import com.dnd.reevserver.domain.retrospect.dto.response.DeleteRetrospectRespons
 import com.dnd.reevserver.domain.retrospect.dto.response.RetrospectResponseDto;
 import com.dnd.reevserver.domain.retrospect.entity.Retrospect;
 import com.dnd.reevserver.domain.retrospect.repository.RetrospectRepository;
-import com.dnd.reevserver.domain.statistics.service.LambdaService;
+import com.dnd.reevserver.domain.statistics.service.StatisticsService;
 import com.dnd.reevserver.domain.team.entity.Team;
 import com.dnd.reevserver.domain.team.service.TeamService;
 import com.dnd.reevserver.global.util.TimeStringUtil;
@@ -38,7 +38,7 @@ public class RetrospectService {
     private final TeamService teamService;
     private final TimeStringUtil timeStringUtil;
     private final CommentRepository commentRepository;
-    private final LambdaService lambdaService;
+    private final StatisticsService statisticsService;
     private final BookmarkRepository bookmarkRepository;
     private final LikeRepository likeRepository;
 
@@ -106,7 +106,7 @@ public class RetrospectService {
             .build();
         retrospectRepository.save(retrospect);
 
-        lambdaService.writeStatistics(userId);
+        statisticsService.writeStatistics(userId);
 
         return new AddRetrospectResponseDto(retrospect.getRetrospectId());
     }

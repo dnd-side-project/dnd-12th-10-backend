@@ -91,4 +91,12 @@ public class SwaggerConfig {
             .pathsToMatch("/api/v1/comment/**")
             .build();
     }
+
+    @Bean
+    public GroupedOpenApi statisticsGroup(){
+        return GroupedOpenApi.builder()
+                .group("Statistics")
+                .pathsToMatch("/api/v1/statistics/**")
+                .build();
+    }
 }

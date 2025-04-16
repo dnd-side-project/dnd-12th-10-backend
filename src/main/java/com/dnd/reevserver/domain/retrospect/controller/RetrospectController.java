@@ -6,7 +6,6 @@ import com.dnd.reevserver.domain.retrospect.dto.response.DeleteRetrospectRespons
 import com.dnd.reevserver.domain.retrospect.dto.response.RetrospectResponseDto;
 import com.dnd.reevserver.domain.retrospect.dto.response.RetrospectSingleResponseDto;
 import com.dnd.reevserver.domain.retrospect.service.RetrospectService;
-import com.dnd.reevserver.global.config.properties.ReevProperties;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

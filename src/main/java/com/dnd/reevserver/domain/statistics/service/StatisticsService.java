@@ -1,6 +1,5 @@
 package com.dnd.reevserver.domain.statistics.service;
 
-import com.dnd.reevserver.domain.statistics.dto.request.DateRequestDto;
 import com.dnd.reevserver.domain.statistics.dto.response.GetRetrospectStatsResponseDto;
 import com.dnd.reevserver.domain.statistics.repository.StatisticsRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,8 +21,10 @@ public class StatisticsService {
         statisticsRepository.incrementRetrospectCount(userId, LocalDate.now());
     }
 
-    public List<GetRetrospectStatsResponseDto> getStatistics(String userId, DateRequestDto requestDto) {
-        List<Map<String, AttributeValue>> rawItems = statisticsRepository.getUserRetrospectStats(userId, requestDto.month());
+    public List<GetRetrospectStatsResponseDto> getStatistics(String userId, int year, int month) {
+        LocalDate startDate = LocalDate.of(year, month, 1);
+        LocalDate endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
+        List<Map<String, AttributeValue>> rawItems = statisticsRepository.getUserRetrospectStats(userId, startDate, endDate);
 
         return rawItems.stream()
                 .map(item -> new GetRetrospectStatsResponseDto(

@@ -27,11 +27,14 @@ public class StatisticsRepository {
                 "date", AttributeValue.fromS(dateStr)
         );
 
-        // Update if exists, else insert
+        // 있으면 업데이트, 없으면 추가
         UpdateItemRequest request = UpdateItemRequest.builder()
                 .tableName(TABLE_NAME)
                 .key(key)
-                .updateExpression("SET cnt = if_not_exists(cnt, :zero) + :incr, month = :month")
+                .updateExpression("SET cnt = if_not_exists(cnt, :zero) + :incr, #month = :month")
+                .expressionAttributeNames(Map.of(
+                        "#month", "month"
+                ))
                 .expressionAttributeValues(Map.of(
                         ":zero", AttributeValue.fromN("0"),
                         ":incr", AttributeValue.fromN("1"),
@@ -42,23 +45,18 @@ public class StatisticsRepository {
         dynamoDbClient.updateItem(request);
     }
 
-    public List<Map<String, AttributeValue>> getUserRetrospectStats(String userId, LocalDate month) {
-        String monthStr = month.toString();
-        String startDate = monthStr + "-01";
-        String endDate = monthStr + "-31";
-
+    public List<Map<String, AttributeValue>> getUserRetrospectStats(String userId, LocalDate startDate, LocalDate endDate) {
         QueryRequest queryRequest = QueryRequest.builder()
                 .tableName(TABLE_NAME)
-                .keyConditionExpression("userId = :userId AND #date BETWEEN :startDate AND :endDate")
+                .keyConditionExpression("userId = :userId AND #date BETWEEN :start AND :end")
                 .expressionAttributeNames(Map.of("#date", "date"))
                 .expressionAttributeValues(Map.of(
                         ":userId", AttributeValue.fromS(userId),
-                        ":startDate", AttributeValue.fromS(startDate),
-                        ":endDate", AttributeValue.fromS(endDate)
+                        ":start", AttributeValue.fromS(startDate.toString()),
+                        ":end", AttributeValue.fromS(endDate.toString())
                 ))
                 .build();
 
-        QueryResponse response = dynamoDbClient.query(queryRequest);
-        return response.items();
+        return dynamoDbClient.query(queryRequest).items();
     }
 }

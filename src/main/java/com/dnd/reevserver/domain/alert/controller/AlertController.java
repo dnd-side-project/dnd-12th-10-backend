@@ -4,6 +4,7 @@ import com.dnd.reevserver.domain.alert.dto.response.AlertListResponseDto;
 import com.dnd.reevserver.domain.alert.dto.response.AlertMessageResponseDto;
 import com.dnd.reevserver.domain.alert.service.AlertService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,7 @@ import reactor.core.publisher.Flux;
 @RestController
 @RequestMapping("/api/v1/alert")
 @RequiredArgsConstructor
+@Tag(name = "Alert", description = "알람 관련 API")
 public class AlertController {
     private final AlertService alertService;
 

@@ -21,7 +21,6 @@ import com.dnd.reevserver.domain.team.entity.Team;
 import com.dnd.reevserver.domain.team.service.TeamService;
 import com.dnd.reevserver.global.util.TimeStringUtil;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import jakarta.persistence.Tuple;
@@ -30,7 +29,6 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class RetrospectService {
 
     private final RetrospectRepository retrospectRepository;
@@ -96,6 +94,8 @@ public class RetrospectService {
                 .content(requestDto.content())
                 .build();
             retrospectRepository.save(retrospect);
+
+            statisticsService.writeStatistics(userId);
 
             return new AddRetrospectResponseDto(retrospect.getRetrospectId());
         }

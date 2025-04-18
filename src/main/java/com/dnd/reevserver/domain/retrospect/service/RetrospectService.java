@@ -95,7 +95,7 @@ public class RetrospectService {
                 .build();
             retrospectRepository.save(retrospect);
 
-            statisticsService.writeStatistics(userId);
+            statisticsService.writeUserRepoStatistics(userId);
 
             return new AddRetrospectResponseDto(retrospect.getRetrospectId());
         }
@@ -106,7 +106,7 @@ public class RetrospectService {
             .build();
         retrospectRepository.save(retrospect);
 
-        statisticsService.writeStatistics(userId);
+        statisticsService.writeUserRepoStatistics(userId);
 
         return new AddRetrospectResponseDto(retrospect.getRetrospectId());
     }

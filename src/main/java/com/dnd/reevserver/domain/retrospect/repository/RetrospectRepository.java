@@ -111,4 +111,23 @@ public interface RetrospectRepository extends JpaRepository<Retrospect, Long> {
     @Query("update Retrospect r set r.team = null "
         + "where r.team.groupId = :groupId")
     void clearTeam(@Param("groupId") Long groupId);
+
+    @Query("SELECT SUM(LENGTH(r.content)) " +
+            "FROM Retrospect r " +
+            "WHERE r.member.userId = :userId " +
+            "AND FUNCTION('DATE_FORMAT', r.createdAt, '%Y-%m') = :yearMonth")
+    Optional<Integer> getTotalWrittenCharacters(@Param("userId") String userId,
+                                      @Param("yearMonth") String yearMonth);
+
+    @Query(value = """
+    SELECT DAYOFWEEK(r.created_at) as dow
+    FROM retrospect r
+    WHERE r.user_id = :userId
+      AND DATE_FORMAT(r.created_at, '%Y-%m') = :yearMonth
+    GROUP BY dow
+    ORDER BY COUNT(*) DESC
+    LIMIT 1
+    """, nativeQuery = true)
+    Integer getMostFrequentWritingDay(@Param("userId") String userId,
+                                      @Param("yearMonth") String yearMonth);
 }

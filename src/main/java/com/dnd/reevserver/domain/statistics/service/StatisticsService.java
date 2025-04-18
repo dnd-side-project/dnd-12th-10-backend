@@ -1,7 +1,9 @@
 package com.dnd.reevserver.domain.statistics.service;
 
 import com.dnd.reevserver.domain.member.repository.MemberRepository;
+import com.dnd.reevserver.domain.retrospect.repository.RetrospectRepository;
 import com.dnd.reevserver.domain.statistics.dto.response.GetRetrospectStatsResponseDto;
+import com.dnd.reevserver.domain.statistics.dto.response.MonthlyActivityStatsResponseDto;
 import com.dnd.reevserver.domain.statistics.dto.response.MonthlyComparisonStatsResponseDto;
 import com.dnd.reevserver.domain.statistics.repository.StatisticsRedisRepository;
 import com.dnd.reevserver.domain.statistics.repository.StatisticsRepository;
@@ -11,8 +13,11 @@ import org.springframework.stereotype.Service;
 
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.format.TextStyle;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -22,6 +27,7 @@ public class StatisticsService {
     private final StatisticsRepository statisticsRepository;
     private final MemberRepository memberRepository;
     private final StatisticsRedisRepository statisticsRedisRepository;
+    private final RetrospectRepository retrospectRepository;
 
     // 매월 1일 유저 수 업데이트 (단일 키에 덮어씀)
     @Scheduled(cron = "0 0 0 1 * ?")
@@ -61,5 +67,28 @@ public class StatisticsService {
                         Integer.parseInt(item.get("cnt").n())
                 ))
                 .collect(Collectors.toList());
+    }
+
+    // 유저의 월 간 기록 반환
+    public MonthlyActivityStatsResponseDto getUserRecordStatistics(String userId, int year, int month) {
+        String yearMonth = String.format("%04d-%02d", year, month);
+        // 총 작성한 글자 수
+        int totalCharacters = retrospectRepository.getTotalWrittenCharacters(userId, yearMonth).orElse(0);
+        // 이번 달 작성 회고 수
+        int retrospectCount = statisticsRedisRepository.getUserRepoCount(userId, year, month);
+        // 주로 작성한 회고일
+        Integer dow = retrospectRepository.getMostFrequentWritingDay(userId, yearMonth);
+        String mostFrequentDayOfWeek = (dow == null) ? "없음" :
+                DayOfWeek.of(dow).getDisplayName(TextStyle.FULL, Locale.KOREAN);
+        // 많이 사용한 태그
+        List<String> mostUsedTags = List.of(); // TODO: RetrospectCategory 완성 후 구현
+
+        return new MonthlyActivityStatsResponseDto(
+                userId,
+                totalCharacters,
+                retrospectCount,
+                mostFrequentDayOfWeek,
+                mostUsedTags
+        );
     }
 }

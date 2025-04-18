@@ -77,9 +77,8 @@ public class StatisticsService {
         // 이번 달 작성 회고 수
         int retrospectCount = statisticsRedisRepository.getUserRepoCount(userId, year, month);
         // 주로 작성한 회고일
-        Integer dow = retrospectRepository.getMostFrequentWritingDay(userId, yearMonth);
-        String mostFrequentDayOfWeek = (dow == null) ? "없음" :
-                DayOfWeek.of(dow).getDisplayName(TextStyle.FULL, Locale.KOREAN);
+        int dow = retrospectRepository.getMostFrequentWritingDay(userId, yearMonth) - 1;
+        String mostFrequentDayOfWeek = DayOfWeek.of(dow).getDisplayName(TextStyle.FULL, Locale.KOREAN);
         // 많이 사용한 태그
         List<String> mostUsedTags = List.of(); // TODO: RetrospectCategory 완성 후 구현
 

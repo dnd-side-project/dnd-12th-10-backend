@@ -1,5 +1,6 @@
 package com.dnd.reevserver.domain.statistics.repository;
 
+import com.dnd.reevserver.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Repository;
 public class StatisticsRedisRepository {
 
     private final StringRedisTemplate redisTemplate;
+    private final MemberRepository memberRepository;
 
     private String getMonthKey(int year, int month) {
         return String.format("%04d-%02d", year, month);
@@ -41,6 +43,13 @@ public class StatisticsRedisRepository {
 
     public int getCurrentUserCount() {
         String value = redisTemplate.opsForValue().get("stats:userCount");
-        return value == null ? 1 : Integer.parseInt(value); // 0 방지용 1
+
+        if (value == null) {
+            long countFromDb = memberRepository.count();
+            redisTemplate.opsForValue().set("stats:userCount", String.valueOf(countFromDb));
+            return (int) countFromDb;
+        }
+
+        return Integer.parseInt(value); // 0 방지용 1
     }
 }

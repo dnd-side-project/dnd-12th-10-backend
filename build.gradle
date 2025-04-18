@@ -51,10 +51,9 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-validation'
 
     // SQS
-    implementation group: 'org.springframework.cloud', name: 'spring-cloud-aws-messaging', version: '2.2.6.RELEASE'
-    implementation group: 'org.springframework.cloud', name: 'spring-cloud-aws-autoconfigure', version: '2.2.6.RELEASE'
-    implementation platform("io.awspring.cloud:spring-cloud-aws-dependencies:3.0.1")
-    implementation 'io.awspring.cloud:spring-cloud-aws-starter-sqs'
+    implementation platform('software.amazon.awssdk:bom:2.21.0') // 버전은 최신 안정화
+    implementation 'software.amazon.awssdk:sqs'
+    implementation 'io.awspring.cloud:spring-cloud-aws-starter-sqs:3.1.0'
 
     // dynamoDB
     implementation platform('software.amazon.awssdk:bom:2.25.19') // 최신 BOM으로 통일

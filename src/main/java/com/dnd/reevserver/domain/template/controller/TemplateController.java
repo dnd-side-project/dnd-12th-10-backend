@@ -5,6 +5,7 @@ import com.dnd.reevserver.domain.template.dto.request.UpdateTemplateRequestDto;
 import com.dnd.reevserver.domain.template.dto.response.TemplateResponseDto;
 import com.dnd.reevserver.domain.template.service.TemplateService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,6 +19,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/template")
 @RequiredArgsConstructor
+@Tag(name = "Template", description = "템플릿 API")
 public class TemplateController {
     private final TemplateService templateService;
 

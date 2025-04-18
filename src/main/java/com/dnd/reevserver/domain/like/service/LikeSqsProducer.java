@@ -1,19 +1,19 @@
 package com.dnd.reevserver.domain.like.service;
 
-import com.amazonaws.services.sqs.AmazonSQS;
-import com.amazonaws.services.sqs.model.SendMessageRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import software.amazon.awssdk.services.sqs.SqsAsyncClient;
+import software.amazon.awssdk.services.sqs.model.SendMessageRequest;
 
 @Component
 @RequiredArgsConstructor
-public class SqsProducer {
+public class LikeSqsProducer {
 
-    private final AmazonSQS amazonSQS;
+    private final SqsAsyncClient sqsAsyncClient;
 
     @Value("${cloud.aws.sqs.queue-like-name}")
-    String queueUrl;
+    private String queueUrl;
 
     public void sendToggleLikeEvent(Long retrospectId, String userId) {
         String body = """
@@ -23,10 +23,11 @@ public class SqsProducer {
             }
             """.formatted(retrospectId, userId);
 
-        SendMessageRequest request = new SendMessageRequest()
-                .withQueueUrl(queueUrl)
-                .withMessageBody(body);
+        SendMessageRequest request = SendMessageRequest.builder()
+                .queueUrl(queueUrl)
+                .messageBody(body)
+                .build();
 
-        amazonSQS.sendMessage(request);
+        sqsAsyncClient.sendMessage(request);
     }
 }

@@ -5,8 +5,8 @@ import com.dnd.reevserver.domain.member.exception.UnauthorizedException;
 import com.dnd.reevserver.domain.member.service.AuthService;
 import com.dnd.reevserver.global.util.CookieUtils;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
@@ -19,7 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @RestController
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
-@Slf4j
+@Tag(name = "Auth", description = "AT/RT 관련 API")
 public class AuthController {
     private final AuthService authService;
 

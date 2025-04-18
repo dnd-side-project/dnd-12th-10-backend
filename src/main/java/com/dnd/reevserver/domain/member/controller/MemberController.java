@@ -5,6 +5,7 @@ import com.dnd.reevserver.domain.member.dto.response.MemberResponseDto;
 import com.dnd.reevserver.domain.member.service.MemberService;
 import com.dnd.reevserver.domain.team.dto.response.TeamResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -15,6 +16,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/user")
 @RequiredArgsConstructor
+@Tag(name = "Member", description = "계정 관련 API")
 public class MemberController {
     private final MemberService memberService;
 

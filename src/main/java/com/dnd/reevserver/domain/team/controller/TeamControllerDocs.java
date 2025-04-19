@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Tag(name = "그룹 API", description = "모임과 관련한 API입니다.")
 public interface TeamControllerDocs {
@@ -59,5 +60,8 @@ public interface TeamControllerDocs {
 
     @Operation(summary = "모임 삭제 API", description = "모임을 삭제합니다.")
     public ResponseEntity<Long> deleteGroup(@AuthenticationPrincipal String userId, @PathVariable Long groupId);
+
+    @Operation(summary = "모임 탐색 API", description = "모임을 검색합니다.")
+    public ResponseEntity<List<TeamResponseDto>> searchGroups(@RequestParam(required = false) String title,  @RequestParam(required = false) List<String> categories);
 
 }

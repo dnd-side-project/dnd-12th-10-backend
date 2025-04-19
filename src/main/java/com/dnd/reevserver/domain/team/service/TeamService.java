@@ -170,7 +170,7 @@ public class TeamService {
     //인기모임 조회
     @Transactional(readOnly = true)
     public List<GetPopularGroupResponseDto> getPopularGroups(){
-        List<Team> groups = teamRepository.findAllPopluarGroups();
+        List<Team> groups = teamRepository.findAllPopularGroups();
 
         return groups.stream()
             .map(team -> {
@@ -239,6 +239,17 @@ public class TeamService {
 
         teamRepository.delete(team);
         return groupId;
+    }
+
+    //그룹 검색
+    @Transactional(readOnly = true)
+    public List<TeamResponseDto> searchGroups(String title, List<String> categories){
+        GroupSearchCondition condition = new GroupSearchCondition(title,categories);
+        List<Team> groups = teamRepository.search(condition);
+        return groups.stream()
+            .map(this::convertToDto)
+            .toList();
+
     }
 
     public Team findById(Long groupId) {

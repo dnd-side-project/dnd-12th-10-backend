@@ -241,6 +241,17 @@ public class TeamService {
         return groupId;
     }
 
+    //그룹 검색
+    @Transactional(readOnly = true)
+    public List<TeamResponseDto> searchGroups(String title, List<String> categories){
+        GroupSearchCondition condition = new GroupSearchCondition(title,categories);
+        List<Team> groups = teamRepository.search(condition);
+        return groups.stream()
+            .map(this::convertToDto)
+            .toList();
+
+    }
+
     public Team findById(Long groupId) {
         return teamRepository.findById(groupId).orElseThrow(TeamNotFoundException::new);
     }

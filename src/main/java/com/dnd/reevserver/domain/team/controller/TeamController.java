@@ -84,5 +84,12 @@ public class TeamController implements TeamControllerDocs{
         return ResponseEntity.ok().body(deleteGroupId);
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<List<TeamResponseDto>> searchGroups(@RequestParam(required = false) String title,
+        @RequestParam(required = false) List<String> categories){
+        List<TeamResponseDto> response = groupService.searchGroups(title,categories);
+        return ResponseEntity.ok().body(response);
+    }
+
 
 }

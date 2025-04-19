@@ -170,7 +170,7 @@ public class TeamService {
     //인기모임 조회
     @Transactional(readOnly = true)
     public List<GetPopularGroupResponseDto> getPopularGroups(){
-        List<Team> groups = teamRepository.findAllPopluarGroups();
+        List<Team> groups = teamRepository.findAllPopularGroups();
 
         return groups.stream()
             .map(team -> {

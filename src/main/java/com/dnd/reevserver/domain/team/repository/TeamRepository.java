@@ -1,7 +1,7 @@
 package com.dnd.reevserver.domain.team.repository;
 
 import com.dnd.reevserver.domain.team.entity.Team;
-import io.lettuce.core.dynamic.annotation.Param;
+import org.springframework.data.repository.query.Param;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -16,7 +16,7 @@ public interface TeamRepository extends JpaRepository<Team, Long>, TeamRepositor
     @Query("select t from Team t "
         + "left join t.userTeams ut "
         + "group by t order by count(ut) desc")
-    List<Team> findAllPopluarGroups();
+    List<Team> findAllPopularGroups();
 
     @Query("select distinct t from Team t " +
         "left join fetch t.teamCategories tc " +

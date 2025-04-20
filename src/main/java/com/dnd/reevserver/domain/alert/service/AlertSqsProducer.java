@@ -32,7 +32,7 @@ public class AlertSqsProducer {
 
             sqsAsyncClient.sendMessage(request);
         } catch (Exception e) {
-            // log.error("SQS 메시지 전송 실패", e);
+            throw new RuntimeException("SQS 메시지 전송 중 오류 발생", e);
         }
     }
 }

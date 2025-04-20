@@ -6,7 +6,6 @@ import com.dnd.reevserver.domain.retrospect.dto.response.DeleteRetrospectRespons
 import com.dnd.reevserver.domain.retrospect.dto.response.RetrospectResponseDto;
 import com.dnd.reevserver.domain.retrospect.dto.response.RetrospectSingleResponseDto;
 import com.dnd.reevserver.domain.retrospect.service.RetrospectService;
-import com.dnd.reevserver.global.config.properties.ReevProperties;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -38,12 +37,6 @@ public class RetrospectController implements RetrospectControllerDocs{
     public ResponseEntity<AddRetrospectResponseDto> addRetrospect(@AuthenticationPrincipal String userId, @RequestBody AddRetrospectRequestDto requestDto) {
         AddRetrospectResponseDto responseDto = retrospectService.addRetrospect(userId, requestDto);
         return ResponseEntity.ok().body(responseDto);
-    }
-
-    @PostMapping("/add")
-    public ResponseEntity<AddRetrospectResponseDto> addRetrospect2(@AuthenticationPrincipal String userId, @RequestBody AddRetrospectRequestDto requestDto) {
-       AddRetrospectResponseDto responseDto = retrospectService.addRetrospect(userId, requestDto);
-       return ResponseEntity.ok().body(responseDto);
     }
 
     @PatchMapping

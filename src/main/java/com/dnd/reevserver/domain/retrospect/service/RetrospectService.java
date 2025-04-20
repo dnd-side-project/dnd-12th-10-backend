@@ -16,12 +16,11 @@ import com.dnd.reevserver.domain.retrospect.dto.response.DeleteRetrospectRespons
 import com.dnd.reevserver.domain.retrospect.dto.response.RetrospectResponseDto;
 import com.dnd.reevserver.domain.retrospect.entity.Retrospect;
 import com.dnd.reevserver.domain.retrospect.repository.RetrospectRepository;
-import com.dnd.reevserver.domain.statistics.service.LambdaService;
+import com.dnd.reevserver.domain.statistics.service.StatisticsService;
 import com.dnd.reevserver.domain.team.entity.Team;
 import com.dnd.reevserver.domain.team.service.TeamService;
 import com.dnd.reevserver.global.util.TimeStringUtil;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import jakarta.persistence.Tuple;
@@ -30,7 +29,6 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class RetrospectService {
 
     private final RetrospectRepository retrospectRepository;
@@ -38,7 +36,7 @@ public class RetrospectService {
     private final TeamService teamService;
     private final TimeStringUtil timeStringUtil;
     private final CommentRepository commentRepository;
-    private final LambdaService lambdaService;
+    private final StatisticsService statisticsService;
     private final BookmarkRepository bookmarkRepository;
     private final LikeRepository likeRepository;
 
@@ -97,6 +95,8 @@ public class RetrospectService {
                 .build();
             retrospectRepository.save(retrospect);
 
+            statisticsService.writeUserRepoStatistics(userId);
+
             return new AddRetrospectResponseDto(retrospect.getRetrospectId());
         }
         Retrospect retrospect = Retrospect.builder()
@@ -106,7 +106,7 @@ public class RetrospectService {
             .build();
         retrospectRepository.save(retrospect);
 
-        lambdaService.writeStatistics(userId);
+        statisticsService.writeUserRepoStatistics(userId);
 
         return new AddRetrospectResponseDto(retrospect.getRetrospectId());
     }

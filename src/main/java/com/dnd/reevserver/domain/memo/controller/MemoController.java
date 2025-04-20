@@ -4,6 +4,7 @@ import com.dnd.reevserver.domain.memo.dto.request.CreateMemoRequestDto;
 import com.dnd.reevserver.domain.memo.dto.response.MemoResponseDto;
 import com.dnd.reevserver.domain.memo.service.MemoService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -14,6 +15,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/memo")
 @RequiredArgsConstructor
+@Tag(name = "Memo", description = "임시글 API")
 public class MemoController {
     private final MemoService memoService;
 

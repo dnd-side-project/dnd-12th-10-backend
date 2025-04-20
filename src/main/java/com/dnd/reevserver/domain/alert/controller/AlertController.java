@@ -24,7 +24,6 @@ public class AlertController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
             @RequestParam(defaultValue = "false") boolean onlyUnread) {
-        userId = "3894991774";
         return ResponseEntity.ok(alertService.getUserAlertList(userId, page, size, onlyUnread));
     }
 
@@ -32,7 +31,6 @@ public class AlertController {
     @PutMapping("/read")
     public ResponseEntity<Void> updateRead(@AuthenticationPrincipal String userId,
                                            @RequestParam String messageId) {
-        userId = "3894991774";
         alertService.updateRead(userId, messageId);
         return ResponseEntity.ok().build();
     }

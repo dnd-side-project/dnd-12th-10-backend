@@ -20,7 +20,7 @@ public class AlertMessageListener {
             AlertMessageResponseDto message = objectMapper.readValue(messageJson, AlertMessageResponseDto.class);
             alertRepository.saveAlert(message.userId(), message.messageId(), messageJson);
         } catch (Exception e) {
-            // log.warn("알림 메시지 처리 실패", e);
+            throw new RuntimeException("SQS 메시지 전송 중 오류 발생", e);
         }
     }
 }

@@ -69,10 +69,18 @@ public class SwaggerConfig {
     }
 
     @Bean
-    public GroupedOpenApi alertGroup(){
+    public GroupedOpenApi likeGroup(){
         return GroupedOpenApi.builder()
                 .group("Like")
                 .pathsToMatch("/api/v1/like/**")
+                .build();
+    }
+
+    @Bean
+    public GroupedOpenApi alertGroup(){
+        return GroupedOpenApi.builder()
+                .group("Alert")
+                .pathsToMatch("/api/v1/alert/**")
                 .build();
     }
 

@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -31,6 +32,7 @@ public class LikeService {
         boolean isUnLiked = isLiked(userId, retrospectId); // DB에 추가해도 없다고 뜸 -> 반영이 안된 상태 -> 즉 거꾸로 뜰 거임
         if(!isUnLiked){
             alertService.sendMessage(
+                    UUID.randomUUID().toString(),
                     retrospect.getMember().getUserId(),
                     member.getName() + "님이 " + retrospect.getTitle() + "에 좋아요를 눌렀습니다. [" + retrospectId + "]",
                     LocalDateTime.now(),

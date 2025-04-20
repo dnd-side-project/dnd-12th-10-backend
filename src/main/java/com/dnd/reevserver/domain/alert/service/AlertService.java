@@ -6,8 +6,6 @@ import com.dnd.reevserver.domain.alert.repository.AlertRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Sinks;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -22,28 +20,27 @@ public class AlertService {
     private final AlertRepository alertRepository;
     private final ObjectMapper objectMapper;
 
-    private final Sinks.Many<AlertMessageResponseDto> messageSink =
-            Sinks.many().multicast().onBackpressureBuffer();
-
-    public void sendMessage(String userId, String content, LocalDateTime timestamp, Long retrospectId) {
-        alertSqsProducer.send(userId, content, timestamp, retrospectId);
+    public void sendMessage(String messageId, String userId, String content, LocalDateTime timestamp, Long retrospectId) {
+        alertSqsProducer.send(messageId, userId, content, timestamp, retrospectId);
     }
 
-    public void pushMessageToSink(AlertMessageResponseDto message) {
-        messageSink.tryEmitNext(message);
-    }
+    public AlertListResponseDto getUserAlertList(String userId, int page, int size, boolean onlyUnread) {
+        List<String> rawMessages = onlyUnread
+                ? alertRepository.getAllAlerts(userId) // 전체 가져와서 필터링
+                : alertRepository.getAlertsByPage(userId, page, size);
 
-    public Flux<AlertMessageResponseDto> getMessageStream(String userId) {
-        return messageSink.asFlux()
-                .filter(msg -> msg.userId().equals(userId));
-    }
+        long totalCnt = alertRepository.getTotalCount(userId);
+        long unreadCnt = alertRepository.getUnreadCount(userId);
 
-    public AlertListResponseDto getUserAlertList(String userId) {
-        List<String> rawMessages = alertRepository.getAlerts(userId);
-        List<AlertMessageResponseDto> alerts = rawMessages.stream()
+        List<AlertMessageResponseDto> allAlerts = rawMessages.stream()
                 .map(json -> {
                     try {
-                        return objectMapper.readValue(json, AlertMessageResponseDto.class);
+                        AlertMessageResponseDto dto = objectMapper.readValue(json, AlertMessageResponseDto.class);
+                        Object readValue = alertRepository.getIsRead(userId, dto.messageId());
+                        boolean isRead = "true".equals(readValue);
+                        return new AlertMessageResponseDto(
+                                dto.messageId(), dto.userId(), dto.content(), dto.timestamp(), dto.retrospectId(), isRead
+                        );
                     } catch (Exception e) {
                         return null;
                     }
@@ -51,8 +48,42 @@ public class AlertService {
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
 
-        long unreadCount = alertRepository.getUnreadCount(userId);
+        List<AlertMessageResponseDto> filtered = onlyUnread
+                ? allAlerts.stream().filter(a -> !a.isRead()).toList()
+                : allAlerts;
 
-        return new AlertListResponseDto(userId, alerts, unreadCount);
+        int totalPage = (int) Math.ceil((double) filtered.size() / size);
+        int fromIndex = page * size;
+        int toIndex = Math.min(fromIndex + size, filtered.size());
+        List<AlertMessageResponseDto> pageList = (fromIndex < filtered.size())
+                ? filtered.subList(fromIndex, toIndex)
+                : List.of();
+
+        boolean hasNext = page < totalPage - 1;
+        boolean hasPrev = page > 0;
+
+        return new AlertListResponseDto(
+                userId,
+                pageList,
+                totalCnt,
+                unreadCnt,
+                page,
+                size,
+                totalPage,
+                hasNext,
+                hasPrev
+        );
+    }
+
+    public void updateRead(String userId, String messageId) {
+        alertRepository.markAsRead(userId, messageId);
+    }
+
+    public void deleteAlert(String userId, String messageId) {
+        alertRepository.deleteAlert(userId, messageId);
+    }
+
+    public void deleteAllAlerts(String userId) {
+        alertRepository.deleteAllAlerts(userId);
     }
 }

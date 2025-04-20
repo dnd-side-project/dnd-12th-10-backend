@@ -12,15 +12,13 @@ import org.springframework.stereotype.Component;
 public class AlertMessageListener {
 
     private final AlertRepository alertRepository;
-    private final AlertService alertService;
     private final ObjectMapper objectMapper;
 
     @SqsListener("${cloud.aws.sqs.queue-name}")
     public void receive(String messageJson) {
         try {
             AlertMessageResponseDto message = objectMapper.readValue(messageJson, AlertMessageResponseDto.class);
-            alertRepository.saveAlert(message.userId(), messageJson);
-            alertService.pushMessageToSink(message);
+            alertRepository.saveAlert(message.userId(), message.messageId(), messageJson);
         } catch (Exception e) {
             // log.warn("알림 메시지 처리 실패", e);
         }

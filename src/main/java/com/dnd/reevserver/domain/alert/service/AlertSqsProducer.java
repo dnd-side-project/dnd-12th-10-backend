@@ -20,9 +20,9 @@ public class AlertSqsProducer {
     @Value("${cloud.aws.sqs.queue-name}")
     private String queueUrl;
 
-    public void send(String userId, String content, LocalDateTime timestamp, Long retrospectId) {
+    public void send(String messageId, String userId, String content, LocalDateTime timestamp, Long retrospectId) {
         try {
-            AlertMessageResponseDto dto = new AlertMessageResponseDto(userId, content, timestamp, retrospectId);
+            AlertMessageResponseDto dto = new AlertMessageResponseDto(messageId, userId, content, timestamp, retrospectId, false);
             String json = objectMapper.writeValueAsString(dto);
 
             SendMessageRequest request = SendMessageRequest.builder()

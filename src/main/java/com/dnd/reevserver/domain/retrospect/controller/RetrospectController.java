@@ -35,6 +35,7 @@ public class RetrospectController implements RetrospectControllerDocs{
 
     @PostMapping
     public ResponseEntity<AddRetrospectResponseDto> addRetrospect(@AuthenticationPrincipal String userId, @RequestBody AddRetrospectRequestDto requestDto) {
+        userId = "3894991774";
         AddRetrospectResponseDto responseDto = retrospectService.addRetrospect(userId, requestDto);
         return ResponseEntity.ok().body(responseDto);
     }

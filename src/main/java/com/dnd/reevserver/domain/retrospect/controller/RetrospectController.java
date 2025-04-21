@@ -23,54 +23,63 @@ public class RetrospectController implements RetrospectControllerDocs{
     //todo:페이징
     @GetMapping("/all")
     public ResponseEntity<List<RetrospectResponseDto>> retrospect(@AuthenticationPrincipal String userId, @RequestParam(required = false) Long groupId) {
+        userId = "3894991774";
         List<RetrospectResponseDto> retroList = retrospectService.getAllRetrospectByGruopId(userId, groupId);
         return ResponseEntity.ok().body(retroList);
     }
 
     @GetMapping("/{retrospectId}")
     public ResponseEntity<RetrospectResponseDto> getRetrospect(@AuthenticationPrincipal String userId, @PathVariable Long retrospectId) {
+        userId = "3894991774";
         RetrospectResponseDto responseDto = retrospectService.getRetrospectById(userId, retrospectId);
         return ResponseEntity.ok().body(responseDto);
     }
 
     @PostMapping
     public ResponseEntity<AddRetrospectResponseDto> addRetrospect(@AuthenticationPrincipal String userId, @RequestBody AddRetrospectRequestDto requestDto) {
+        userId = "3894991774";
         AddRetrospectResponseDto responseDto = retrospectService.addRetrospect(userId, requestDto);
         return ResponseEntity.ok().body(responseDto);
     }
 
     @PatchMapping
     public ResponseEntity<RetrospectSingleResponseDto> updateRetrospect(@AuthenticationPrincipal String userId, @RequestBody UpdateRetrospectRequestDto requestDto){
+        userId = "3894991774";
         RetrospectSingleResponseDto responseDto = retrospectService.updateRetrospect(userId, requestDto);
         return ResponseEntity.ok().body(responseDto);
     }
 
     @DeleteMapping
     public ResponseEntity<DeleteRetrospectResponseDto>  deleteRetrospect(@AuthenticationPrincipal String userId, @RequestBody DeleteRetrospectRequestDto requestDto){
+        userId = "3894991774";
         DeleteRetrospectResponseDto responseDto = retrospectService.deleteRetrospect(userId, requestDto);
         return ResponseEntity.ok().body(responseDto);
     }
 
     @GetMapping("/bookmark")
     public ResponseEntity<List<RetrospectResponseDto>> getBookmarkedRetrospects(@AuthenticationPrincipal String userId) {
+        userId = "3894991774";
         List<RetrospectResponseDto> bookmarkedRetrospects = retrospectService.getBookmarkedRetrospects(userId);
         return ResponseEntity.ok().body(bookmarkedRetrospects);
     }
 
     @GetMapping("/bookmark/group")
     public ResponseEntity<List<RetrospectResponseDto>> getBookmarkedRetrospectsWithGroupId(@AuthenticationPrincipal String userId, @RequestParam Long groupId) {
+        userId = "3894991774";
         List<RetrospectResponseDto> bookmarkedRetrospects = retrospectService.getBookmarkedRetrospectsWithGroupId(userId, groupId);
         return ResponseEntity.ok().body(bookmarkedRetrospects);
     }
 
     @PostMapping("/bookmark")
     public ResponseEntity<Void> insertBookmark(@AuthenticationPrincipal String userId, @RequestBody BookmarkRequestDto dto) {
+        userId = "3894991774";
         retrospectService.insertBookmark(userId, dto);
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/bookmark")
     public ResponseEntity<Void> deleteBookmark(@AuthenticationPrincipal String userId, @RequestBody BookmarkRequestDto dto) {
+        userId = "3894991774";
         retrospectService.deleteBookmark(userId, dto);
         return ResponseEntity.ok().build();
     }

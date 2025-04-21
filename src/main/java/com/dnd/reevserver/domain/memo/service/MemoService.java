@@ -85,6 +85,13 @@ public class MemoService {
                 .userId(memo.getMember().getUserId())
                 .content(memo.getContent())
                 .templateName(memo.getTemplate().getTemplateName())
+                .categories(
+                        List.copyOf(
+                                memo.getMemoCategories().stream()
+                                        .map(mc -> mc.getCategory().getCategoryName())
+                                        .toList()
+                        )
+                )
                 .build();
     }
 }

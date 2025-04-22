@@ -86,11 +86,9 @@ public class MemoService {
                 .content(memo.getContent())
                 .templateName(memo.getTemplate().getTemplateName())
                 .categories(
-                        List.copyOf(
-                                memo.getMemoCategories().stream()
-                                        .map(mc -> mc.getCategory().getCategoryName())
-                                        .toList()
-                        )
+                         memo.getMemoCategories().stream()
+                            .map(mc -> mc.getCategory().getCategoryName())
+                            .toList()
                 )
                 .build();
     }

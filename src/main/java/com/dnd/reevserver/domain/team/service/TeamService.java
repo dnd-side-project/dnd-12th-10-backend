@@ -1,6 +1,6 @@
 package com.dnd.reevserver.domain.team.service;
 
-
+import com.dnd.reevserver.domain.alert.service.AlertService;
 import com.dnd.reevserver.domain.category.entity.Category;
 import com.dnd.reevserver.domain.category.entity.TeamCategory;
 import com.dnd.reevserver.domain.category.repository.CategoryRepository;
@@ -31,8 +31,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -49,6 +51,7 @@ public class TeamService {
     private final CategoryRepository categoryRepository;
     private final TeamCategoryService teamCategoryService;
     private final LikeRepository likeRepository;
+    private final AlertService alertService;
 
     //모든 그룹조회
     @Transactional(readOnly = true)
@@ -150,6 +153,13 @@ public class TeamService {
         userTeamRepository.save(join);
         member.addUserTeam(join);
         team.addUserTeam(join);
+
+        alertService.sendMessage(
+                UUID.randomUUID().toString(),
+                team.getOwnerId(),
+                member.getName() + "님이 " + team.getGroupName() + "에 새롭게 가입하였습니다.",
+                LocalDateTime.now(),
+                null);
         return new JoinGroupResponseDto(member.getUserId(),team.getGroupId());
     }
 
@@ -313,6 +323,7 @@ public class TeamService {
                 .userName(retrospect.getMember().getNickname())
                 .timeString(timeStringUtil.getTimeString(retrospect.getUpdatedAt()))
                 .likeCount(getLikeCount(retrospect.getRetrospectId()))
+                .categories(retrospectRepository.findCategoryNamesByRetrospectId(retrospect.getRetrospectId()))
                 .build();
     }
 

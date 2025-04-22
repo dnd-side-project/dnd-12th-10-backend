@@ -1,5 +1,6 @@
 package com.dnd.reevserver.domain.comment.service;
 
+import com.dnd.reevserver.domain.alert.service.AlertService;
 import com.dnd.reevserver.domain.comment.dto.request.AddCommentRequestDto;
 import com.dnd.reevserver.domain.comment.dto.request.AddReplyRequestDto;
 import com.dnd.reevserver.domain.comment.dto.request.UpdateCommentRequestDto;
@@ -19,7 +20,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -29,6 +32,7 @@ public class CommentService {
     private final RetrospectService retrospectService;
     private final MemberService memberService;
     private final TimeStringUtil timeStringUtil;
+    private final AlertService alertService;
 
     //댓글 목록 조회
     @Transactional(readOnly = true)
@@ -52,6 +56,14 @@ public class CommentService {
                 .content(requestDto.content())
                 .build();
         commentRepository.save(comment);
+
+        alertService.sendMessage(
+                UUID.randomUUID().toString(),
+                retrospect.getMember().getUserId(),
+                member.getName() + "님이 " + retrospect.getTitle() + "에 댓글을 작성하였습니다. [" + retrospect.getRetrospectId() + "]",
+                LocalDateTime.now(),
+                retrospect.getRetrospectId());
+
         return convertToCommentDto(comment, false);
     }
 
@@ -78,6 +90,13 @@ public class CommentService {
                 .build();
         comment.setParentComment(parentComment);
         commentRepository.save(comment);
+
+        alertService.sendMessage(
+                UUID.randomUUID().toString(),
+                retrospect.getMember().getUserId(),
+                member.getName() + "님이 " + retrospect.getTitle() + " 회고의 댓글에 답글을 작성하였습니다. [" + retrospect.getRetrospectId() + "]",
+                LocalDateTime.now(),
+                retrospect.getRetrospectId());
 
         return convertToReplyDto(comment, false);
 

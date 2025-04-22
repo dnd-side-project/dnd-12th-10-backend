@@ -30,6 +30,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import jakarta.persistence.Tuple;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -122,6 +123,11 @@ public class RetrospectService {
                 .toList();
         retrospectCategoryBatchRepository.saveAll(rcList);
 
+        LocalDateTime now = LocalDateTime.now();
+
+        statisticsService.writeRetrospectCategoryStatistics(userId, now.getYear(), now.getMonthValue(),
+                categories.stream().map(Category::getCategoryName).toList());
+
         return new AddRetrospectResponseDto(retrospect.getRetrospectId());
     }
 
@@ -137,14 +143,19 @@ public class RetrospectService {
         }
         retrospect.updateRetrospect(requestDto.title(), requestDto.content());
 
+        List<String> oldCategoryNames = retrospectRepository.findCategoryNamesByRetrospectId(requestDto.retrospectId());
+
         retrospectCategoryRepository.deleteAllByRetrospect(retrospect);
 
-        List<Category> categories = categoryRepository.findByCategoryNameIn(requestDto.categoryNames());
+        List<Category> newCategoryNames = categoryRepository.findByCategoryNameIn(requestDto.categoryNames());
 
-        List<RetrospectCategory> rcList = categories.stream()
+        List<RetrospectCategory> rcList = newCategoryNames.stream()
                 .map(category -> new RetrospectCategory(retrospect, category))
                 .toList();
         retrospectCategoryBatchRepository.saveAll(rcList);
+
+        statisticsService.updateRetrospectCategoryStatistics(userId, retrospect.getCreatedAt(), oldCategoryNames
+                , newCategoryNames.stream().map(Category::getCategoryName).toList());
 
         return convertToSingleDto(retrospect, requestDto.categoryNames());
     }

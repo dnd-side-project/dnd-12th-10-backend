@@ -1,5 +1,10 @@
 package com.dnd.reevserver.domain.retrospect.service;
 
+import com.dnd.reevserver.domain.category.entity.Category;
+import com.dnd.reevserver.domain.category.entity.RetrospectCategory;
+import com.dnd.reevserver.domain.category.repository.CategoryRepository;
+import com.dnd.reevserver.domain.category.repository.RetrospectCategoryRepository;
+import com.dnd.reevserver.domain.category.repository.batch.RetrospectCategoryBatchRepository;
 import com.dnd.reevserver.domain.like.repository.LikeRepository;
 import com.dnd.reevserver.domain.retrospect.dto.request.BookmarkRequestDto;
 import com.dnd.reevserver.domain.retrospect.dto.response.RetrospectSingleResponseDto;
@@ -25,6 +30,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import jakarta.persistence.Tuple;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -39,6 +45,9 @@ public class RetrospectService {
     private final StatisticsService statisticsService;
     private final BookmarkRepository bookmarkRepository;
     private final LikeRepository likeRepository;
+    private final CategoryRepository categoryRepository;
+    private final RetrospectCategoryBatchRepository retrospectCategoryBatchRepository;
+    private final RetrospectCategoryRepository retrospectCategoryRepository;
 
     //단일회고 조회
     @Transactional(readOnly = true)
@@ -51,8 +60,9 @@ public class RetrospectService {
         Retrospect retrospect = tuple.get(0, Retrospect.class); // 첫 번째 값: Retrospect 객체
         boolean isBookmarked = tuple.get(1, Boolean.class); // 두 번째 값: 북마크 여부
         long commentCount = tuple.get(2, Long.class); // 세 번째 값: 댓글 수
+        List<String> rcList = retrospectRepository.findCategoryNamesByRetrospectId(retrospectId);
 
-        return convertToDto(retrospect, isBookmarked, commentCount);
+        return convertToDto(retrospect, isBookmarked, commentCount, rcList);
     }
 
     //회고 목록 조회
@@ -67,7 +77,8 @@ public class RetrospectService {
                 .map(tuple -> convertToDto(
                         tuple.get(0, Retrospect.class),
                         tuple.get(1, Boolean.class),
-                        tuple.get(2, Long.class)))
+                        tuple.get(2, Long.class),
+                        retrospectRepository.findCategoryNamesByRetrospectId(tuple.get(0, Retrospect.class).getRetrospectId())))
                 .toList();
         }
 
@@ -76,7 +87,8 @@ public class RetrospectService {
                 .map(tuple -> convertToDto(
                         tuple.get(0, Retrospect.class),
                         tuple.get(1, Boolean.class),
-                        tuple.get(2, Long.class)))
+                        tuple.get(2, Long.class),
+                        retrospectRepository.findCategoryNamesByRetrospectId(tuple.get(0, Retrospect.class).getRetrospectId())))
                 .toList();
     }
 
@@ -84,29 +96,37 @@ public class RetrospectService {
     @Transactional
     public AddRetrospectResponseDto addRetrospect(String userId, AddRetrospectRequestDto requestDto) {
         Member member = memberService.findById(userId);
+        Retrospect retrospect;
         if(requestDto.groupId()!=null) {
             Team team = teamService.findById(requestDto.groupId());
-//            UserTeam userTeam = teamService.findByUserIdAndGroupId(userId, requestDto.groupId());
-            Retrospect retrospect = Retrospect.builder()
+            retrospect = Retrospect.builder()
                 .member(member)
                 .team(team)
                 .title(requestDto.title())
                 .content(requestDto.content())
                 .build();
-            retrospectRepository.save(retrospect);
-
-            statisticsService.writeUserRepoStatistics(userId);
-
-            return new AddRetrospectResponseDto(retrospect.getRetrospectId());
         }
-        Retrospect retrospect = Retrospect.builder()
-            .member(member)
-            .title(requestDto.title())
-            .content(requestDto.content())
-            .build();
+        else{
+            retrospect = Retrospect.builder()
+                    .member(member)
+                    .title(requestDto.title())
+                    .content(requestDto.content())
+                    .build();
+        }
         retrospectRepository.save(retrospect);
-
         statisticsService.writeUserRepoStatistics(userId);
+
+        List<Category> categories = categoryRepository.findByCategoryNameIn(requestDto.categoryNames());
+
+        List<RetrospectCategory> rcList = categories.stream()
+                .map(category -> new RetrospectCategory(retrospect, category))
+                .toList();
+        retrospectCategoryBatchRepository.saveAll(rcList);
+
+        LocalDateTime now = LocalDateTime.now();
+
+        statisticsService.writeRetrospectCategoryStatistics(userId, now.getYear(), now.getMonthValue(),
+                categories.stream().map(Category::getCategoryName).toList());
 
         return new AddRetrospectResponseDto(retrospect.getRetrospectId());
     }
@@ -122,7 +142,22 @@ public class RetrospectService {
             throw new RetrospectAuthorException();
         }
         retrospect.updateRetrospect(requestDto.title(), requestDto.content());
-        return convertToSingleDto(retrospect);
+
+        List<String> oldCategoryNames = retrospectRepository.findCategoryNamesByRetrospectId(requestDto.retrospectId());
+
+        retrospectCategoryRepository.deleteAllByRetrospect(retrospect);
+
+        List<Category> newCategoryNames = categoryRepository.findByCategoryNameIn(requestDto.categoryNames());
+
+        List<RetrospectCategory> rcList = newCategoryNames.stream()
+                .map(category -> new RetrospectCategory(retrospect, category))
+                .toList();
+        retrospectCategoryBatchRepository.saveAll(rcList);
+
+        statisticsService.updateRetrospectCategoryStatistics(userId, retrospect.getCreatedAt(), oldCategoryNames
+                , newCategoryNames.stream().map(Category::getCategoryName).toList());
+
+        return convertToSingleDto(retrospect, requestDto.categoryNames());
     }
 
     @Transactional
@@ -133,6 +168,7 @@ public class RetrospectService {
         }
         long retrospectId = retrospect.getRetrospectId();
         commentRepository.deleteAllByRetrospectRetrospectId(retrospectId);
+        retrospectCategoryRepository.deleteAllByRetrospect(retrospect);
         retrospectRepository.delete(retrospect);
         return new DeleteRetrospectResponseDto(retrospectId);
     }
@@ -153,7 +189,8 @@ public class RetrospectService {
                 .map(tuple -> convertToDto(
                         tuple.get(0, Retrospect.class),
                         tuple.get(1, Boolean.class),
-                        tuple.get(2, Long.class)))
+                        tuple.get(2, Long.class),
+                        retrospectRepository.findCategoryNamesByRetrospectId(tuple.get(0, Retrospect.class).getRetrospectId())))
                 .toList();
     }
 
@@ -163,7 +200,8 @@ public class RetrospectService {
                 .map(tuple -> convertToDto(
                         tuple.get(0, Retrospect.class),
                         tuple.get(1, Boolean.class),
-                        tuple.get(2, Long.class)))
+                        tuple.get(2, Long.class),
+                        retrospectRepository.findCategoryNamesByRetrospectId(tuple.get(0, Retrospect.class).getRetrospectId())))
                 .toList();
     }
 
@@ -184,7 +222,7 @@ public class RetrospectService {
         bookmarkRepository.deleteByRetrospectRetrospectIdAndMemberUserId(dto.retrospectId(), userId);
     }
 
-    private RetrospectResponseDto convertToDto(Retrospect retrospect, boolean isBookmarked, long commentCnt) {
+    private RetrospectResponseDto convertToDto(Retrospect retrospect, boolean isBookmarked, long commentCnt, List<String> categoriesName) {
         return RetrospectResponseDto.builder()
                 .retrospectId(retrospect.getRetrospectId())
                 .title(retrospect.getTitle())
@@ -196,10 +234,11 @@ public class RetrospectService {
                 .groupId(retrospect.getTeam() != null ? retrospect.getTeam().getGroupId() : null)
                 .commentCount(commentCnt)
                 .bookmark(isBookmarked)
+                .categories(categoriesName)
                 .build();
     }
 
-    private RetrospectSingleResponseDto convertToSingleDto(Retrospect retrospect) {
+    private RetrospectSingleResponseDto convertToSingleDto(Retrospect retrospect, List<String> categoriesName) {
         return RetrospectSingleResponseDto.builder()
                 .retrospectId(retrospect.getRetrospectId())
                 .title(retrospect.getTitle())
@@ -210,6 +249,7 @@ public class RetrospectService {
                 .groupName(retrospect.getTeam() != null ? retrospect.getTeam().getGroupName() : null)
                 .groupId(retrospect.getTeam() != null ? retrospect.getTeam().getGroupId() : null)
                 .commentCount(commentRepository.countByRetrospect(retrospect))
+                .categories(categoriesName)
                 .build();
     }
 }

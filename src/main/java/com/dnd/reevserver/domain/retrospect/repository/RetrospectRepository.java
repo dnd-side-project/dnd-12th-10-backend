@@ -130,4 +130,12 @@ public interface RetrospectRepository extends JpaRepository<Retrospect, Long> {
     """, nativeQuery = true)
     Integer getMostFrequentWritingDay(@Param("userId") String userId,
                                       @Param("yearMonth") String yearMonth);
+
+    @Query("""
+        SELECT c.categoryName
+        FROM RetrospectCategory rc
+        JOIN rc.category c
+        WHERE rc.retrospect.retrospectId = :retrospectId
+    """)
+    List<String> findCategoryNamesByRetrospectId(@Param("retrospectId") Long retrospectId);
 }

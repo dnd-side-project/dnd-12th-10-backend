@@ -1,10 +1,14 @@
 package com.dnd.reevserver.domain.memo.entity;
 
+import com.dnd.reevserver.domain.category.entity.MemoCategory;
 import com.dnd.reevserver.domain.member.entity.Member;
 import com.dnd.reevserver.domain.template.entity.Template;
 import com.dnd.reevserver.global.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "Memo")
@@ -31,4 +35,7 @@ public class Memo extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "template_id")
     private Template template;
+
+    @OneToMany(mappedBy = "memo", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<MemoCategory> memoCategories = new ArrayList<>();
 }

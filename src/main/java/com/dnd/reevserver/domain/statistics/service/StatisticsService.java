@@ -15,10 +15,9 @@ import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.TextStyle;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -80,14 +79,37 @@ public class StatisticsService {
         int dow = retrospectRepository.getMostFrequentWritingDay(userId, yearMonth) - 1;
         String mostFrequentDayOfWeek = DayOfWeek.of(dow).getDisplayName(TextStyle.FULL, Locale.KOREAN);
         // 많이 사용한 태그
-        List<String> mostUsedTags = List.of(); // TODO: RetrospectCategory 완성 후 구현
+        List<String> mostUsedCategory = statisticsRedisRepository.getMostUsedCategories(userId, year, month);
 
         return new MonthlyActivityStatsResponseDto(
                 userId,
                 totalCharacters,
                 retrospectCount,
                 mostFrequentDayOfWeek,
-                mostUsedTags
+                mostUsedCategory
         );
     }
+
+    public void writeRetrospectCategoryStatistics(String userId, int year, int month, List<String> categories) {
+        statisticsRedisRepository.incrementRepoTagCount(userId, year, month, categories);
+    }
+
+    public void updateRetrospectCategoryStatistics(String userId, LocalDateTime createdAt,
+                                                    List<String> oldTags, List<String> newTags) {
+        int year = createdAt.getYear();
+        int month = createdAt.getMonthValue();
+
+        Set<String> oldSet = new HashSet<>(oldTags);
+        Set<String> newSet = new HashSet<>(newTags);
+
+        Set<String> toAdd = new HashSet<>(newSet);
+        toAdd.removeAll(oldSet); // 새로 추가된 태그
+
+        Set<String> toRemove = new HashSet<>(oldSet);
+        toRemove.removeAll(newSet); // 제거된 태그
+
+        statisticsRedisRepository.incrementRepoTagCount(userId, year, month, toAdd.stream().toList());
+        statisticsRedisRepository.decrementRepoTagCount(userId, year, month, toRemove.stream().toList());
+    }
+
 }

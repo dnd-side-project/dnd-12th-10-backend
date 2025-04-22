@@ -5,6 +5,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+
 @Repository
 @RequiredArgsConstructor
 public class StatisticsRedisRepository {
@@ -52,4 +56,42 @@ public class StatisticsRedisRepository {
 
         return Integer.parseInt(value); // 0 방지용 1
     }
+
+    public List<String> getMostUsedCategories(String userId, int year, int month) {
+        String key = "stats:retrospect:category:" + userId + ":" + getMonthKey(year, month);
+        Map<Object, Object> entries = redisTemplate.opsForHash().entries(key);
+
+        if (entries.isEmpty()) {
+            return List.of();
+        }
+
+        // 최댓값 계산
+        int maxCount = entries.values().stream()
+                .mapToInt(value -> Integer.parseInt(value.toString()))
+                .max()
+                .orElse(0);
+
+        // 최댓값과 동일한 카테고리 리스트 추출
+        return entries.entrySet().stream()
+                .filter(entry -> Integer.parseInt(entry.getValue().toString()) == maxCount)
+                .map(entry -> entry.getKey().toString())
+                .toList();
+    }
+
+    public void incrementRepoTagCount(String userId, int year, int month, List<String> categories) {
+        String key = "stats:retrospect:category:" + userId + ":" + getMonthKey(year, month);
+
+        for (String category : categories) {
+            redisTemplate.opsForHash().increment(key, category, 1);
+        }
+    }
+
+    public void decrementRepoTagCount(String userId, int year, int month, List<String> categories) {
+        String key = "stats:retrospect:category:" + userId + ":" + getMonthKey(year, month);
+
+        for (String category : categories) {
+            redisTemplate.opsForHash().increment(key, category, -1);
+        }
+    }
+
 }

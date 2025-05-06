@@ -46,7 +46,7 @@ Swagger UI를 사용하여 API 문서를 작성하였습니다.
 ## 🏘️ TEAM
 * Design
   * [**전석희**](https://brunch.co.kr/@hilda)
-  * [**박희수**]
+  * [**박희수**](https://www.behance.net/xvsqhc7xvv03fa)
 * Front-End
   * [**이준석**](https://github.com/leeleeleeleejun)
   * [**조윤서**](https://github.com/yoonncho)

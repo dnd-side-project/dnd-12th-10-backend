@@ -81,7 +81,8 @@ public class SecurityConfig {
     @Bean
     protected CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(reevProperties.getFrontUrl());
+
+        config.setAllowedOriginPatterns(reevProperties.getFrontUrl()); // CORS 주소랑 정확히 매칭 -> 패턴 매칭
         config.addAllowedMethod(CorsConfiguration.ALL);
         config.addAllowedHeader("*");
         config.setExposedHeaders(List.of("Set-Cookie", "Authorization"));

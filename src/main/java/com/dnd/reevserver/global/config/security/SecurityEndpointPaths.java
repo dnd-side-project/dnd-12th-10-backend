@@ -7,10 +7,7 @@ public class SecurityEndpointPaths {
     };
 
     public static final String[] USER_LIST = {
-            "/api/v1/categories",
-            "/api/v1/user/**",
-            "/api/v1/meetings",
-            "/api/v1/meetings/*/schedules/members/**",
+
     };
 
     public static final String[] ADMIN_LIST = {

@@ -65,10 +65,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             authenticateUser(userId, request);
             filterChain.doFilter(request, response);
-        } catch (MalformedTokenException | TokenExpiredException e) {
+        } catch (MalformedTokenException | TokenExpiredException | MemberNotFoundException e) {
+            String origin = request.getHeader("Origin");
+            response.setHeader("Access-Control-Allow-Origin", origin);
+            response.setHeader("Access-Control-Allow-Credentials", "true");
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.setContentType("application/json");
-            response.getWriter().write("{\"message\": \"" + e.getMessage() + "\"}"); // 클라이언트가 이 메시지를 보고 재요청 판단
+            response.getWriter().write("{\"message\": \"" + e.getMessage() + "\"}");
         }
     }
 

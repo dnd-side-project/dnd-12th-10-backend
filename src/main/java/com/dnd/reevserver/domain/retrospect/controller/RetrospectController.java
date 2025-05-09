@@ -33,14 +33,8 @@ public class RetrospectController implements RetrospectControllerDocs{
         return ResponseEntity.ok().body(responseDto);
     }
 
-    @PostMapping
-    public ResponseEntity<AddRetrospectResponseDto> addRetrospect(@AuthenticationPrincipal String userId, @RequestBody AddRetrospectRequestDto requestDto) {
-        AddRetrospectResponseDto responseDto = retrospectService.addRetrospect(userId, requestDto);
-        return ResponseEntity.ok().body(responseDto);
-    }
-
     @PostMapping("/add")
-    public ResponseEntity<AddRetrospectResponseDto> addRetrospect2(@AuthenticationPrincipal String userId, @RequestBody AddRetrospectRequestDto requestDto) {
+    public ResponseEntity<AddRetrospectResponseDto> addRetrospect(@AuthenticationPrincipal String userId, @RequestBody AddRetrospectRequestDto requestDto) {
         AddRetrospectResponseDto responseDto = retrospectService.addRetrospect(userId, requestDto);
         return ResponseEntity.ok().body(responseDto);
     }

@@ -10,20 +10,17 @@ import java.util.List;
 
 public interface CommentRepository extends JpaRepository<Comment, Long> {
     @Query("SELECT c FROM Comment c " +
-            "JOIN FETCH c.member " +
-            "JOIN FETCH c.retrospect " +
-            "WHERE c.retrospect.retrospectId = :retrospectId " +
-            "and c.parentComment is null " +
-            "and c.isDeleted = false")
+        "JOIN FETCH c.member " +
+        "JOIN FETCH c.retrospect " +
+        "WHERE c.retrospect.retrospectId = :retrospectId " +
+        "and c.parentComment is null")
     List<Comment> findByRetrospectId(@Param("retrospectId") Long retrospectId);
 
 
     @Query("SELECT c FROM Comment c " +
-            "JOIN FETCH c.member " +
-            "JOIN FETCH c.retrospect " +
-            "WHERE c.parentComment.commentId = :parentCommentId " +
-            "and c.isDeleted = false " +
-            "and c.parentComment.isDeleted = false")
+        "JOIN FETCH c.member " +
+        "JOIN FETCH c.retrospect " +
+        "WHERE c.parentComment.commentId = :parentCommentId")
     List<Comment> findAllByParentCommentId(@Param("parentCommentId") Long parentCommentId);
 
 

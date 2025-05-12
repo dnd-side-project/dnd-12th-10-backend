@@ -143,7 +143,6 @@ public class CommentService {
                 .content(comment.getContent())
                 .nickName(comment.getMember().getNickname())
                 .timeMessage(timeStringUtil.getTimeString(comment.getUpdatedAt()))
-                .isDeleted(comment.isDeleted())
                 .likeCount(comment.getLikeCount())
                 .isAuthor(isCommentAuthor(comment))
                 .build();
@@ -155,7 +154,6 @@ public class CommentService {
             .content(comment.getContent())
             .nickName(comment.getMember().getNickname())
             .timeMessage(timeStringUtil.getTimeString(comment.getUpdatedAt()))
-            .isDeleted(comment.isDeleted())
             .build();
     }
 
@@ -168,7 +166,6 @@ public class CommentService {
                 .content(reply.getContent())
                 .nickName(reply.getMember().getNickname())
                 .timeMessage(timeStringUtil.getTimeString(reply.getUpdatedAt()))
-                .isDeleted(reply.isDeleted())
                 .likeCount(reply.getLikeCount())
                 .isAuthor(isCommentAuthor(reply))
                 .build();
@@ -180,7 +177,6 @@ public class CommentService {
             .content(reply.getContent())
             .nickName(reply.getMember().getNickname())
             .timeMessage(timeStringUtil.getTimeString(reply.getUpdatedAt()))
-            .isDeleted(reply.isDeleted())
             .build();
     }
 }

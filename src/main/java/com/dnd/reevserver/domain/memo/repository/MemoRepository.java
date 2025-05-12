@@ -11,6 +11,15 @@ public interface MemoRepository extends JpaRepository<Memo, Long> {
     @Query("SELECT m FROM Memo m " +
             "JOIN FETCH m.member " +
             "JOIN FETCH m.template " +
+            "JOIN FETCH m.team "+
             "WHERE m.member.userId = :userId")
     List<Memo> findMemosByMemberUserId(@Param("userId") String userId);
+
+    @Query("SELECT m FROM Memo m " +
+            "JOIN FETCH m.member " +
+            "JOIN FETCH m.template " +
+            "JOIN FETCH m.team "+
+            "WHERE m.member.userId = :userId " +
+            "AND m.team.groupId = :groupId")
+    List<Memo> findMemosByMemberUserIdAndGroupId(@Param("userId") String userId, @Param("groupId") Long groupId);
 }

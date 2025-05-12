@@ -19,16 +19,24 @@ import java.util.List;
 public class MemoController {
     private final MemoService memoService;
 
+    @Operation(summary = "메모 단일 조회, 그룹이 없을 경우 groupId가 0으로 표시됩니다.")
     @GetMapping("/{memoId}")
     public ResponseEntity<MemoResponseDto> findMemoById(@PathVariable Long memoId) {
         return ResponseEntity.ok(memoService.findMemoById(memoId));
     }
 
-    @Operation(summary = "유저의 전체 메모 조회")
+    @Operation(summary = "유저의 전체 메모 조회, 그룹이 없을 경우 groupId가 0으로 표시됩니다.")
     @GetMapping
     public ResponseEntity<List<MemoResponseDto>> findMemosByUserId(@AuthenticationPrincipal String userId) {
         List<MemoResponseDto> memos = memoService.findMemosByUserId(userId);
         return ResponseEntity.ok(memos);
+    }
+
+    @Operation(summary = "유저와 그룹으로 메모들 조회")
+    @GetMapping("/group/{groupId}")
+    public ResponseEntity<List<MemoResponseDto>> findMemosByUserIdAndGroupId(@AuthenticationPrincipal String userId,
+                                                                             @PathVariable Long groupId) {
+        return ResponseEntity.ok(memoService.findMemosByUserIdAndGroupId(userId, groupId));
     }
 
     @Operation(summary = "유저의 메모 수 조회")

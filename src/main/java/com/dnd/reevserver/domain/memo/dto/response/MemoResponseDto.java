@@ -5,5 +5,6 @@ import lombok.Builder;
 import java.util.List;
 
 @Builder
-public record MemoResponseDto(Long memoId, String userId, String title, String content, String templateName, List<String> categories){
+public record MemoResponseDto(Long memoId, String userId, String title,
+                              String content, String templateName, List<String> categories, Long groupId){
 }

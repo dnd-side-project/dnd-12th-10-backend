@@ -2,6 +2,7 @@ package com.dnd.reevserver.domain.memo.entity;
 
 import com.dnd.reevserver.domain.category.entity.MemoCategory;
 import com.dnd.reevserver.domain.member.entity.Member;
+import com.dnd.reevserver.domain.team.entity.Team;
 import com.dnd.reevserver.domain.template.entity.Template;
 import com.dnd.reevserver.global.common.entity.BaseEntity;
 import jakarta.persistence.*;
@@ -38,4 +39,8 @@ public class Memo extends BaseEntity {
 
     @OneToMany(mappedBy = "memo", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<MemoCategory> memoCategories = new ArrayList<>();
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "group_id")
+    private Team team;
 }

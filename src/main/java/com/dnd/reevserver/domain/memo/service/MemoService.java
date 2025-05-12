@@ -11,6 +11,7 @@ import com.dnd.reevserver.domain.memo.dto.response.MemoResponseDto;
 import com.dnd.reevserver.domain.memo.entity.Memo;
 import com.dnd.reevserver.domain.memo.exception.MemoNotFoundException;
 import com.dnd.reevserver.domain.memo.repository.MemoRepository;
+import com.dnd.reevserver.domain.team.service.TeamService;
 import com.dnd.reevserver.domain.template.entity.Template;
 import com.dnd.reevserver.domain.template.service.TemplateService;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +30,7 @@ public class MemoService {
     private final MemoCategoryRepository memoCategoryRepository;
     private final CategoryRepository categoryRepository;
     private final MemoCategoryBatchRepository memoCategoryBatchRepository;
+    private final TeamService teamService;
 
     public Memo findById(Long id) {
         return memoRepository.findById(id).orElseThrow(MemoNotFoundException::new);
@@ -46,6 +48,13 @@ public class MemoService {
                 .collect(Collectors.toList());
     }
 
+    // 유저의 그룹에 있는 메모들 조회
+    public List<MemoResponseDto> findMemosByUserIdAndGroupId(String userId, Long groupId){
+        return memoRepository.findMemosByMemberUserIdAndGroupId(userId, groupId).stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+    }
+
     // 유저의 메모 수 조회
     public Integer countMemosByUserId(String userId){
         return memoRepository.findMemosByMemberUserId(userId).size();
@@ -56,11 +65,12 @@ public class MemoService {
     public void createMemo(String userId, CreateMemoRequestDto dto){
         Template template = templateService.findByName(dto.templateName());
         Memo memo = Memo.builder()
-                .member(memberService.findById(userId))
-                .title(dto.title())
-                .content(dto.content())
-                .template(template) // null 가능
-                .build();
+                    .member(memberService.findById(userId))
+                    .title(dto.title())
+                    .content(dto.content())
+                    .template(template) // null 가능
+                    .team(dto.groupId() == null ? null : teamService.findById(dto.groupId())) // null 가능
+                    .build();
         // 메모-태그 생성
         memoRepository.save(memo);
         List<Category> categories = categoryRepository.findByCategoryNameIn(dto.categoriesName());
@@ -89,6 +99,9 @@ public class MemoService {
                          memo.getMemoCategories().stream()
                             .map(mc -> mc.getCategory().getCategoryName())
                             .toList()
+                )
+                .groupId(
+                        memo.getTeam() == null ? 0 : memo.getTeam().getGroupId()
                 )
                 .build();
     }

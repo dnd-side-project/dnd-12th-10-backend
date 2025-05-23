@@ -95,7 +95,7 @@ public class MemoService {
                 .userId(memo.getMember().getUserId())
                 .content(memo.getContent())
                 .templateName(memo.getTemplate().getTemplateName())
-                .categories(
+                .categoryNames(
                          memo.getMemoCategories().stream()
                             .map(mc -> mc.getCategory().getCategoryName())
                             .toList()

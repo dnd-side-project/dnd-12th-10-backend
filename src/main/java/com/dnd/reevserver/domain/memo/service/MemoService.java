@@ -63,17 +63,15 @@ public class MemoService {
     // 메모 생성
     @Transactional
     public void createMemo(String userId, CreateMemoRequestDto dto){
-        Template template = templateService.findByName(dto.templateName());
         Memo memo = Memo.builder()
                     .member(memberService.findById(userId))
                     .title(dto.title())
                     .content(dto.content())
-                    .template(template) // null 가능
                     .team(dto.groupId() == null ? null : teamService.findById(dto.groupId())) // null 가능
                     .build();
         // 메모-태그 생성
         memoRepository.save(memo);
-        List<Category> categories = categoryRepository.findByCategoryNameIn(dto.categoriesName());
+        List<Category> categories = categoryRepository.findByCategoryNameIn(dto.categoryNames());
         List<MemoCategory> mcList = categories.stream()
                 .map(category -> new MemoCategory(memo, category))
                 .collect(Collectors.toList());
@@ -94,8 +92,7 @@ public class MemoService {
                 .title(memo.getTitle())
                 .userId(memo.getMember().getUserId())
                 .content(memo.getContent())
-                .templateName(memo.getTemplate().getTemplateName())
-                .categories(
+                .categoryNames(
                          memo.getMemoCategories().stream()
                             .map(mc -> mc.getCategory().getCategoryName())
                             .toList()

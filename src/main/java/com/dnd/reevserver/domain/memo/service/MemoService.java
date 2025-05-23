@@ -73,7 +73,7 @@ public class MemoService {
                     .build();
         // 메모-태그 생성
         memoRepository.save(memo);
-        List<Category> categories = categoryRepository.findByCategoryNameIn(dto.categoriesName());
+        List<Category> categories = categoryRepository.findByCategoryNameIn(dto.categoryNames());
         List<MemoCategory> mcList = categories.stream()
                 .map(category -> new MemoCategory(memo, category))
                 .collect(Collectors.toList());

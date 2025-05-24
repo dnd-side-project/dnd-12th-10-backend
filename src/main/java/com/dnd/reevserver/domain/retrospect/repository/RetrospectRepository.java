@@ -20,7 +20,7 @@ public interface RetrospectRepository extends JpaRepository<Retrospect, Long> {
            COUNT(c)
     FROM Retrospect r
     JOIN FETCH r.member m
-    JOIN FETCH r.team t
+    LEFT JOIN FETCH r.team t
     LEFT JOIN Bookmark b
         ON r.retrospectId = b.retrospect.retrospectId
     LEFT JOIN Comment c

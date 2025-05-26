@@ -1,11 +1,9 @@
 package com.dnd.reevserver.domain.retrospect.controller;
 
 import com.dnd.reevserver.domain.retrospect.dto.request.*;
-import com.dnd.reevserver.domain.retrospect.dto.response.AddRetrospectResponseDto;
-import com.dnd.reevserver.domain.retrospect.dto.response.DeleteRetrospectResponseDto;
-import com.dnd.reevserver.domain.retrospect.dto.response.RetrospectResponseDto;
-import com.dnd.reevserver.domain.retrospect.dto.response.RetrospectSingleResponseDto;
+import com.dnd.reevserver.domain.retrospect.dto.response.*;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +20,16 @@ public interface RetrospectControllerDocs {
 
     @Operation(summary = "단일 회고 조회 API", description = "선택한 회고를 불러옵니다.")
     ResponseEntity<RetrospectResponseDto> getRetrospect(@AuthenticationPrincipal String userId, @PathVariable Long retrospectId);
+
+    @Operation(summary = "나의 회고 현황 조회 API", description = "유저의 현황을 불러옵니다. action에 따라 모두, 모임, 개인으로 나눠집니다.")
+    ResponseEntity<RetrospectByMemberResponseDto> getRetrospectByMember(@AuthenticationPrincipal String userId, @Parameter(
+            name = "action",
+            description = """
+                회고 조회 범위 지정:
+                - all: 전체 회고 (모임 + 개인)
+                - group: 모임 회고만
+                - personal: 개인 회고만
+            """) @RequestParam String action);
 
     @Operation(summary = "회고 작성 API", description = "회고를 작성합니다.")
     ResponseEntity<AddRetrospectResponseDto> addRetrospect(@AuthenticationPrincipal String userId, @RequestBody AddRetrospectRequestDto requestDto);

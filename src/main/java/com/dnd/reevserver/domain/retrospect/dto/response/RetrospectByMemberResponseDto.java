@@ -5,6 +5,6 @@ import lombok.Builder;
 import java.util.List;
 
 @Builder
-public record RetrospectByMemberResponseDto(String userName, Long count,
+public record RetrospectByMemberResponseDto(int count,
                                             List<RetrospectByMemberItemResponseDto> retrospectList) {
 }

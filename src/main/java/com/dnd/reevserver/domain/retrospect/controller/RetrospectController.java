@@ -1,10 +1,7 @@
 package com.dnd.reevserver.domain.retrospect.controller;
 
 import com.dnd.reevserver.domain.retrospect.dto.request.*;
-import com.dnd.reevserver.domain.retrospect.dto.response.AddRetrospectResponseDto;
-import com.dnd.reevserver.domain.retrospect.dto.response.DeleteRetrospectResponseDto;
-import com.dnd.reevserver.domain.retrospect.dto.response.RetrospectResponseDto;
-import com.dnd.reevserver.domain.retrospect.dto.response.RetrospectSingleResponseDto;
+import com.dnd.reevserver.domain.retrospect.dto.response.*;
 import com.dnd.reevserver.domain.retrospect.service.RetrospectService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +27,13 @@ public class RetrospectController implements RetrospectControllerDocs{
     @GetMapping("/{retrospectId}")
     public ResponseEntity<RetrospectResponseDto> getRetrospect(@AuthenticationPrincipal String userId, @PathVariable Long retrospectId) {
         RetrospectResponseDto responseDto = retrospectService.getRetrospectById(userId, retrospectId);
+        return ResponseEntity.ok().body(responseDto);
+    }
+
+    @GetMapping("/member")
+    public ResponseEntity<RetrospectByMemberResponseDto> getRetrospectByMember(@AuthenticationPrincipal String userId, @RequestParam String action) {
+        userId = "3894991774";
+        RetrospectByMemberResponseDto responseDto = retrospectService.getRetrospectByMemberAndGroupExisted(userId, action);
         return ResponseEntity.ok().body(responseDto);
     }
 

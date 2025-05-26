@@ -95,22 +95,29 @@ public class RetrospectService {
     // action : personal -> 개인만
     @Transactional(readOnly = true)
     public RetrospectByMemberResponseDto getRetrospectByMemberAndGroupExisted(String userId, String action){
-        RetrospectByMemberResponseDto response;
+        List<RetrospectSimpleDto> resultList;
         if(userId.isEmpty()) {
             throw new MemberNotFoundException();
         }
-        if("all".equals(action)){
+        if("all".equals(action)) resultList = retrospectRepository.findSimpleByUserId(userId);
+        else if("group".equals(action)) resultList = retrospectRepository.findSimpleByUserIdAndGroupExisted(userId);
+        else if("personal".equals(action)) resultList = retrospectRepository.findSimpleByUserIdAndGroupNotExisted(userId);
+        else throw new WrongActionException();
 
-        }
-        else if("group".equals(action)){
-
-        }
-        else if("personal".equals(action)){
-
-        }
-        else{
-            throw new WrongActionException();
-        }
+        return RetrospectByMemberResponseDto.builder()
+                .count(resultList.size())
+                .retrospectList(
+                        resultList.stream()
+                                .map(r -> RetrospectByMemberItemResponseDto.builder()
+                                        .retrospectId(r.getRetrospectId())
+                                        .title(r.getTitle())
+                                        .content(r.getContent())
+                                        .type(r.getGroupId() == null ? "개인" : "모임")
+                                        .build()
+                                )
+                                .toList()
+                )
+                .build();
     }
 
     //회고 작성

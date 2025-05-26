@@ -36,7 +36,6 @@ public class Retrospect extends BaseEntity {
     @Column(nullable = false, columnDefinition = "LONGTEXT")
     private String content;
 
-    // 북마크 연계 삭제를 위해 사용
     @OneToMany(mappedBy = "retrospect", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Bookmark> bookmarks = new ArrayList<>();
 

@@ -32,7 +32,6 @@ public class RetrospectController implements RetrospectControllerDocs{
 
     @GetMapping("/member")
     public ResponseEntity<RetrospectByMemberResponseDto> getRetrospectByMember(@AuthenticationPrincipal String userId, @RequestParam String action) {
-        userId = "3894991774";
         RetrospectByMemberResponseDto responseDto = retrospectService.getRetrospectByMemberAndGroupExisted(userId, action);
         return ResponseEntity.ok().body(responseDto);
     }

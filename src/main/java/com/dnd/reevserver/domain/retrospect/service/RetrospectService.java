@@ -7,7 +7,7 @@ import com.dnd.reevserver.domain.category.repository.RetrospectCategoryRepositor
 import com.dnd.reevserver.domain.category.repository.batch.RetrospectCategoryBatchRepository;
 import com.dnd.reevserver.domain.like.repository.LikeRepository;
 import com.dnd.reevserver.domain.retrospect.dto.request.BookmarkRequestDto;
-import com.dnd.reevserver.domain.retrospect.dto.response.RetrospectSingleResponseDto;
+import com.dnd.reevserver.domain.retrospect.dto.response.*;
 import com.dnd.reevserver.domain.retrospect.entity.Bookmark;
 import com.dnd.reevserver.domain.retrospect.exception.*;
 import com.dnd.reevserver.domain.retrospect.repository.BookmarkRepository;
@@ -16,9 +16,6 @@ import com.dnd.reevserver.domain.member.entity.Member;
 import com.dnd.reevserver.domain.member.exception.MemberNotFoundException;
 import com.dnd.reevserver.domain.member.service.MemberService;
 import com.dnd.reevserver.domain.retrospect.dto.request.*;
-import com.dnd.reevserver.domain.retrospect.dto.response.AddRetrospectResponseDto;
-import com.dnd.reevserver.domain.retrospect.dto.response.DeleteRetrospectResponseDto;
-import com.dnd.reevserver.domain.retrospect.dto.response.RetrospectResponseDto;
 import com.dnd.reevserver.domain.retrospect.entity.Retrospect;
 import com.dnd.reevserver.domain.retrospect.repository.RetrospectRepository;
 import com.dnd.reevserver.domain.statistics.service.StatisticsService;
@@ -90,6 +87,30 @@ public class RetrospectService {
                         tuple.get(2, Long.class),
                         retrospectRepository.findCategoryNamesByRetrospectId(tuple.get(0, Retrospect.class).getRetrospectId())))
                 .toList();
+    }
+
+    // 유저 별 회고 작성 현황 조회
+    // action : all -> 모임, 개인 전체
+    // action : group -> 모임만
+    // action : personal -> 개인만
+    @Transactional(readOnly = true)
+    public RetrospectByMemberResponseDto getRetrospectByMemberAndGroupExisted(String userId, String action){
+        RetrospectByMemberResponseDto response;
+        if(userId.isEmpty()) {
+            throw new MemberNotFoundException();
+        }
+        if("all".equals(action)){
+
+        }
+        else if("group".equals(action)){
+
+        }
+        else if("personal".equals(action)){
+
+        }
+        else{
+            throw new WrongActionException();
+        }
     }
 
     //회고 작성

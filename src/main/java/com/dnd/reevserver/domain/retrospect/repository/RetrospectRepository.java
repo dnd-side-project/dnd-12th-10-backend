@@ -1,5 +1,6 @@
 package com.dnd.reevserver.domain.retrospect.repository;
 
+import com.dnd.reevserver.domain.retrospect.dto.response.RetrospectSummaryDto;
 import com.dnd.reevserver.domain.retrospect.entity.Retrospect;
 import io.lettuce.core.dynamic.annotation.Param;
 import java.util.Optional;
@@ -13,6 +14,17 @@ import java.util.List;
 
 
 public interface RetrospectRepository extends JpaRepository<Retrospect, Long> {
+
+    @Query("""
+    SELECT\s
+        r.retrospectId AS retrospectId,
+        r.content AS content,
+        r.title AS title,
+        r.team.groupId AS groupId
+    FROM Retrospect r
+    WHERE r.member.userId = :userId
+   \s""")
+    List<RetrospectSummaryDto> findSimpleByUserId(@Param("userId") String userId);
 
     @Query("""
     SELECT r,

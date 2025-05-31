@@ -14,6 +14,7 @@ import com.dnd.reevserver.domain.memo.repository.MemoRepository;
 import com.dnd.reevserver.domain.team.service.TeamService;
 import com.dnd.reevserver.domain.template.entity.Template;
 import com.dnd.reevserver.domain.template.service.TemplateService;
+import com.dnd.reevserver.global.util.TimeStringUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,6 +31,7 @@ public class MemoService {
     private final MemoCategoryRepository memoCategoryRepository;
     private final CategoryRepository categoryRepository;
     private final MemoCategoryBatchRepository memoCategoryBatchRepository;
+    private final TimeStringUtil timeStringUtil;
     private final TeamService teamService;
 
     public Memo findById(Long id) {
@@ -100,6 +102,7 @@ public class MemoService {
                 .groupId(
                         memo.getTeam() == null ? 0 : memo.getTeam().getGroupId()
                 )
+                .updateTime(timeStringUtil.getTimeString(memo.getUpdatedAt()))
                 .build();
     }
 }

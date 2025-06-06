@@ -24,14 +24,11 @@ public class SearchService {
     private final TimeStringUtil timeStringUtil;
 
     @Transactional(readOnly = true)
-    public List<SearchAllResponseDto> searchAll(String keyword){
+    public SearchAllResponseDto searchAll(String keyword){
         List<SearchGroupResponseDto> groups = teamService.searchForKeyword(keyword);
         List<SearchRetrospectResponseDto> retrospects = retrospectService.searchForKeyword(keyword);
-
+        return new SearchAllResponseDto(groups, retrospects);
     }
-
-
-
 
 
 }

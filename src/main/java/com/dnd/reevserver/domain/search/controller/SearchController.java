@@ -19,8 +19,8 @@ public class SearchController {
     private final SearchService searchService;
 
     @GetMapping
-    public ResponseEntity<?> search (@RequestParam(required = false) String keyword){
-        List<SearchAllResponseDto> response = searchService.searchAll(keyword);
-        return ResponseEntity.ok().body(null);
+    public ResponseEntity<SearchAllResponseDto> search (@RequestParam(required = false) String keyword){
+        SearchAllResponseDto response = searchService.searchAll(keyword);
+        return ResponseEntity.ok().body(response);
     }
 }

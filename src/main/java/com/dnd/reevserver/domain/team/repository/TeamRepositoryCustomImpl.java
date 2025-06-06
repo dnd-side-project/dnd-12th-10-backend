@@ -39,7 +39,7 @@ public class TeamRepositoryCustomImpl implements TeamRepositoryCustom {
         BooleanBuilder builder = new BooleanBuilder();
 
         BooleanExpression titleCondition = containTitle(keyword);
-        if (titleCondition != null) {
+        if(titleCondition != null) {
             builder.or(titleCondition);
         }
 

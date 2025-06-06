@@ -208,6 +208,16 @@ public class RetrospectService {
         return retrospectRepository.countByGroupId(groupId);
     }
 
+    //통합검색에서 검색
+    @Transactional(readOnly = true)
+    public List<SearchRetrospectResponseDto> searchForKeyword(String keyword){
+        List<Retrospect> retrospects = retrospectRepository.searchForKeyword(keyword);
+        return retrospects.stream()
+            .map(this::convertToRetrospectResponse)
+            .toList();
+    }
+
+
     public int getLikeCount(Long retrospectId) {
         return likeRepository.getLikeCount(retrospectId);
     }

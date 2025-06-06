@@ -14,6 +14,7 @@ import com.dnd.reevserver.domain.member.service.FeatureKeywordService;
 import com.dnd.reevserver.domain.retrospect.dto.response.RetrospectResponseDto;
 import com.dnd.reevserver.domain.retrospect.entity.Retrospect;
 import com.dnd.reevserver.domain.retrospect.repository.RetrospectRepository;
+import com.dnd.reevserver.domain.search.dto.response.SearchGroupResponseDto;
 import com.dnd.reevserver.domain.team.dto.request.*;
 import com.dnd.reevserver.domain.team.dto.response.*;
 import com.dnd.reevserver.domain.team.entity.Team;
@@ -262,6 +263,16 @@ public class TeamService {
 
     }
 
+
+    //통합검색에서 검색
+    @Transactional(readOnly = true)
+    public List<SearchGroupResponseDto> searchForKeyword(String keyword){
+        List<Team> groups = teamRepository.searchForKeyword(keyword);
+        return groups.stream()
+            .map(this::convertToGroupResponse)
+            .toList();
+    }
+
     public Team findById(Long groupId) {
         return teamRepository.findById(groupId).orElseThrow(TeamNotFoundException::new);
     }
@@ -336,6 +347,16 @@ public class TeamService {
                 .likeCount(getLikeCount(retrospect.getRetrospectId()))
                 .categories(retrospectRepository.findCategoryNamesByRetrospectId(retrospect.getRetrospectId()))
                 .build();
+    }
+
+    private SearchGroupResponseDto convertToGroupResponse(Team team){
+        return SearchGroupResponseDto.builder()
+            .groupId(team.getGroupId())
+            .groupName(team.getGroupName())
+            .introduction(team.getIntroduction())
+            .userCount(team.getUserTeams().size())
+            .retrospectCount(retrospectRepository.countByGroupId(team.getGroupId()))
+            .build();
     }
 
 

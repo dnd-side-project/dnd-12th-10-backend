@@ -7,6 +7,7 @@ import static com.dnd.reevserver.domain.category.entity.QTeamCategory.teamCatego
 import com.dnd.reevserver.domain.category.entity.QTeamCategory;
 import com.dnd.reevserver.domain.team.dto.request.GroupSearchCondition;
 import com.dnd.reevserver.domain.team.entity.Team;
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -32,6 +33,29 @@ public class TeamRepositoryCustomImpl implements TeamRepositoryCustom {
 
     }
 
+
+    @Override
+    public List<Team> searchForKeyword(String keyword){
+        BooleanBuilder builder = new BooleanBuilder();
+
+        BooleanExpression titleCondition = containTitle(keyword);
+        if (titleCondition != null) {
+            builder.or(titleCondition);
+        }
+
+        BooleanExpression introductionCondition = containIntroduction(keyword);
+        if (introductionCondition != null) {
+            builder.or(introductionCondition);
+        }
+
+        return queryFactory
+            .select(team)
+            .from(team)
+            .where(builder)
+            .fetch();
+    }
+
+    //제목에 포함
     private BooleanExpression containTitle(String title){
         if(!hasText(title)){
             return null;
@@ -40,6 +64,7 @@ public class TeamRepositoryCustomImpl implements TeamRepositoryCustom {
 
     }
 
+    //카테고리 포함
     private BooleanExpression categoryIn(List<String> categories) {
         if(categories == null || categories.isEmpty()) {
             return null;
@@ -51,6 +76,14 @@ public class TeamRepositoryCustomImpl implements TeamRepositoryCustom {
                 .from(tc)
                 .where(tc.category.categoryName.in(categories))
         );
+    }
 
+
+    //한줄소개에 있는지
+    private BooleanExpression containIntroduction(String keyword){
+        if(!hasText(keyword)){
+            return null;
+        }
+        return team.introduction.containsIgnoreCase(keyword);
     }
 }

@@ -107,4 +107,12 @@ public class SwaggerConfig {
                 .pathsToMatch("/api/v1/statistics/**")
                 .build();
     }
+
+    @Bean
+    public GroupedOpenApi searchGroup(){
+        return GroupedOpenApi.builder()
+                .group("Search")
+                .pathsToMatch("/api/v1/search/**")
+                .build();
+    }
 }

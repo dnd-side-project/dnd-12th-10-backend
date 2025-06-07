@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface TeamRepositoryCustom {
     List<Team> search(GroupSearchCondition condition);
+    List<Team> searchForKeyword(String keyword);
 }

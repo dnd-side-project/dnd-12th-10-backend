@@ -18,6 +18,7 @@ import com.dnd.reevserver.domain.member.service.MemberService;
 import com.dnd.reevserver.domain.retrospect.dto.request.*;
 import com.dnd.reevserver.domain.retrospect.entity.Retrospect;
 import com.dnd.reevserver.domain.retrospect.repository.RetrospectRepository;
+import com.dnd.reevserver.domain.search.dto.response.SearchRetrospectResponseDto;
 import com.dnd.reevserver.domain.statistics.service.StatisticsService;
 import com.dnd.reevserver.domain.team.entity.Team;
 import com.dnd.reevserver.domain.team.service.TeamService;
@@ -207,6 +208,16 @@ public class RetrospectService {
         return retrospectRepository.countByGroupId(groupId);
     }
 
+    //통합검색에서 검색
+    @Transactional(readOnly = true)
+    public List<SearchRetrospectResponseDto> searchForKeyword(String keyword){
+        List<Retrospect> retrospects = retrospectRepository.searchForKeyword(keyword);
+        return retrospects.stream()
+            .map(this::convertToRetrospectResponse)
+            .toList();
+    }
+
+
     public int getLikeCount(Long retrospectId) {
         return likeRepository.getLikeCount(retrospectId);
     }
@@ -279,5 +290,14 @@ public class RetrospectService {
                 .commentCount(commentRepository.countByRetrospect(retrospect))
                 .categories(categoriesName)
                 .build();
+    }
+
+    private SearchRetrospectResponseDto convertToRetrospectResponse(Retrospect retrospect){
+        return SearchRetrospectResponseDto.builder()
+            .retrospectId(retrospect.getRetrospectId())
+            .title(retrospect.getTitle())
+            .userName(retrospect.getMember().getNickname())
+            .timeString(timeStringUtil.getTimeString(retrospect.getUpdatedAt()))
+            .build();
     }
 }

@@ -52,7 +52,7 @@ public class AlertRepository {
 
     public long getUnreadCount(String userId) {
         return redisTemplate.opsForHash().values(getIsReadKey(userId)).stream()
-                .filter(val -> "false".equals(val))
+                .filter("false"::equals)
                 .count();
     }
 

@@ -83,6 +83,11 @@ public class SQSConfig {
             @Qualifier("alertSqsClient") SqsAsyncClient alertClient) {
         return SqsMessageListenerContainerFactory.builder()
                 .sqsAsyncClient(alertClient)
+                .configure(options -> options
+                        .maxMessagesPerPoll(10)                // 한 번에 가져오는 메시지 수
+                        .pollTimeout(Duration.ofSeconds(10))   // 폴링 타임아웃
+                        .maxConcurrentMessages(20)             // 동시에 처리할 최대 메시지 수
+                )
                 .build();
     }
 }

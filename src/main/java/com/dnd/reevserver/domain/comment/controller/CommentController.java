@@ -29,6 +29,7 @@ public class CommentController implements CommentControllerDocs {
 
     @PostMapping
     public ResponseEntity<CommentResponseDto> addComment(@AuthenticationPrincipal String userId, @RequestBody AddCommentRequestDto requestDto) {
+        userId = "3894991774";
         CommentResponseDto commentResponseDto = commentService.addComment(userId, requestDto);
         return ResponseEntity.ok().body(commentResponseDto);
     }

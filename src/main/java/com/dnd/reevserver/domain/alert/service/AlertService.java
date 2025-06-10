@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -24,13 +23,11 @@ public class AlertService {
         alertSqsProducer.send(messageId, userId, content, timestamp, retrospectId);
     }
 
-    public AlertListResponseDto getUserAlertList(String userId, int page, int size, boolean onlyUnread) {
-        List<String> rawMessages = onlyUnread
-                ? alertRepository.getAllAlerts(userId) // 전체 가져와서 필터링
-                : alertRepository.getAlertsByPage(userId, page, size);
-
+    public AlertListResponseDto getUserAlertList(String userId, int page, int size) {
         long totalCnt = alertRepository.getTotalCount(userId);
         long unreadCnt = alertRepository.getUnreadCount(userId);
+
+        List<String> rawMessages = alertRepository.getAlertsByPage(userId, page, size, totalCnt);
 
         List<AlertMessageResponseDto> allAlerts = rawMessages.stream()
                 .map(json -> {
@@ -46,11 +43,9 @@ public class AlertService {
                     }
                 })
                 .filter(Objects::nonNull)
-                .collect(Collectors.toList());
+                .toList();
 
-        List<AlertMessageResponseDto> filtered = onlyUnread
-                ? allAlerts.stream().filter(a -> !a.isRead()).toList()
-                : allAlerts;
+        List<AlertMessageResponseDto> filtered = allAlerts.stream().filter(a -> !a.isRead()).toList();
 
         int totalPage = (int) Math.ceil((double) filtered.size() / size);
         int fromIndex = page * size;

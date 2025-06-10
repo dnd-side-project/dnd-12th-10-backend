@@ -3,6 +3,7 @@ package com.dnd.reevserver.domain.alert.repository;
 import com.dnd.reevserver.domain.alert.dto.response.AlertMessageResponseDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -11,6 +12,7 @@ import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
+@Slf4j
 public class AlertRepository {
 
     private final StringRedisTemplate redisTemplate;
@@ -26,9 +28,20 @@ public class AlertRepository {
     }
 
     public void saveAlert(String userId, String messageId, String messageJson) {
-        redisTemplate.opsForList().leftPush(getAlertKey(userId), messageJson);
-        redisTemplate.opsForHash().put(getIsReadKey(userId), messageId, "false");
-        refreshTtl(userId);
+        log.info("saveAlert 실행");
+        String alertKey = getAlertKey(userId);
+        String isReadKey = getIsReadKey(userId);
+
+        redisTemplate.opsForList().leftPush(alertKey, messageJson);
+        redisTemplate.opsForHash().put(isReadKey, messageId, "false");
+
+        // TTL이 없으면 새로 설정 (중복 갱신 방지)
+        if (Boolean.FALSE.equals(redisTemplate.hasKey(alertKey))) {
+            redisTemplate.expire(alertKey, ALERT_TTL);
+        }
+        if (Boolean.FALSE.equals(redisTemplate.hasKey(isReadKey))) {
+            redisTemplate.expire(isReadKey, ALERT_TTL);
+        }
     }
 
     private void refreshTtl(String userId) {
@@ -36,9 +49,11 @@ public class AlertRepository {
         redisTemplate.expire(getIsReadKey(userId), ALERT_TTL);
     }
 
-    public List<String> getAlertsByPage(String userId, int page, int size) {
+    public List<String> getAlertsByPage(String userId, int page, int size, long totalCnt) {
         int start = page * size;
-        int end = start + size - 1;
+        int end = Math.min(start + size - 1, (int) totalCnt - 1);
+        log.info("start : {}, end : {}", start, end);
+        log.info("Redis stored alerts: {}", redisTemplate.opsForList().range(getAlertKey(userId), 0, -1));
         return redisTemplate.opsForList().range(getAlertKey(userId), start, end);
     }
 
@@ -47,7 +62,9 @@ public class AlertRepository {
     }
 
     public void markAsRead(String userId, String messageId) {
-        redisTemplate.opsForHash().put(getIsReadKey(userId), messageId, "true");
+        if (getIsRead(userId, messageId) != null) {
+            redisTemplate.opsForHash().put(getIsReadKey(userId), messageId, "true");
+        }
     }
 
     public long getUnreadCount(String userId) {
@@ -58,10 +75,6 @@ public class AlertRepository {
 
     public long getTotalCount(String userId) {
         return redisTemplate.opsForList().size(getAlertKey(userId));
-    }
-
-    public List<String> getAllAlerts(String userId) {
-        return redisTemplate.opsForList().range(getAlertKey(userId), 0, -1);
     }
 
     public void deleteAlert(String userId, String messageId) {

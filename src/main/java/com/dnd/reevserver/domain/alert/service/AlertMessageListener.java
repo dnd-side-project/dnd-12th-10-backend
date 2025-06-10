@@ -5,6 +5,7 @@ import com.dnd.reevserver.domain.alert.repository.AlertRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.awspring.cloud.sqs.annotation.SqsListener;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.ListOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
@@ -14,6 +15,7 @@ import java.util.concurrent.TimeUnit;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class AlertMessageListener {
 
     private final AlertRepository alertRepository;
@@ -26,6 +28,7 @@ public class AlertMessageListener {
 
     @SqsListener(value = "${cloud.aws.sqs.queue-name}", factory = "alertSqsListenerContainerFactory")
     public void receive(String messageJson) {
+        log.info("AlertMessageListener receive 실행");
         boolean acquired = false;
 
         try {

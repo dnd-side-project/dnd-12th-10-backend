@@ -2,6 +2,7 @@ package com.dnd.reevserver.domain.alert.service;
 
 import com.dnd.reevserver.domain.alert.dto.response.AlertMessageResponseDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -13,6 +14,7 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
 @Component
+@Slf4j
 public class AlertSqsProducer {
 
     private final SqsAsyncClient sqsAsyncClient;
@@ -57,5 +59,6 @@ public class AlertSqsProducer {
             semaphore.release(); // 예외 시에도 해제
             throw new RuntimeException("SQS 메시지 전송 중 오류 발생", e);
         }
+        log.info("AlertSqsProducer send 완료");
     }
 }

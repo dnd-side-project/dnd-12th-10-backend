@@ -14,7 +14,7 @@ public class AlertMessageListener {
     private final AlertRepository alertRepository;
     private final ObjectMapper objectMapper;
 
-    @SqsListener("${cloud.aws.sqs.queue-name}")
+    @SqsListener(value = "${cloud.aws.sqs.queue-name}", factory = "alertSqsListenerContainerFactory")
     public void receive(String messageJson) {
         try {
             AlertMessageResponseDto message = objectMapper.readValue(messageJson, AlertMessageResponseDto.class);

@@ -1,16 +1,19 @@
 package com.dnd.reevserver.domain.like.service;
 
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import software.amazon.awssdk.services.sqs.SqsAsyncClient;
 import software.amazon.awssdk.services.sqs.model.SendMessageRequest;
 
 @Component
-@RequiredArgsConstructor
 public class LikeSqsProducer {
 
     private final SqsAsyncClient sqsAsyncClient;
+
+    public LikeSqsProducer(@Qualifier("likeSqsClient") SqsAsyncClient sqsAsyncClient) {
+        this.sqsAsyncClient = sqsAsyncClient;
+    }
 
     @Value("${cloud.aws.sqs.queue-like-name}")
     private String queueUrl;

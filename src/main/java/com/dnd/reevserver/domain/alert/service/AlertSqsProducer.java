@@ -2,7 +2,7 @@ package com.dnd.reevserver.domain.alert.service;
 
 import com.dnd.reevserver.domain.alert.dto.response.AlertMessageResponseDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import software.amazon.awssdk.services.sqs.SqsAsyncClient;
@@ -11,11 +11,14 @@ import software.amazon.awssdk.services.sqs.model.SendMessageRequest;
 import java.time.LocalDateTime;
 
 @Component
-@RequiredArgsConstructor
 public class AlertSqsProducer {
-
     private final SqsAsyncClient sqsAsyncClient;
     private final ObjectMapper objectMapper;
+
+    public AlertSqsProducer(@Qualifier("alertSqsClient") SqsAsyncClient sqsAsyncClient, ObjectMapper objectMapper) {
+        this.sqsAsyncClient = sqsAsyncClient;
+        this.objectMapper = objectMapper;
+    }
 
     @Value("${cloud.aws.sqs.queue-name}")
     private String queueUrl;

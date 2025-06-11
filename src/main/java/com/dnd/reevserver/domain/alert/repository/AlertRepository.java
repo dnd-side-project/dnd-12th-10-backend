@@ -14,7 +14,6 @@ import java.util.List;
 public class AlertRepository {
 
     private final StringRedisTemplate redisTemplate;
-    private static final Duration ALERT_TTL = Duration.ofDays(7);
     private final ObjectMapper objectMapper;
 
     private String getAlertKey(String userId) {

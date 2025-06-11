@@ -25,22 +25,6 @@ public class AlertRepository {
         return "alert:" + userId + ":isread";
     }
 
-    public void saveAlert(String userId, String messageId, String messageJson) {
-        String alertKey = getAlertKey(userId);
-        String isReadKey = getIsReadKey(userId);
-
-        redisTemplate.opsForList().leftPush(alertKey, messageJson);
-        redisTemplate.opsForHash().put(isReadKey, messageId, "false");
-
-        // TTL이 없으면 새로 설정 (중복 갱신 방지)
-        if (Boolean.FALSE.equals(redisTemplate.hasKey(alertKey))) {
-            redisTemplate.expire(alertKey, ALERT_TTL);
-        }
-        if (Boolean.FALSE.equals(redisTemplate.hasKey(isReadKey))) {
-            redisTemplate.expire(isReadKey, ALERT_TTL);
-        }
-    }
-
     public List<String> getAlertsByPage(String userId, int page, int size, long totalCnt) {
         int start = page * size;
         int end = Math.min(start + size - 1, (int) totalCnt - 1);

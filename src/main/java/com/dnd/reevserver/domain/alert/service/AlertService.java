@@ -33,8 +33,7 @@ public class AlertService {
                 .map(json -> {
                     try {
                         AlertMessageResponseDto dto = objectMapper.readValue(json, AlertMessageResponseDto.class);
-                        Object readValue = alertRepository.getIsRead(userId, dto.messageId());
-                        boolean isRead = "true".equals(readValue);
+                        boolean isRead = alertRepository.isRead(userId, dto.messageId());
                         return new AlertMessageResponseDto(
                                 dto.messageId(), dto.userId(), dto.content(), dto.timestamp(), dto.retrospectId(), isRead
                         );

@@ -16,12 +16,15 @@ public class AlertRepository {
     private final StringRedisTemplate redisTemplate;
     private final ObjectMapper objectMapper;
 
+    private static final Duration READ_TTL = Duration.ofMinutes(5);
+    private static final String READ_MARK_PREFIX = "read:";
+
     private String getAlertKey(String userId) {
         return "alert:" + userId;
     }
 
-    private String getIsReadKey(String userId) {
-        return "alert:" + userId + ":isread";
+    private String getReadKey(String userId, String messageId) {
+        return READ_MARK_PREFIX + userId + ":" + messageId;
     }
 
     public List<String> getAlertsByPage(String userId, int page, int size, long totalCnt) {
@@ -30,20 +33,26 @@ public class AlertRepository {
         return redisTemplate.opsForList().range(getAlertKey(userId), start, end);
     }
 
-    public Object getIsRead(String userId, String messageId) {
-        return redisTemplate.opsForHash().get(getIsReadKey(userId), messageId);
+    public boolean isRead(String userId, String messageId) {
+        return Boolean.TRUE.equals(redisTemplate.hasKey(getReadKey(userId, messageId)));
     }
 
     public void markAsRead(String userId, String messageId) {
-        if (getIsRead(userId, messageId) != null) {
-            redisTemplate.opsForHash().put(getIsReadKey(userId), messageId, "true");
-        }
+        redisTemplate.opsForValue().set(getReadKey(userId, messageId), "true", READ_TTL);
     }
 
     public long getUnreadCount(String userId) {
-        return redisTemplate.opsForHash().values(getIsReadKey(userId)).stream()
-                .filter("false"::equals)
-                .count();
+        List<String> allAlerts = redisTemplate.opsForList().range(getAlertKey(userId), 0, -1);
+        if (allAlerts == null) return 0;
+
+        return allAlerts.stream().filter(json -> {
+            try {
+                AlertMessageResponseDto dto = objectMapper.readValue(json, AlertMessageResponseDto.class);
+                return !isRead(userId, dto.messageId());
+            } catch (Exception e) {
+                return false;
+            }
+        }).count();
     }
 
     public long getTotalCount(String userId) {
@@ -52,9 +61,7 @@ public class AlertRepository {
 
     public void deleteAlert(String userId, String messageId) {
         String alertKey = getAlertKey(userId);
-        String isReadKey = getIsReadKey(userId);
 
-        // 리스트에서 해당 메시지를 제거 (O(n))
         List<String> allAlerts = redisTemplate.opsForList().range(alertKey, 0, -1);
         if (allAlerts != null) {
             for (String json : allAlerts) {
@@ -62,18 +69,25 @@ public class AlertRepository {
                     AlertMessageResponseDto dto = objectMapper.readValue(json, AlertMessageResponseDto.class);
                     if (dto.messageId().equals(messageId)) {
                         redisTemplate.opsForList().remove(alertKey, 1, json);
+                        redisTemplate.delete(getReadKey(userId, messageId));
                         break;
                     }
                 } catch (Exception ignored) {}
             }
         }
-
-        // isread에서도 제거
-        redisTemplate.opsForHash().delete(isReadKey, messageId);
     }
 
     public void deleteAllAlerts(String userId) {
-        redisTemplate.delete(getAlertKey(userId));
-        redisTemplate.delete(getIsReadKey(userId));
+        String alertKey = getAlertKey(userId);
+        List<String> allAlerts = redisTemplate.opsForList().range(alertKey, 0, -1);
+        if (allAlerts != null) {
+            for (String json : allAlerts) {
+                try {
+                    AlertMessageResponseDto dto = objectMapper.readValue(json, AlertMessageResponseDto.class);
+                    redisTemplate.delete(getReadKey(userId, dto.messageId()));
+                } catch (Exception ignored) {}
+            }
+        }
+        redisTemplate.delete(alertKey);
     }
 }

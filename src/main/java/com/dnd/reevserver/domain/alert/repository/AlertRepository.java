@@ -3,7 +3,6 @@ package com.dnd.reevserver.domain.alert.repository;
 import com.dnd.reevserver.domain.alert.dto.response.AlertMessageResponseDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -12,7 +11,6 @@ import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
-@Slf4j
 public class AlertRepository {
 
     private final StringRedisTemplate redisTemplate;
@@ -28,7 +26,6 @@ public class AlertRepository {
     }
 
     public void saveAlert(String userId, String messageId, String messageJson) {
-        log.info("saveAlert 실행");
         String alertKey = getAlertKey(userId);
         String isReadKey = getIsReadKey(userId);
 
@@ -44,16 +41,9 @@ public class AlertRepository {
         }
     }
 
-    private void refreshTtl(String userId) {
-        redisTemplate.expire(getAlertKey(userId), ALERT_TTL);
-        redisTemplate.expire(getIsReadKey(userId), ALERT_TTL);
-    }
-
     public List<String> getAlertsByPage(String userId, int page, int size, long totalCnt) {
         int start = page * size;
         int end = Math.min(start + size - 1, (int) totalCnt - 1);
-        log.info("start : {}, end : {}", start, end);
-        log.info("Redis stored alerts: {}", redisTemplate.opsForList().range(getAlertKey(userId), 0, -1));
         return redisTemplate.opsForList().range(getAlertKey(userId), start, end);
     }
 

@@ -1,6 +1,6 @@
 package com.dnd.reevserver.domain.like.service;
 
-import org.springframework.beans.factory.annotation.Qualifier;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import software.amazon.awssdk.services.sqs.SqsAsyncClient;
@@ -10,6 +10,7 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
 @Component
+@RequiredArgsConstructor
 public class LikeSqsProducer {
 
     private final SqsAsyncClient sqsAsyncClient;
@@ -19,10 +20,6 @@ public class LikeSqsProducer {
 
     @Value("${cloud.aws.sqs.queue-like-name}")
     private String queueUrl;
-
-    public LikeSqsProducer(@Qualifier("likeSqsClient") SqsAsyncClient sqsAsyncClient) {
-        this.sqsAsyncClient = sqsAsyncClient;
-    }
 
     public void sendToggleLikeEvent(Long retrospectId, String userId) {
         try {

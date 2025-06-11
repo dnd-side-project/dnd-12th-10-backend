@@ -1,9 +1,7 @@
 package com.dnd.reevserver.global.config.sqs;
 
 import io.awspring.cloud.sqs.config.SqsBootstrapConfiguration;
-import io.awspring.cloud.sqs.config.SqsMessageListenerContainerFactory;
 import io.awspring.cloud.sqs.operations.SqsTemplate;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -42,8 +40,8 @@ public class SQSConfig {
         };
     }
 
-    @Bean(name = "likeSqsClient")
-    public SqsAsyncClient likeSqsClient() {
+    @Bean
+    public SqsAsyncClient sqsAsyncClient() {
         return SqsAsyncClient.builder()
                 .region(Region.of(AWS_REGION))
                 .credentialsProvider(this::credentials)
@@ -55,39 +53,8 @@ public class SQSConfig {
                 .build();
     }
 
-    @Bean(name = "alertSqsClient")
-    public SqsAsyncClient alertSqsClient() {
-        return SqsAsyncClient.builder()
-                .region(Region.of(AWS_REGION))
-                .credentialsProvider(this::credentials)
-                .httpClientBuilder(
-                        NettyNioAsyncHttpClient.builder()
-                                .maxConcurrency(100)
-                                .connectionAcquisitionTimeout(Duration.ofSeconds(5))
-                )
-                .build();
-    }
-
-    @Bean(name = "likeSqsTemplate")
-    public SqsTemplate likeSqsTemplate(@Qualifier("likeSqsClient") SqsAsyncClient likeClient) {
-        return SqsTemplate.newTemplate(likeClient);
-    }
-
-    @Bean(name = "alertSqsTemplate")
-    public SqsTemplate alertSqsTemplate(@Qualifier("alertSqsClient") SqsAsyncClient alertClient) {
-        return SqsTemplate.newTemplate(alertClient);
-    }
-
-    @Bean(name = "alertSqsListenerContainerFactory")
-    public SqsMessageListenerContainerFactory<Object> alertSqsListenerContainerFactory(
-            @Qualifier("alertSqsClient") SqsAsyncClient alertClient) {
-        return SqsMessageListenerContainerFactory.builder()
-                .sqsAsyncClient(alertClient)
-                .configure(options -> options
-                        .maxMessagesPerPoll(10)                // 한 번에 가져오는 메시지 수
-                        .pollTimeout(Duration.ofSeconds(10))   // 폴링 타임아웃
-                        .maxConcurrentMessages(20)             // 동시에 처리할 최대 메시지 수
-                )
-                .build();
+    @Bean
+    public SqsTemplate sqsTemplate(SqsAsyncClient sqsAsyncClient) {
+        return SqsTemplate.newTemplate(sqsAsyncClient);
     }
 }

@@ -22,9 +22,8 @@ public class AlertController {
     public ResponseEntity<AlertListResponseDto> getUserAlerts(
             @AuthenticationPrincipal String userId,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size,
-            @RequestParam(defaultValue = "false") boolean onlyUnread) {
-        return ResponseEntity.ok(alertService.getUserAlertList(userId, page, size, onlyUnread));
+            @RequestParam(defaultValue = "20") int size) {
+        return ResponseEntity.ok(alertService.getUserAlertList(userId, page, size));
     }
 
     @Operation(summary = "알림 읽음 처리")

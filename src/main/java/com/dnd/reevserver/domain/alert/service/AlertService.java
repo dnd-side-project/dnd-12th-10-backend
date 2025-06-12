@@ -44,21 +44,13 @@ public class AlertService {
                 .filter(Objects::nonNull)
                 .toList();
 
-        List<AlertMessageResponseDto> filtered = allAlerts.stream().filter(a -> !a.isRead()).toList();
-
-        int totalPage = (int) Math.ceil((double) filtered.size() / size);
-        int fromIndex = page * size;
-        int toIndex = Math.min(fromIndex + size, filtered.size());
-        List<AlertMessageResponseDto> pageList = (fromIndex < filtered.size())
-                ? filtered.subList(fromIndex, toIndex)
-                : List.of();
-
+        int totalPage = (int) Math.ceil((double) totalCnt / size);
         boolean hasNext = page < totalPage - 1;
         boolean hasPrev = page > 0;
 
         return new AlertListResponseDto(
                 userId,
-                pageList,
+                allAlerts,
                 totalCnt,
                 unreadCnt,
                 page,

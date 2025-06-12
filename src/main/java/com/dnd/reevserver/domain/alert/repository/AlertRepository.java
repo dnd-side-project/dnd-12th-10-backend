@@ -16,15 +16,16 @@ public class AlertRepository {
     private final StringRedisTemplate redisTemplate;
     private final ObjectMapper objectMapper;
 
-    private static final Duration READ_TTL = Duration.ofMinutes(5);
+    private static final Duration READ_TTL = Duration.ofDays(7);
     private static final String READ_MARK_PREFIX = "read:";
+    private static final String ALERT_MARK_PREFIX = "alert:";
 
     private String getAlertKey(String userId) {
-        return "alert:" + userId;
+        return ALERT_MARK_PREFIX + userId;
     }
 
     private String getReadKey(String userId, String messageId) {
-        return READ_MARK_PREFIX + userId + ":" + messageId;
+        return ALERT_MARK_PREFIX + userId + ":" + READ_MARK_PREFIX + messageId;
     }
 
     public List<String> getAlertsByPage(String userId, int page, int size, long totalCnt) {

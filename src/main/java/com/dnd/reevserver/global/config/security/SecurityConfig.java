@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -48,11 +49,16 @@ public class SecurityConfig {
                 .httpBasic(HttpBasicConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize -> authorize
-//                        .requestMatchers(WHITE_LIST).permitAll()
-//                        .requestMatchers(USER_LIST).hasRole("USER")
-//                        .requestMatchers(ADMIN_LIST).hasRole("ADMIN")
-//                        .anyRequest().authenticated()
-                          .anyRequest().permitAll() // 임시로 전부 허용
+                        // 1. GET 요청은 전부 허용
+                        .requestMatchers(HttpMethod.GET, "/**").permitAll()
+                        // 2. 명시된 공개 경로는 모두 허용
+                        .requestMatchers(SecurityEndpointPaths.WHITE_LIST).permitAll()
+                        // 3. 관리자 권한이 필요한 경로
+                        .requestMatchers(SecurityEndpointPaths.ADMIN_LIST).hasRole("ADMIN")
+                        // 4. 일반 사용자 권한이 필요한 경로
+                        .requestMatchers(SecurityEndpointPaths.USER_LIST).hasAnyRole("USER", "ADMIN")
+                        // 5. 그 외 모든 요청은 인증 필요
+                        .anyRequest().authenticated()
                 )
                 .sessionManagement(sessionManagement -> sessionManagement
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)

@@ -49,8 +49,9 @@ public class SecurityConfig {
                 .httpBasic(HttpBasicConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize -> authorize
-                        // 1. GET 요청은 전부 허용
+                        // 1. GET, OPTIONS 요청은 전부 허용
                         .requestMatchers(HttpMethod.GET, "/**").permitAll()
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         // 2. 명시된 공개 경로는 모두 허용
                         .requestMatchers(SecurityEndpointPaths.WHITE_LIST).permitAll()
                         // 3. 관리자 권한이 필요한 경로

@@ -35,16 +35,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final MemberRepository memberRepository;
 
     /**
-     * 화이트 리스트에 포함된 요청은 필터링하지 않습니다.
+     * GET, OPTIONS 요청과 화이트 리스트에 포함된 요청은 필터링하지 않습니다.
      */
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-
-        return Arrays.stream(SecurityEndpointPaths.WHITE_LIST)
-                .anyMatch(path ->
-                        PatternMatchUtils.simpleMatch(path, request.getRequestURI()));
+        return request.getMethod().equalsIgnoreCase("GET") ||
+                request.getMethod().equalsIgnoreCase("OPTIONS") ||
+                Arrays.stream(SecurityEndpointPaths.WHITE_LIST)
+                        .anyMatch(path -> PatternMatchUtils.simpleMatch(path, request.getRequestURI()));
     }
-
     /**
      * 요청에 대해 JWT 인증을 수행합니다.
      */

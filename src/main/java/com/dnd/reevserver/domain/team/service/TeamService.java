@@ -283,14 +283,16 @@ public class TeamService {
 
     //유저역할반환
     public Role getRole(String userId, Team group){
-        Optional<UserTeam> userTeam = userTeamRepository.findByUserIdAndGroupId(userId,group.getGroupId());
-        if(userTeam.isEmpty()){
-            return Role.NON_MEMBER;
-        }
         if(userId.equals(group.getOwnerId())){
             return Role.LEADER;
         }
-        return Role.MEMBER;
+
+        Optional<UserTeam> userTeam = userTeamRepository.findByUserIdAndGroupId(userId,group.getGroupId());
+        if(userTeam.isPresent()){
+            return Role.MEMBER;
+        }
+
+        return Role.NON_MEMBER;
 
     }
 

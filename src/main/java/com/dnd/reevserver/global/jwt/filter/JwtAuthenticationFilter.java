@@ -39,9 +39,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
      */
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        return request.getMethod().equalsIgnoreCase("GET") ||
-                request.getMethod().equalsIgnoreCase("OPTIONS") ||
-                Arrays.stream(SecurityEndpointPaths.WHITE_LIST)
+        return Arrays.stream(SecurityEndpointPaths.WHITE_LIST)
                         .anyMatch(path -> PatternMatchUtils.simpleMatch(path, request.getRequestURI()));
     }
     /**

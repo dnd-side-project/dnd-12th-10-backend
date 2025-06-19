@@ -10,7 +10,7 @@ import java.util.List;
 public interface MemoRepository extends JpaRepository<Memo, Long> {
     @Query("SELECT m FROM Memo m " +
             "JOIN FETCH m.member " +
-            "JOIN FETCH m.team "+
+            "LEFT JOIN FETCH m.team "+
             "WHERE m.member.userId = :userId")
     List<Memo> findMemosByMemberUserId(@Param("userId") String userId);
 

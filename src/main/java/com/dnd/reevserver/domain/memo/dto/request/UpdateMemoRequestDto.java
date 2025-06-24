@@ -2,7 +2,8 @@ package com.dnd.reevserver.domain.memo.dto.request;
 
 import java.util.List;
 
-public record CreateMemoRequestDto(Long groupId,
+public record UpdateMemoRequestDto(Long memoId,
+                                   Long groupId,
                                    Long templateId,
                                    String title,
                                    String content,

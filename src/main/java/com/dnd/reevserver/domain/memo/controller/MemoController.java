@@ -1,7 +1,10 @@
 package com.dnd.reevserver.domain.memo.controller;
 
 import com.dnd.reevserver.domain.memo.dto.request.CreateMemoRequestDto;
+import com.dnd.reevserver.domain.memo.dto.request.UpdateMemoRequestDto;
+import com.dnd.reevserver.domain.memo.dto.response.CreateMemoResponseDto;
 import com.dnd.reevserver.domain.memo.dto.response.MemoResponseDto;
+import com.dnd.reevserver.domain.memo.dto.response.UpdateMemoResponseDto;
 import com.dnd.reevserver.domain.memo.service.MemoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -47,9 +50,14 @@ public class MemoController {
 
     @Operation(summary = "메모 생성")
     @PostMapping
-    public ResponseEntity<String> createMemo(@AuthenticationPrincipal String userId, @RequestBody CreateMemoRequestDto dto) {
-        memoService.createMemo(userId, dto);
-        return ResponseEntity.ok().body("메모 생성이 성공적으로 이루어졌습니다.");
+    public ResponseEntity<CreateMemoResponseDto> createMemo(@AuthenticationPrincipal String userId, @RequestBody CreateMemoRequestDto dto) {
+        return ResponseEntity.ok().body(memoService.createMemo(userId, dto));
+    }
+
+    @Operation(summary = "메모 수정")
+    @PutMapping
+    public ResponseEntity<UpdateMemoResponseDto> updateMemo(@AuthenticationPrincipal String userId, @RequestBody UpdateMemoRequestDto dto) {
+        return ResponseEntity.ok().body(memoService.updateMemo(userId, dto));
     }
 
     @Operation(summary = "메모 삭제")

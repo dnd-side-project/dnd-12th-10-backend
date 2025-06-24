@@ -38,4 +38,18 @@ public class Memo extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "group_id")
     private Team team;
+
+    public void updateTitle(String newTitle) {
+        this.title = newTitle;
+    }
+
+    public void updateContent(String newContent) {
+        this.content = newContent;
+    }
+
+    public void updateTeam(Team newTeam) { this.team = newTeam; }
+
+    public void clearMemoCategory(){
+        this.memoCategories.clear();
+    }
 }

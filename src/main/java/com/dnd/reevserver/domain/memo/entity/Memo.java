@@ -3,6 +3,7 @@ package com.dnd.reevserver.domain.memo.entity;
 import com.dnd.reevserver.domain.category.entity.MemoCategory;
 import com.dnd.reevserver.domain.member.entity.Member;
 import com.dnd.reevserver.domain.team.entity.Team;
+import com.dnd.reevserver.domain.template.entity.Template;
 import com.dnd.reevserver.global.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -39,6 +40,10 @@ public class Memo extends BaseEntity {
     @JoinColumn(name = "group_id")
     private Team team;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "template_id")
+    private Template template;
+
     public void updateTitle(String newTitle) {
         this.title = newTitle;
     }
@@ -48,6 +53,8 @@ public class Memo extends BaseEntity {
     }
 
     public void updateTeam(Team newTeam) { this.team = newTeam; }
+
+    public void updateTemplate(Template newTemplate) { this.template = newTemplate; }
 
     public void clearMemoCategory(){
         this.memoCategories.clear();

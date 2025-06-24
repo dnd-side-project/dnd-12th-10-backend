@@ -16,6 +16,7 @@ import com.dnd.reevserver.domain.memo.exception.MemoNotFoundException;
 import com.dnd.reevserver.domain.memo.repository.MemoRepository;
 import com.dnd.reevserver.domain.team.service.TeamService;
 import com.dnd.reevserver.domain.template.exception.UnauthorizedTemplateException;
+import com.dnd.reevserver.domain.template.service.TemplateService;
 import com.dnd.reevserver.global.util.TimeStringUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -34,6 +35,7 @@ public class MemoService {
     private final MemoCategoryBatchRepository memoCategoryBatchRepository;
     private final TimeStringUtil timeStringUtil;
     private final TeamService teamService;
+    private final TemplateService templateService;
 
     public Memo findById(Long id) {
         return memoRepository.findById(id).orElseThrow(MemoNotFoundException::new);
@@ -71,6 +73,7 @@ public class MemoService {
                     .title(dto.title())
                     .content(dto.content())
                     .team(dto.groupId() == null ? null : teamService.findById(dto.groupId())) // null 가능
+                    .template(templateService.findById(dto.templateId()))
                     .build();
         // 메모-태그 생성
         memoRepository.save(memo);
@@ -94,6 +97,7 @@ public class MemoService {
         memo.updateTitle(dto.title());
         memo.updateContent(dto.content());
         memo.updateTeam(dto.groupId() == null ? null : teamService.findById(dto.groupId()));
+        memo.updateTemplate(templateService.findById(dto.templateId()));
 
         memoRepository.deleteAllByMemo(memo);
         memo.clearMemoCategory();
@@ -129,6 +133,7 @@ public class MemoService {
                 .groupId(
                         memo.getTeam() == null ? 0 : memo.getTeam().getGroupId()
                 )
+                .templateId(memo.getTemplate().getTemplateId())
                 .updateTime(timeStringUtil.getTimeString(memo.getUpdatedAt()))
                 .build();
     }

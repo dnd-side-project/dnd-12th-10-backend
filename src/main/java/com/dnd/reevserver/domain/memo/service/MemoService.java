@@ -14,7 +14,6 @@ import com.dnd.reevserver.domain.memo.dto.response.UpdateMemoResponseDto;
 import com.dnd.reevserver.domain.memo.entity.Memo;
 import com.dnd.reevserver.domain.memo.exception.MemoNotFoundException;
 import com.dnd.reevserver.domain.memo.repository.MemoRepository;
-import com.dnd.reevserver.domain.team.entity.Team;
 import com.dnd.reevserver.domain.team.service.TeamService;
 import com.dnd.reevserver.domain.template.exception.UnauthorizedTemplateException;
 import com.dnd.reevserver.global.util.TimeStringUtil;

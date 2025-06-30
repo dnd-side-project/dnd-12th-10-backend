@@ -4,6 +4,7 @@ import com.dnd.reevserver.domain.team.dto.request.*;
 import com.dnd.reevserver.domain.team.dto.response.*;
 import com.dnd.reevserver.domain.team.service.TeamService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -91,5 +92,17 @@ public class TeamController implements TeamControllerDocs{
         return ResponseEntity.ok().body(response);
     }
 
+    @PostMapping("/invite")
+    public ResponseEntity<CreateTeamInviteLinkResponseDto> createInviteLink(@AuthenticationPrincipal String userId, @RequestBody CreateTeamInviteLinkRequestDto requestDto){
+        return ResponseEntity.ok().body(groupService.createTeamInviteLink(userId, requestDto));
+    }
 
+    @GetMapping("/invite/{uuid}")
+    public ResponseEntity<?> handleInvite(@PathVariable String uuid) {
+        boolean exists = groupService.handleInvite(uuid);
+        if (!exists) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("초대 링크가 유효하지 않거나 만료되었습니다.");
+        }
+        return ResponseEntity.ok("초대 링크가 유효합니다.");
+    }
 }

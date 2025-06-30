@@ -20,6 +20,7 @@ import com.dnd.reevserver.domain.team.dto.response.*;
 import com.dnd.reevserver.domain.team.entity.Team;
 import com.dnd.reevserver.domain.team.exception.NotOwnerUserException;
 import com.dnd.reevserver.domain.team.exception.TeamNotFoundException;
+import com.dnd.reevserver.domain.team.repository.TeamLinkRepository;
 import com.dnd.reevserver.domain.team.repository.TeamRepository;
 import com.dnd.reevserver.domain.member.entity.Member;
 import com.dnd.reevserver.domain.member.service.MemberService;
@@ -29,9 +30,11 @@ import com.dnd.reevserver.domain.userTeam.exception.UserGroupNotFoundException;
 import com.dnd.reevserver.domain.userTeam.repository.UserTeamRepository;
 import com.dnd.reevserver.global.util.TimeStringUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -40,6 +43,9 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class TeamService {
+
+    @Value("${invite.base-url}")
+    private String BASE_URL;
 
     private final TeamRepository teamRepository;
     private final UserTeamRepository userTeamRepository;
@@ -53,6 +59,7 @@ public class TeamService {
     private final TeamCategoryService teamCategoryService;
     private final LikeRepository likeRepository;
     private final AlertService alertService;
+    private final TeamLinkRepository teamLinkRepository;
 
     //모든 그룹조회
     @Transactional(readOnly = true)
@@ -252,6 +259,23 @@ public class TeamService {
         return groupId;
     }
 
+    // 그룹 초대
+    @Transactional(readOnly = true)
+    public CreateTeamInviteLinkResponseDto createTeamInviteLink(String userId, CreateTeamInviteLinkRequestDto dto) {
+        findByUserIdAndGroupId(userId, dto.groupId());
+        String uuid = UUID.randomUUID().toString();
+        String link = BASE_URL + "api/v1/group/invite/" + uuid;
+        teamLinkRepository.save(uuid, dto.groupId(), Duration.ofHours(2));
+        return new CreateTeamInviteLinkResponseDto(link);
+    }
+
+    // 초대 링크 검사
+    public TeamInviteResponseDto handleInvite(String uuid) {
+        return teamLinkRepository.findGroupIdByUuid(uuid)
+                .map(groupId -> new TeamInviteResponseDto(true, groupId, "초대 링크가 유효합니다."))
+                .orElseGet(() -> new TeamInviteResponseDto(false, null, "초대 링크가 유효하지 않거나 만료되었습니다."));
+    }
+
     //그룹 검색
     @Transactional(readOnly = true)
     public List<TeamResponseDto> searchGroups(String title, List<String> categories){
@@ -262,7 +286,6 @@ public class TeamService {
             .toList();
 
     }
-
 
     //통합검색에서 검색
     @Transactional(readOnly = true)

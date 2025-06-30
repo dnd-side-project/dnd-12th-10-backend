@@ -4,6 +4,7 @@ import com.dnd.reevserver.domain.team.dto.request.*;
 import com.dnd.reevserver.domain.team.dto.response.*;
 import com.dnd.reevserver.domain.team.service.TeamService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -91,5 +92,19 @@ public class TeamController implements TeamControllerDocs{
         return ResponseEntity.ok().body(response);
     }
 
+    @PostMapping("/invite")
+    public ResponseEntity<CreateTeamInviteLinkResponseDto> createInviteLink(@AuthenticationPrincipal String userId, @RequestBody CreateTeamInviteLinkRequestDto requestDto){
+        return ResponseEntity.ok().body(groupService.createTeamInviteLink(userId, requestDto));
+    }
 
+    @GetMapping("/invite/{uuid}")
+    public ResponseEntity<TeamInviteResponseDto> handleInvite(@PathVariable String uuid) {
+        TeamInviteResponseDto response = groupService.handleInvite(uuid);
+
+        if (!response.valid()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        }
+
+        return ResponseEntity.ok(response);
+    }
 }

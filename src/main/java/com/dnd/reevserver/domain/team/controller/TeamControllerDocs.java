@@ -1,29 +1,13 @@
 package com.dnd.reevserver.domain.team.controller;
 
-import com.dnd.reevserver.domain.team.dto.request.AddFavoriteGroupRequestDto;
-import com.dnd.reevserver.domain.team.dto.request.AddTeamRequestDto;
-import com.dnd.reevserver.domain.team.dto.request.GetRecommendGroupRequestDto;
-import com.dnd.reevserver.domain.team.dto.request.JoinGroupRequestDto;
-import com.dnd.reevserver.domain.team.dto.request.LeaveGroupRequestDto;
-import com.dnd.reevserver.domain.team.dto.request.UpdateGroupRequestDto;
-import com.dnd.reevserver.domain.team.dto.response.AddFavoriteGroupResponseDto;
-import com.dnd.reevserver.domain.team.dto.response.AddTeamResponseDto;
-import com.dnd.reevserver.domain.team.dto.response.GetPopularGroupResponseDto;
-import com.dnd.reevserver.domain.team.dto.response.GroupDetailResponseDto;
-import com.dnd.reevserver.domain.team.dto.response.JoinGroupResponseDto;
-import com.dnd.reevserver.domain.team.dto.response.LeaveGroupResponseDto;
-import com.dnd.reevserver.domain.team.dto.response.TeamResponseDto;
+import com.dnd.reevserver.domain.team.dto.request.*;
+import com.dnd.reevserver.domain.team.dto.response.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "그룹 API", description = "모임과 관련한 API입니다.")
 public interface TeamControllerDocs {
@@ -64,4 +48,9 @@ public interface TeamControllerDocs {
     @Operation(summary = "모임 탐색 API", description = "모임을 검색합니다.")
     public ResponseEntity<List<TeamResponseDto>> searchGroups(@RequestParam(required = false) String title,  @RequestParam(required = false) List<String> categories);
 
+    @Operation(summary = "모임 초대 링크 생성 API", description = "모임을 초대하는 링크를 생성합니다. userId가 group 내에 속해있지 않으면 예외처리합니다. 생성된 링크는 2시간 뒤 삭제됩니다.")
+    public ResponseEntity<CreateTeamInviteLinkResponseDto> createInviteLink(@AuthenticationPrincipal String userId, @RequestBody CreateTeamInviteLinkRequestDto requestDto);
+
+    @Operation(summary = "모임 초대 링크 들어가기", description = "모임 초대 링크를 들어갑니다. 생성된 링크가 아니면 초대X 및 404 리턴, 맟으면 초대합니다.")
+    public ResponseEntity<TeamInviteResponseDto> handleInvite(@PathVariable String uuid);
 }

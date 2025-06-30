@@ -52,5 +52,5 @@ public interface TeamControllerDocs {
     public ResponseEntity<CreateTeamInviteLinkResponseDto> createInviteLink(@AuthenticationPrincipal String userId, @RequestBody CreateTeamInviteLinkRequestDto requestDto);
 
     @Operation(summary = "모임 초대 링크 들어가기", description = "모임 초대 링크를 들어갑니다. 생성된 링크가 아니면 초대X 및 404 리턴, 맟으면 초대합니다.")
-    public ResponseEntity<?> handleInvite(@PathVariable String uuid);
+    public ResponseEntity<TeamInviteResponseDto> handleInvite(@PathVariable String uuid);
 }

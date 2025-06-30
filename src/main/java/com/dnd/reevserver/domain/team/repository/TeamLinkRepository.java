@@ -11,6 +11,7 @@ import software.amazon.awssdk.services.dynamodb.model.PutItemRequest;
 
 import java.time.Duration;
 import java.util.Map;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
@@ -22,22 +23,39 @@ public class TeamLinkRepository {
 
     private static final String PK = "uuid";
 
-    public void save(String uuid, Duration expiration) {
+    public void save(String uuid, Long groupId, Duration expiration) {
         dynamoDbClient.putItem(PutItemRequest.builder()
                 .tableName(TABLE_NAME)
                 .item(Map.of(
                         PK, AttributeValue.fromS(uuid),
+                        "groupId", AttributeValue.fromS(String.valueOf(groupId)),
                         "ttl", AttributeValue.fromN(String.valueOf((System.currentTimeMillis() / 1000) + expiration.getSeconds()))
                 ))
                 .build());
     }
 
-    public boolean existsUuid(String uuid) {
+    public Optional<Long> findGroupIdByUuid(String uuid) {
         GetItemResponse response = dynamoDbClient.getItem(GetItemRequest.builder()
                 .tableName(TABLE_NAME)
                 .key(Map.of(PK, AttributeValue.fromS(uuid)))
                 .build());
 
-        return response.hasItem();
+        if (!response.hasItem()) {
+            return Optional.empty();
+        }
+
+        Map<String, AttributeValue> item = response.item();
+        AttributeValue groupIdAttr = item.get("groupId");
+
+        if (groupIdAttr == null) {
+            return Optional.empty();
+        }
+
+        try {
+            return Optional.of(Long.parseLong(groupIdAttr.s()));
+        } catch (NumberFormatException e) {
+            return Optional.empty(); // 잘못 저장된 경우도 방어
+        }
     }
+
 }

@@ -98,11 +98,13 @@ public class TeamController implements TeamControllerDocs{
     }
 
     @GetMapping("/invite/{uuid}")
-    public ResponseEntity<?> handleInvite(@PathVariable String uuid) {
-        boolean exists = groupService.handleInvite(uuid);
-        if (!exists) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("초대 링크가 유효하지 않거나 만료되었습니다.");
+    public ResponseEntity<TeamInviteResponseDto> handleInvite(@PathVariable String uuid) {
+        TeamInviteResponseDto response = groupService.handleInvite(uuid);
+
+        if (!response.valid()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         }
-        return ResponseEntity.ok("초대 링크가 유효합니다.");
+
+        return ResponseEntity.ok(response);
     }
 }

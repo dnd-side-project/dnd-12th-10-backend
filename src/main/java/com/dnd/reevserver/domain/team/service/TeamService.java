@@ -265,13 +265,15 @@ public class TeamService {
         findByUserIdAndGroupId(userId, dto.groupId());
         String uuid = UUID.randomUUID().toString();
         String link = BASE_URL + "api/v1/group/invite/" + uuid;
-        teamLinkRepository.save(uuid, Duration.ofHours(2));
+        teamLinkRepository.save(uuid, dto.groupId(), Duration.ofHours(2));
         return new CreateTeamInviteLinkResponseDto(link);
     }
 
     // 초대 링크 검사
-    public boolean handleInvite(String uuid){
-        return teamLinkRepository.existsUuid(uuid);
+    public TeamInviteResponseDto handleInvite(String uuid) {
+        return teamLinkRepository.findGroupIdByUuid(uuid)
+                .map(groupId -> new TeamInviteResponseDto(true, groupId, "초대 링크가 유효합니다."))
+                .orElseGet(() -> new TeamInviteResponseDto(false, null, "초대 링크가 유효하지 않거나 만료되었습니다."));
     }
 
     //그룹 검색

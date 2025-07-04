@@ -10,6 +10,9 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
 
 @RequiredArgsConstructor
 public class RetrospectRepositoryCustomImpl implements RetrospectRepositoryCustom {
@@ -34,6 +37,30 @@ public class RetrospectRepositoryCustomImpl implements RetrospectRepositoryCusto
             .from(retrospect)
             .where(builder)
             .fetch();
+    }
+
+    @Override
+    public Slice<Retrospect> searchForKeywordParti(String keyword, Pageable pageable){
+        BooleanBuilder builder = new BooleanBuilder()
+            .or(containTitle(keyword))
+            .or(containContent(keyword));
+
+        List<Retrospect> fetched = queryFactory
+            .select(retrospect)
+            .from(retrospect)
+            .where(builder)
+            .orderBy(retrospect.retrospectId.desc())
+            .offset(pageable.getOffset())
+            .limit(pageable.getPageSize() + 1)
+            .fetch();
+
+        boolean hasNext = false;
+        if (fetched.size() > pageable.getPageSize()) {
+            fetched.remove(pageable.getPageSize());
+            hasNext = true;
+        }
+
+        return new SliceImpl<>(fetched, pageable, hasNext);
     }
 
     //제목에 포함

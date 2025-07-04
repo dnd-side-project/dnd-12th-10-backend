@@ -24,6 +24,8 @@ import com.dnd.reevserver.domain.team.entity.Team;
 import com.dnd.reevserver.domain.team.service.TeamService;
 import com.dnd.reevserver.global.util.TimeStringUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import jakarta.persistence.Tuple;
@@ -215,6 +217,13 @@ public class RetrospectService {
         return retrospects.stream()
             .map(this::convertToRetrospectResponse)
             .toList();
+    }
+
+    //통합검색후 상세
+    @Transactional(readOnly = true)
+    public Slice<SearchRetrospectResponseDto> searchForKeywordParti(String keyword, Pageable pageable){
+         return retrospectRepository.searchForKeywordParti(keyword, pageable)
+            .map(this::convertToRetrospectResponse);
     }
 
 

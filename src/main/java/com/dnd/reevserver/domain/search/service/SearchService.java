@@ -37,5 +37,10 @@ public class SearchService {
         return retrospectService.searchForKeywordParti(keyword, pageable);
     }
 
+    @Transactional(readOnly = true)
+    public Slice<SearchGroupResponseDto> searchAllGroup(String keyword, Pageable pageable){
+        return teamService.searchForKeywordParti(keyword, pageable);
+    }
+
 
 }

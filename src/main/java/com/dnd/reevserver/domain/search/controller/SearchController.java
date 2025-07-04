@@ -34,9 +34,8 @@ public class SearchController {
         return searchService.searchAllRetrospect(keyword, pageable);
     }
 
-//    @GetMapping("/group")
-//    public ResponseEntity<SearchAllResponseDto> searchPartiGroup (@RequestParam(required = false) String keyword){
-//        SearchAllResponseDto response = searchService.searchAll(keyword);
-//        return ResponseEntity.ok().body(response);
-//    }
+    @GetMapping("/group")
+    public Slice<SearchGroupResponseDto> searchPartiGroup (@RequestParam(required = false) String keyword, @PageableDefault(size = 3) Pageable pageable){
+        return searchService.searchAllGroup(keyword, pageable);
+    }
 }

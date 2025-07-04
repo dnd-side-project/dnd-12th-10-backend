@@ -1,10 +1,12 @@
 package com.dnd.reevserver.domain.team.repository;
 
+import static com.dnd.reevserver.domain.retrospect.entity.QRetrospect.retrospect;
 import static org.springframework.util.StringUtils.hasText;
 import static com.dnd.reevserver.domain.team.entity.QTeam.team;
 import static com.dnd.reevserver.domain.category.entity.QTeamCategory.teamCategory;
 
 import com.dnd.reevserver.domain.category.entity.QTeamCategory;
+import com.dnd.reevserver.domain.retrospect.entity.Retrospect;
 import com.dnd.reevserver.domain.team.dto.request.GroupSearchCondition;
 import com.dnd.reevserver.domain.team.entity.Team;
 import com.querydsl.core.BooleanBuilder;
@@ -13,6 +15,9 @@ import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
 
 @RequiredArgsConstructor
 public class TeamRepositoryCustomImpl implements TeamRepositoryCustom {
@@ -53,6 +58,30 @@ public class TeamRepositoryCustomImpl implements TeamRepositoryCustom {
             .from(team)
             .where(builder)
             .fetch();
+    }
+
+    @Override
+    public Slice<Team> searchForKeywordParti(String keyword, Pageable pageable){
+        BooleanBuilder builder = new BooleanBuilder()
+            .or(containTitle(keyword))
+            .or(containIntroduction(keyword));
+
+        List<Team> fetched = queryFactory
+            .select(team)
+            .from(team)
+            .where(builder)
+            .orderBy(team.groupId.desc())
+            .offset(pageable.getOffset())
+            .limit(pageable.getPageSize() + 1)
+            .fetch();
+
+        boolean hasNext = false;
+        if (fetched.size() > pageable.getPageSize()) {
+            fetched.remove(pageable.getPageSize());
+            hasNext = true;
+        }
+
+        return new SliceImpl<>(fetched, pageable, hasNext);
     }
 
     //제목에 포함

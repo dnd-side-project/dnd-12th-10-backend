@@ -15,6 +15,7 @@ import com.dnd.reevserver.domain.retrospect.dto.response.RetrospectResponseDto;
 import com.dnd.reevserver.domain.retrospect.entity.Retrospect;
 import com.dnd.reevserver.domain.retrospect.repository.RetrospectRepository;
 import com.dnd.reevserver.domain.search.dto.response.SearchGroupResponseDto;
+import com.dnd.reevserver.domain.search.dto.response.SearchRetrospectResponseDto;
 import com.dnd.reevserver.domain.team.dto.request.*;
 import com.dnd.reevserver.domain.team.dto.response.*;
 import com.dnd.reevserver.domain.team.entity.Team;
@@ -31,6 +32,8 @@ import com.dnd.reevserver.domain.userTeam.repository.UserTeamRepository;
 import com.dnd.reevserver.global.util.TimeStringUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -294,6 +297,13 @@ public class TeamService {
         return groups.stream()
             .map(this::convertToGroupResponse)
             .toList();
+    }
+
+    //통합검색후 상세
+    @Transactional(readOnly = true)
+    public Slice<SearchGroupResponseDto> searchForKeywordParti(String keyword, Pageable pageable){
+        return teamRepository.searchForKeywordParti(keyword, pageable)
+            .map(this::convertToGroupResponse);
     }
 
     public Team findById(Long groupId) {

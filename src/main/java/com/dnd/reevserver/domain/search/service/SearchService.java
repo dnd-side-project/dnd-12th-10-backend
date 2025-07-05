@@ -12,6 +12,8 @@ import com.dnd.reevserver.domain.team.service.TeamService;
 import com.dnd.reevserver.global.util.TimeStringUtil;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +30,16 @@ public class SearchService {
         List<SearchGroupResponseDto> groups = teamService.searchForKeyword(keyword);
         List<SearchRetrospectResponseDto> retrospects = retrospectService.searchForKeyword(keyword);
         return new SearchAllResponseDto(groups, retrospects);
+    }
+
+    @Transactional(readOnly = true)
+    public Slice<SearchRetrospectResponseDto> searchAllRetrospect(String keyword, Pageable pageable){
+        return retrospectService.searchForKeywordParti(keyword, pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public Slice<SearchGroupResponseDto> searchAllGroup(String keyword, Pageable pageable){
+        return teamService.searchForKeywordParti(keyword, pageable);
     }
 
 

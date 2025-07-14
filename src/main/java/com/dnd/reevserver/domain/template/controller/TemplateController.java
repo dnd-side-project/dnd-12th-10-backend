@@ -31,10 +31,10 @@ public class TemplateController {
     }
 
     // 공용 템플릿 조회
-    @Operation(summary = "공용 템플릿 조회, userId는 public라고 나올 것입니다.")
+    @Operation(summary = "공용 템플릿 조회, userId는 public라고 나올 것입니다. Type은 회고 방식을 나타내는 retrospective_type과 직무를 나타내는 job_type으로 분류할 수 있습니다.")
     @GetMapping("/public")
-    public ResponseEntity<List<TemplateResponseDto>> findPublicTemplates() {
-        return ResponseEntity.ok(templateService.findPublicTemplates());
+    public ResponseEntity<List<TemplateResponseDto>> findPublicTemplates(@RequestParam String type) {
+        return ResponseEntity.ok(templateService.findPublicTemplates(type));
     }
 
     // 템플릿 개별 조회

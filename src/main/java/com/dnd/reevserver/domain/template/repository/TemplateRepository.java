@@ -19,8 +19,8 @@ public interface TemplateRepository extends JpaRepository<Template, Long> {
     @Query("SELECT t FROM Template t " +
             "LEFT JOIN FETCH t.templateCategories tc " +
             "LEFT JOIN FETCH tc.category " +
-            "WHERE t.isPublic = true")
-    List<Template> findByIsPublicTrueWithCategories();
+            "WHERE t.isPublic = true AND t.type = :type")
+    List<Template> findByIsPublicTrueWithCategories(@Param("type") String type);
 
 
     Template findByTemplateName(String templateName);

@@ -39,6 +39,9 @@ public class Template extends BaseEntity {
     @Column(name = "preset", nullable = false, columnDefinition = "LONGTEXT")
     private String preset;
 
+    @Column(name = "type", nullable = false)
+    private String type;
+
     @OneToMany(mappedBy = "template")
     private List<TemplateCategory> templateCategories = new ArrayList<>();
 
@@ -53,6 +56,8 @@ public class Template extends BaseEntity {
     public void updatePreset(String newPreset) { this.preset = newPreset; }
 
     public void updateDescription(String newDescription) { this.description = newDescription; }
+
+    public void updateType(String newType) { this.type = newType; }
 
     public void clearTemplateCategory(){
         this.templateCategories.clear();

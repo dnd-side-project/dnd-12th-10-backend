@@ -50,8 +50,8 @@ public class TemplateService {
     }
 
     // 공용 템플릿 조회
-    public List<TemplateResponseDto> findPublicTemplates() {
-        return templateRepository.findByIsPublicTrueWithCategories().stream()
+    public List<TemplateResponseDto> findPublicTemplates(String type) {
+        return templateRepository.findByIsPublicTrueWithCategories(type).stream()
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
     }
@@ -74,6 +74,7 @@ public class TemplateService {
                 .member(member)
                 .preset(dto.preset())
                 .templateCategories(new ArrayList<>())
+                .type(dto.type())
                 .build();
         templateRepository.save(template);
 
@@ -87,7 +88,7 @@ public class TemplateService {
         templateCategoryBatchRepository.saveAll(tcList);
     }
 
-    // 템플릿 제목, 내용, 설명, 카테고리 수정, isPublic이 false여만 가능, true면 PublicTemplateCannotModifyException 예외 처리
+    // 템플릿 제목, 내용, 설명, 카테고리, 타입 수정, isPublic이 false여만 가능, true면 PublicTemplateCannotModifyException 예외 처리
     @Transactional
     public void updateTemplate(String userId, UpdateTemplateRequestDto dto) {
         Template template = findById(dto.templateId());
@@ -103,6 +104,7 @@ public class TemplateService {
         template.updateContent(dto.content());
         template.updatePreset(dto.preset());
         template.updateDescription(dto.description());
+        template.updateType(dto.type());
 
         templateCategoryRepository.deleteAllByTemplate(template);
         template.clearTemplateCategory();
@@ -140,6 +142,7 @@ public class TemplateService {
                 .preset(template.getPreset())
                 .isPublic(template.isPublic())
                 .userId(template.isPublic() ? "public" : template.getMember().getUserId())
+                .type(template.getType())
                 .categories(
                         List.copyOf(
                                 template.getTemplateCategories().stream()

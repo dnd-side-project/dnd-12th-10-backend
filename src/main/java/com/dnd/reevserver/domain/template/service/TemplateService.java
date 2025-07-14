@@ -69,6 +69,7 @@ public class TemplateService {
         Template template = Template.builder()
                 .templateName(dto.templateName())
                 .content(dto.content())
+                .description(dto.description())
                 .isPublic(false)
                 .member(member)
                 .preset(dto.preset())
@@ -100,7 +101,8 @@ public class TemplateService {
 
         template.updateTemplateName(dto.templateName());
         template.updateContent(dto.content());
-        template.updateDescription(dto.preset());
+        template.updatePreset(dto.preset());
+        template.updateDescription(dto.description());
 
         templateCategoryRepository.deleteAllByTemplate(template);
         template.clearTemplateCategory();
@@ -133,6 +135,7 @@ public class TemplateService {
         return TemplateResponseDto.builder()
                 .templateId(template.getTemplateId())
                 .templateName(template.getTemplateName())
+                .description(template.getDescription())
                 .content(template.getContent())
                 .preset(template.getPreset())
                 .isPublic(template.isPublic())

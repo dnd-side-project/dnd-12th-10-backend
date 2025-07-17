@@ -25,8 +25,8 @@ public class RetrospectController implements RetrospectControllerDocs{
     }
 
     @GetMapping("/{retrospectId}")
-    public ResponseEntity<RetrospectResponseDto> getRetrospect(@AuthenticationPrincipal String userId, @PathVariable Long retrospectId) {
-        RetrospectResponseDto responseDto = retrospectService.getRetrospectById(userId, retrospectId);
+    public ResponseEntity<RetrospectDetailResponseDto> getRetrospect(@AuthenticationPrincipal String userId, @PathVariable Long retrospectId) {
+        RetrospectDetailResponseDto responseDto = retrospectService.getRetrospectById(userId, retrospectId);
         return ResponseEntity.ok().body(responseDto);
     }
 

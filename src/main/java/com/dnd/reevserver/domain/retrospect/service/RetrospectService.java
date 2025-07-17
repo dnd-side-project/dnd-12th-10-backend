@@ -51,7 +51,7 @@ public class RetrospectService {
 
     //단일회고 조회
     @Transactional(readOnly = true)
-    public RetrospectResponseDto getRetrospectById(String userId, Long retrospectId) {
+    public RetrospectDetailResponseDto getRetrospectById(String userId, Long retrospectId) {
         if(userId.isEmpty()) {
             throw new MemberNotFoundException();
         }
@@ -62,7 +62,7 @@ public class RetrospectService {
         long commentCount = tuple.get(2, Long.class); // 세 번째 값: 댓글 수
         List<String> rcList = retrospectRepository.findCategoryNamesByRetrospectId(retrospectId);
 
-        return convertToDto(retrospect, isBookmarked, commentCount, rcList);
+        return convertToDetailDto(retrospect, isBookmarked, commentCount, rcList, userId);
     }
 
     //회고 목록 조회
@@ -284,6 +284,24 @@ public class RetrospectService {
                 .bookmark(isBookmarked)
                 .categories(categoriesName)
                 .build();
+    }
+
+    //작성자인지 여부 포함
+    private RetrospectDetailResponseDto convertToDetailDto(Retrospect retrospect, boolean isBookmarked, long commentCnt, List<String> categoriesName, String userId) {
+        return RetrospectDetailResponseDto.builder()
+            .retrospectId(retrospect.getRetrospectId())
+            .title(retrospect.getTitle())
+            .content(retrospect.getContent())
+            .userName(retrospect.getMember().getNickname())
+            .timeString(timeStringUtil.getTimeString(retrospect.getUpdatedAt()))
+            .likeCount(getLikeCount(retrospect.getRetrospectId()))
+            .groupName(retrospect.getTeam() != null ? retrospect.getTeam().getGroupName() : null)
+            .groupId(retrospect.getTeam() != null ? retrospect.getTeam().getGroupId() : null)
+            .commentCount(commentCnt)
+            .bookmark(isBookmarked)
+            .categories(categoriesName)
+            .isAuthor((retrospect.getMember().getUserId()).equals(userId))
+            .build();
     }
 
     private RetrospectSingleResponseDto convertToSingleDto(Retrospect retrospect, List<String> categoriesName) {

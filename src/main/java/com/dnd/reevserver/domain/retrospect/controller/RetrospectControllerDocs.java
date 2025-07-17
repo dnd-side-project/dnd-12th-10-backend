@@ -19,7 +19,7 @@ public interface RetrospectControllerDocs {
     ResponseEntity<List<RetrospectResponseDto>> retrospect(@AuthenticationPrincipal String userId, @RequestParam Long groupId);
 
     @Operation(summary = "단일 회고 조회 API", description = "선택한 회고를 불러옵니다.")
-    ResponseEntity<RetrospectResponseDto> getRetrospect(@AuthenticationPrincipal String userId, @PathVariable Long retrospectId);
+    ResponseEntity<RetrospectDetailResponseDto> getRetrospect(@AuthenticationPrincipal String userId, @PathVariable Long retrospectId);
 
     @Operation(summary = "나의 회고 현황 조회 API", description = "유저의 현황을 불러옵니다. action에 따라 모두, 모임, 개인으로 나눠집니다.")
     ResponseEntity<RetrospectByMemberResponseDto> getRetrospectByMember(@AuthenticationPrincipal String userId, @Parameter(

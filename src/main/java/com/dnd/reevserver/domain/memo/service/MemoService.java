@@ -73,7 +73,7 @@ public class MemoService {
                     .title(dto.title())
                     .content(dto.content())
                     .team(dto.groupId() == null ? null : teamService.findById(dto.groupId())) // null 가능
-                    .template(templateService.findById(dto.templateId()))
+                    .template(dto.templateId() == 0 ? null : templateService.findById(dto.templateId()))
                     .build();
         // 메모-태그 생성
         memoRepository.save(memo);
@@ -97,7 +97,9 @@ public class MemoService {
         memo.updateTitle(dto.title());
         memo.updateContent(dto.content());
         memo.updateTeam(dto.groupId() == null ? null : teamService.findById(dto.groupId()));
-        memo.updateTemplate(templateService.findById(dto.templateId()));
+
+        if(dto.templateId() != 0)
+            memo.updateTemplate(templateService.findById(dto.templateId()));
 
         memoRepository.deleteAllByMemo(memo);
         memo.clearMemoCategory();

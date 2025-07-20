@@ -135,7 +135,7 @@ public class MemoService {
                 .groupId(
                         memo.getTeam() == null ? 0 : memo.getTeam().getGroupId()
                 )
-                .templateId(memo.getTemplate().getTemplateId())
+                .templateId(memo.getTemplate() == null ? 0 : memo.getTemplate().getTemplateId())
                 .updateTime(timeStringUtil.getTimeString(memo.getUpdatedAt()))
                 .build();
     }

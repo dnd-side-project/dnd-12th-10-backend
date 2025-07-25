@@ -68,20 +68,34 @@ public class MemoService {
     // 메모 생성
     @Transactional
     public CreateMemoResponseDto createMemo(String userId, CreateMemoRequestDto dto){
+        // 1. 메모 개수 확인
+        long memoCount = memoRepository.countByUserId(userId);
+        if (memoCount >= 5) {
+            // 2. 가장 오래된 메모 ID 조회 (1개만)
+            Long oldestMemoId = memoRepository.findOldestMemoIdByUserId(userId);
+            if (oldestMemoId != null) {
+                // 3. 삭제 (orphanRemoval을 위해 엔티티 삭제)
+                deleteMemo(oldestMemoId);
+            }
+        }
+
+        // 4. 메모 생성
         Memo memo = Memo.builder()
-                    .member(memberService.findById(userId))
-                    .title(dto.title())
-                    .content(dto.content())
-                    .team(dto.groupId() == null ? null : teamService.findById(dto.groupId())) // null 가능
-                    .template(dto.templateId() == 0 ? null : templateService.findById(dto.templateId()))
-                    .build();
-        // 메모-태그 생성
+                .member(memberService.findById(userId))
+                .title(dto.title())
+                .content(dto.content())
+                .team(dto.groupId() == null ? null : teamService.findById(dto.groupId()))
+                .template(dto.templateId() == 0 ? null : templateService.findById(dto.templateId()))
+                .build();
+
         memoRepository.save(memo);
+
         List<Category> categories = categoryRepository.findByCategoryNameIn(dto.categoryNames());
         List<MemoCategory> mcList = categories.stream()
                 .map(category -> new MemoCategory(memo, category))
                 .collect(Collectors.toList());
         memoCategoryBatchRepository.saveAll(mcList);
+
         return new CreateMemoResponseDto(memo.getMemoId());
     }
 

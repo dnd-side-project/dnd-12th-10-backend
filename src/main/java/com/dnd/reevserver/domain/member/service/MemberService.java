@@ -8,6 +8,7 @@ import com.dnd.reevserver.domain.member.exception.MemberNicknameAlreadyExistedEx
 import com.dnd.reevserver.domain.member.exception.MemberNotFoundException;
 import com.dnd.reevserver.domain.member.repository.FeatureKeywordBatchRepository;
 import com.dnd.reevserver.domain.member.repository.MemberRepository;
+import com.dnd.reevserver.domain.retrospect.repository.RetrospectRepository;
 import com.dnd.reevserver.domain.team.dto.response.TeamResponseDto;
 import com.dnd.reevserver.domain.team.entity.Team;
 import com.dnd.reevserver.domain.team.repository.TeamRepository;
@@ -26,6 +27,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final TeamRepository teamRepository;
     private final FeatureKeywordBatchRepository featureKeywordBatchRepository;
+    private final RetrospectRepository retrospectRepository;
 
     // 모임 관련 API 작성 예정
 
@@ -145,6 +147,7 @@ public class MemberService {
                 .groupId(team.getGroupId())
                 .groupName(team.getGroupName())
                 .description(team.getDescription())
+                .introduction(team.getIntroduction())
                 .userCount(team.getUserTeams().size())
                 .recentActString(getRecentActString(team.getRecentAct()))
                 .categoryNames(
@@ -152,6 +155,8 @@ public class MemberService {
                                 .map(teamCategory -> teamCategory.getCategory().getCategoryName())
                                 .toList()
                 )
+                .retrospectCount(retrospectRepository.countByGroupId(team.getGroupId()))
+                .maxNum(team.getMaxNum())
                 .build();
     }
 }

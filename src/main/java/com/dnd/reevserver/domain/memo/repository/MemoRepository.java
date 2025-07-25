@@ -26,4 +26,14 @@ public interface MemoRepository extends JpaRepository<Memo, Long> {
     @Query("DELETE FROM MemoCategory mc " +
             "WHERE mc.memo = :memo")
     void deleteAllByMemo(@Param("memo") Memo memo);
+
+    @Query(value = "SELECT m.memo_id FROM memo m " +
+            "WHERE m.user_id = :userId " +
+            "ORDER BY m.created_at ASC " +
+            "LIMIT 1", nativeQuery = true)
+    Long findOldestMemoIdByUserId(@Param("userId") String userId);
+
+    @Query("SELECT COUNT(m) FROM Memo m WHERE m.member.userId = :userId")
+    long countByUserId(@Param("userId") String userId);
+
 }

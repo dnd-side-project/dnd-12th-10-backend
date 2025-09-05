@@ -1,6 +1,6 @@
 name: reev server deploy
 
-# main 브랜치에 push 이벤트가 발생했을 때 이 워크플로우를 실행합니다. ㅇㅇ
+# main 브랜치에 push 이벤트가 발생했을 때 이 워크플로우를 실행합니다.
 on:
   push:
     branches:
